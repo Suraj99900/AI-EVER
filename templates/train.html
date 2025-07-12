@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="max-w-xl mx-auto glass p-8 rounded-2xl shadow-xl animate-float">
+  <h2 class="text-3xl font-extrabold text-indigo-200 mb-6 text-center">🚂 Launch Training</h2>
+  <form id="train-form" class="space-y-6">
+    <div>
+      <label class="block text-gray-200 font-medium mb-1">Epochs</label>
+      <input
+        name="epochs" type="number" value="3"
+        class="w-full bg-white/30 backdrop-blur-sm border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+      />
+    </div>
+    <div>
+      <label class="block text-gray-200 font-medium mb-1">Batch Size</label>
+      <input
+        name="batch_size" type="number" value="1"
+        class="w-full bg-white/30 backdrop-blur-sm border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+      />
+    </div>
+    <button
+      type="submit"
+      class="w-full bg-indigo-500 hover:bg-indigo-400 text-white font-semibold rounded-lg py-3 shadow-lg transition transform hover:-translate-y-1"
+    >
+      🧠 Start Training
+    </button>
+  </form>
+
+  <div id="train-status" class="mt-8 text-center">
+    <!-- hidden until training starts -->
+    <div id="spinner" class="mx-auto mb-4 w-12 h-12 border-4 border-indigo-400 border-t-transparent rounded-full animate-spin hidden"></div>
+    <pre id="train-output" class="h-40 p-4 bg-black bg-opacity-50 rounded-lg text-sm overflow-auto text-green-200 hidden"></pre>
+  </div>
+</section>
+
+<script>
+  const formEl = document.getElementById("train-form");
+  const spinner = document.getElementById("spinner");
+  const output = document.getElementById("train-output");
+
+  formEl.addEventListener("submit", async e => {
+    e.preventDefault();
+    // show spinner & hide previous output
+    spinner.classList.remove("hidden");
+    output.classList.add("hidden");
+    output.textContent = "";
+
+    const config = Object.fromEntries(new FormData(formEl).entries());
+    // fire off training
+    const res = await fetch("/train", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(config)
+    });
+
+    const data = await res.json();
+    // hide spinner, show results
+    spinner.classList.add("hidden");
+    output.classList.remove("hidden");
+    output.textContent = JSON.stringify(data, null, 2);
+  });
+</script>
+{% endblock %}

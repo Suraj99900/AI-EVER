@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>AI Ever</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Glassmorphism backdrop */
+    .glass {
+      @apply bg-white/20 backdrop-blur-lg;
+    }
+    /* Floating animation */
+    @keyframes float {
+      0%,100%{ transform: translateY(0) }
+      50%{ transform: translateY(-6px) }
+    }
+    .animate-float { animation: float 6s ease-in-out infinite }
+    /* Fade-in */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px) }
+      to   { opacity: 1; transform: translateY(0) }
+    }
+    .animate-fade-in { animation: fadeIn 1s ease-out both }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-b from-gray-800 via-gray-900 to-black text-white overflow-x-hidden">
+
+  <!-- Glass Header -->
+  <header class="fixed top-0 w-full glass shadow-xl z-50 transition hover:shadow-2xl">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-indigo-300 hover:text-indigo-400 transition">AI Ever</h1>
+      <nav class="space-x-8 text-gray-200">
+        <a href="/" class="hover:text-yellow-400 transition">Home</a>
+        <a href="/train" class="hover:text-yellow-400 transition">Train</a>
+        <a href="/inference" class="hover:text-yellow-400 transition">Inference</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main (child pages inject here) -->
+  <main class="container mx-auto px-6 pt-28 pb-12 animate-fade-in">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Glass Footer -->
+  <footer class="glass border-t border-gray-700 mt-12">
+    <div class="container mx-auto px-6 py-6 text-center text-gray-300 text-sm">
+      <p class="mb-2">© 2025 AI Ever. Built with Flask & Tailwind CSS.</p>
+      <p class="space-x-4">
+        <a href="#" class="hover:text-yellow-400 transition">Privacy</a>
+        <a href="#" class="hover:text-yellow-400 transition">Terms</a>
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>

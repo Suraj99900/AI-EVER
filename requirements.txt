@@ -1,0 +1,9 @@
+flask
+transformers
+datasets
+peft
+accelerate
+mysql-connector-python
+torch
+tailwindcss
+gunicorn

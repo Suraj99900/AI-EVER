@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Ever - Code + SQL AI Training</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Glassmorphism backdrop */
+    .glass {
+      @apply bg-white/20 backdrop-blur-lg;
+    }
+    /* Floating card animation */
+    @keyframes float {
+      0%,100%{ transform: translateY(0) }
+      50%{ transform: translateY(-6px) }
+    }
+    .animate-float { animation: float 6s ease-in-out infinite }
+    /* Fade-in utility */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px) }
+      to   { opacity: 1; transform: translateY(0) }
+    }
+    .animate-fade-in { animation: fadeIn 1s ease-out both }
+    /* Parallax hero */
+    .hero-bg { background-attachment: fixed }
+  </style>
+</head>
+<body class="bg-gradient-to-b from-gray-800 via-gray-900 to-black text-white">
+
+  <!-- Navbar -->
+  <header class="fixed w-full top-0 glass z-50 transition-shadow hover:shadow-xl">
+    <div class="container mx-auto flex justify-between items-center px-6 py-4">
+      <h1 class="text-2xl font-bold tracking-wider">AI Ever</h1>
+      <nav>
+        <ul class="flex space-x-8 font-medium">
+          <li><a href="#home" class="hover:text-yellow-400">Home</a></li>
+          <li><a href="#features" class="hover:text-yellow-400">Features</a></li>
+          <li><a href="#about" class="hover:text-yellow-400">About</a></li>
+          <li><a href="/train" class="hover:text-yellow-400">Train</a></li>
+          <li><a href="/inference" class="hover:text-yellow-400">Inference</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="home" class="relative flex items-center justify-center h-screen text-center px-6 hero-bg"
+           style="background:url('https://images.unsplash.com/photo-1551739440-82f6ad6c4e07?auto=format&fit=crop&w=1470&q=80') center/cover;">
+    <div class="absolute inset-0 bg-black/60"></div>
+    <div class="relative z-10 max-w-3xl p-8 glass rounded-2xl animate-fade-in">
+      <h2 class="text-5xl font-extrabold mb-4">Welcome to AI Ever</h2>
+      <p class="text-xl mb-8">Transform how you train AI using your source code and SQL schema. Automate fine‑tuning and run smart, context‑aware inference.</p>
+      <div class="flex justify-center space-x-6">
+        <a href="/train"
+           class="bg-yellow-400 hover:bg-yellow-300 text-black px-8 py-3 rounded-full font-semibold shadow-lg transition-transform transform hover:-translate-y-1 animate-fade-in delay-200">
+          🧠 Start Training
+        </a>
+        <a href="/inference"
+           class="bg-white hover:bg-gray-100 text-black px-8 py-3 rounded-full font-semibold shadow-lg transition-transform transform hover:-translate-y-1 animate-fade-in delay-400">
+          🧪 Run Inference
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Use AI Ever -->
+  <section id="features" class="py-24">
+    <div class="container mx-auto px-6 text-center">
+      <h3 class="text-4xl font-bold mb-12 animate-fade-in">Why Choose AI Ever?</h3>
+      <div class="grid md:grid-cols-3 gap-10">
+        <div class="glass p-8 rounded-2xl shadow-lg hover:shadow-2xl animate-float transition duration-500">
+          <h4 class="text-2xl font-semibold mb-4">📂 Code + SQL Support</h4>
+          <p>Automatically extract and convert code and SQL schema into training‑ready prompt datasets.</p>
+        </div>
+        <div class="glass p-8 rounded-2xl shadow-lg hover:shadow-2xl animate-float transition duration-500 delay-150">
+          <h4 class="text-2xl font-semibold mb-4">⚙️ QLoRA Fine‑Tuning</h4>
+          <p>Leverage efficient memory‑aware training with QLoRA/LoRA on local hardware with checkpoint support.</p>
+        </div>
+        <div class="glass p-8 rounded-2xl shadow-lg hover:shadow-2xl animate-float transition duration-500 delay-300">
+          <h4 class="text-2xl font-semibold mb-4">🧪 Smart Inference UI</h4>
+          <p>Run your trained model in a sleek web interface that supports structured prompt‑response format.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Project -->
+  <section id="about" class="py-24 bg-gray-900">
+    <div class="container mx-auto px-6 max-w-3xl text-center">
+      <h3 class="text-4xl font-bold mb-6 animate-fade-in">About the Project</h3>
+      <p class="text-lg text-gray-300 animate-fade-in delay-200">
+        <strong>AI Ever</strong> is a developer‑focused platform to easily train and test models like <em>StarCoder</em> or <em>CodeLLaMA</em> with your own codebase and MySQL schema. The project handles everything: scanning files, prompt creation, tokenization, fine‑tuning via Transformers + PEFT, and inference.
+      </p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-12 text-gray-400">
+    <div class="container mx-auto px-6 grid md:grid-cols-3 gap-8">
+      <div>
+        <h4 class="text-xl font-semibold mb-2 text-white">AI Ever</h4>
+        <p>Build AI models that understand your code. Fine‑tune locally. Instruct with context.</p>
+      </div>
+      <div>
+        <h4 class="text-xl font-semibold mb-2 text-white">Quick Links</h4>
+        <ul class="space-y-2">
+          <li><a href="#home" class="hover:text-white transition">Home</a></li>
+          <li><a href="#features" class="hover:text-white transition">Features</a></li>
+          <li><a href="#about" class="hover:text-white transition">About</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-xl font-semibold mb-2 text-white">Contact</h4>
+        <p>Email: <a href="mailto:suraj@example.com" class="underline hover:text-white">suraj@example.com</a></p>
+        <p>Location: Pune, India</p>
+      </div>
+    </div>
+    <div class="text-center text-sm mt-8 text-gray-500">
+      © 2025 AI Ever. All rights reserved.
+    </div>
+  </footer>
+
+</body>
+</html>

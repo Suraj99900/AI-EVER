@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="max-w-xl mx-auto glass p-8 rounded-2xl shadow-xl animate-float">
+  <h2 class="text-3xl font-extrabold text-indigo-200 mb-6 text-center">🧪 Run Inference</h2>
+
+  <label for="prompt" class="block text-gray-200 font-medium mb-2">Enter your prompt:</label>
+  <textarea
+    id="prompt"
+    rows="6"
+    class="w-full bg-white/30 backdrop-blur-sm border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+    placeholder="### Instruction:\nDescribe the schema of the users table\n\n### Response:"
+  ></textarea>
+
+  <button
+    id="go"
+    class="w-full mt-4 bg-green-500 hover:bg-green-400 text-white font-semibold rounded-lg py-3 shadow-lg transition transform hover:-translate-y-1"
+  >
+    Generate
+  </button>
+
+  <div id="infer-status" class="mt-8 text-center">
+    <div id="spinner-infer" class="mx-auto mb-4 w-10 h-10 border-4 border-green-400 border-t-transparent rounded-full animate-spin hidden"></div>
+    <pre
+      id="infer-output"
+      class="hidden mt-4 p-4 bg-black bg-opacity-50 rounded-lg text-left text-green-200 overflow-auto"
+      style="max-height: 250px;"
+    ></pre>
+  </div>
+</section>
+
+<script>
+  const btn = document.getElementById("go");
+  const spinner = document.getElementById("spinner-infer");
+  const output = document.getElementById("infer-output");
+
+  btn.addEventListener("click", async () => {
+    // show spinner, hide previous output
+    spinner.classList.remove("hidden");
+    output.classList.add("hidden");
+    output.textContent = "";
+
+    const prompt = document.getElementById("prompt").value;
+    const res = await fetch("/inference", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt })
+    });
+    const { output: result } = await res.json();
+
+    // hide spinner, show result
+    spinner.classList.add("hidden");
+    output.classList.remove("hidden");
+    output.textContent = result;
+  });
+</script>
+{% endblock %}
