@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="max-w-lg mx-auto glass p-8 rounded-2xl shadow-xl animate-float">
+  <h2 class="text-3xl font-extrabold text-indigo-200 mb-6 text-center">📂 Extract Code</h2>
+
+  <form id="extract-form" class="space-y-4">
+    <label for="repo_path" class="block text-gray-200 font-medium">Local project path:</label>
+    <input
+      type="text"
+      id="repo_path"
+      name="repo_path"
+      placeholder="/home/user/myrepo"
+      class="w-full bg-white/30 backdrop-blur-sm border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+      required
+    />
+    <button
+      type="submit"
+      class="w-full bg-blue-500 hover:bg-blue-400 text-white font-semibold rounded-lg py-3 shadow-lg transition transform hover:-translate-y-1"
+    >
+      🔄 Start Extraction
+    </button>
+  </form>
+
+  <div id="extract-status" class="mt-8">
+    <div id="spinner-extract" class="mx-auto mb-4 w-10 h-10 border-4 border-blue-400 border-t-transparent rounded-full animate-spin hidden"></div>
+    <pre id="extract-log" class="hidden mt-4 p-4 bg-black bg-opacity-50 rounded-lg text-left text-blue-200 overflow-auto" style="max-height: 300px;"></pre>
+    <div id="download-link" class="mt-4 text-center hidden">
+      <a
+        href="{{ url_for('main.extract_download') }}"
+        class="inline-block bg-green-400 hover:bg-green-300 text-black font-semibold px-6 py-3 rounded-lg transition"
+      >
+        📥 Download JSONL
+      </a>
+    </div>
+  </div>
+</section>
+
+<script>
+  const form = document.getElementById("extract-form");
+  const spinner = document.getElementById("spinner-extract");
+  const logEl = document.getElementById("extract-log");
+  const download = document.getElementById("download-link");
+
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    spinner.classList.remove("hidden");
+    logEl.classList.remove("hidden");
+    logEl.textContent = "";
+    download.classList.add("hidden");
+
+    // start extraction
+    await fetch("/extract", {
+      method: "POST",
+      headers: {"Content-Type": "application/x-www-form-urlencoded"},
+      body: new URLSearchParams(new FormData(form))
+    });
+
+    // poll for logs every 500ms
+    const poll = setInterval(async () => {
+      const res = await fetch("/extract/logs");
+      const { logs } = await res.json();
+      logEl.textContent = logs.join("");
+      if (logs.some(l => l.includes("Extraction finished"))) {
+        clearInterval(poll);
+        spinner.classList.add("hidden");
+        download.classList.remove("hidden");
+      }
+    }, 500);
+  });
+</script>
+{% endblock %}
