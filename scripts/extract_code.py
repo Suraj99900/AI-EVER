@@ -1,92 +1,151 @@
+#!/usr/bin/env python3
+# extract_code.py
+
 import os
+import sys
 import json
 import logging
+import subprocess
+import tempfile
 from pathlib import Path
+from argparse import ArgumentParser
+from logging.handlers import RotatingFileHandler
 
 # ---------------- Configuration ----------------
-RAW_DIR = Path("../data/raw_code")  # adjust if necessary
+DEFAULT_RAW_DIR = Path("data/raw_code")
 OUT_PATH = Path("../data/processed/train_data.jsonl")
-# Skip binary or large asset extensions
-SKIP_EXTS = {'.png', '.jpg', '.jpeg', '.gif', '.bmp', '.exe', '.dll', '.so', '.bin', '.zip'}
-# Max file size to read (e.g., 1 MB)
-MAX_SIZE_BYTES = 1 * 1024 * 1024
+LOG_PATH = Path("../data/logs/extract_code.log")
 
-# Setup logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="[%(asctime)s] %(levelname)s: %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S"
-)
-logger = logging.getLogger(__name__)
+SKIP_DIRS = {"vendor", ".git", ".svn", ".hg", "__pycache__"}
+SKIP_EXTS = {
+    '.png', '.jpg', '.jpeg', '.gif', '.bmp', '.exe', '.dll',
+    '.so', '.bin', '.zip', '.tar', '.gz', '.rar', '.7z', '.pdf',
+    '.doc', '.docx', '.ppt', '.pptx', '.xls', '.xlsx', '.mp3',
+    '.mp4', '.avi', '.mov', '.wmv', '.iso', '.svg'
+}
+MAX_SIZE_BYTES = 2 * 1024 * 1024  # 2 MiB
+
+# ---------------- Logging Setup ---------------
+LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+logger = logging.getLogger("extract_code")
+logger.setLevel(logging.DEBUG)
+
+ch = logging.StreamHandler()
+ch.setLevel(logging.INFO)
+ch.setFormatter(logging.Formatter("[%(levelname)s] %(message)s"))
+logger.addHandler(ch)
+
+fh = RotatingFileHandler(LOG_PATH, maxBytes=1_000_000, backupCount=3)
+fh.setLevel(logging.DEBUG)
+fh.setFormatter(logging.Formatter("%(asctime)s %(levelname)s: %(message)s", "%Y-%m-%d %H:%M:%S"))
+logger.addHandler(fh)
 
 
-def extract_all_code(file_path: Path) -> dict | None:
+def extract_all_code(file_path: Path, base_dir: Path) -> dict | None:
     """
     Read a text-based file under size limit and package as a prompt.
-    Returns None on failure or skip.
+    Returns None on skip or error.
     """
     try:
         size = file_path.stat().st_size
         if size > MAX_SIZE_BYTES:
-            logger.debug(f"Skipping large file: {file_path} ({size} bytes)")
+            logger.debug(f"SKIP large: {file_path.relative_to(base_dir)} ({size} bytes)")
             return None
-        content = file_path.read_text(encoding='utf-8', errors='ignore').strip()
+
+        content = file_path.read_text(encoding="utf-8", errors="ignore").strip()
+        if not content:
+            logger.debug(f"SKIP empty: {file_path.relative_to(base_dir)}")
+            return None
+
     except Exception as e:
-        logger.warning(f"Failed to read {file_path}: {e}")
+        logger.warning(f"ERROR reading {file_path}: {e}")
         return None
 
-    if not content:
-        logger.debug(f"Empty content, skipping: {file_path}")
-        return None
-
-    rel_path = file_path.relative_to(RAW_DIR)
-    instruction = f"Explain what this file `{rel_path}` does."
-    prompt = (
-        f"### Instruction:\n{instruction}\n\n"
-        f"### Response:\n{content}"
-    )
+    rel = file_path.relative_to(base_dir)
+    prompt = f"### Instruction:\nExplain what this file `{rel}` does.\n\n" \
+             f"### Response:\n{content}"
+    logger.debug(f"EXTRACT: {rel}")
     return {"text": prompt}
 
 
+def clone_repo(repo_url: str) -> Path:
+    """
+    Clone Git repository into a temporary directory and return its path.
+    """
+    temp_dir = tempfile.mkdtemp(prefix="repo_clone_")
+    try:
+        subprocess.run(
+            ["git", "clone", "--depth", "1", repo_url, temp_dir],
+            check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+        )
+        logger.info(f"Cloned repository to: {temp_dir}")
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Failed to clone repository {repo_url}: {e}")
+        sys.exit(1)
+    return Path(temp_dir)
+
+
 def main():
-    # Validate RAW_DIR
-    if not RAW_DIR.exists() or not RAW_DIR.is_dir():
-        logger.error(f"RAW_DIR not found or not a directory: {RAW_DIR}")
-        return
+    p = ArgumentParser(description="Extract code files into JSONL prompts")
+    group = p.add_mutually_exclusive_group(required=False)
+    group.add_argument(
+        "--repo",
+        type=str,
+        help="Git repository URL to clone and extract code from"
+    )
+    group.add_argument(
+        "--path",
+        type=Path,
+        help="Local directory path to extract code from"
+    )
+    p.add_argument(
+        "--out",
+        type=Path,
+        default=OUT_PATH,
+        help="Output JSONL file path"
+    )
+    args = p.parse_args()
 
-    # Ensure output directory exists
-    OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    # Determine source directory
+    if args.repo:
+        raw_dir = clone_repo(args.repo)
+    else:
+        raw_dir = args.path.resolve() if args.path else DEFAULT_RAW_DIR.resolve()
 
-    dataset = []
-    logger.info(f"Starting extraction from {RAW_DIR}...")
-    count = 0
+    logger.info(f"Using source directory: {raw_dir}")
+    if not raw_dir.exists() or not raw_dir.is_dir():
+        logger.error(f"Source directory not found or not a directory: {raw_dir}")
+        sys.exit(1)
 
-    for root, dirs, files in os.walk(RAW_DIR, topdown=True):
-        # Skip any 'vendor' folders
-        dirs[:] = [d for d in dirs if d.lower() != 'vendor']
+    # Prepare output path
+    out_file = args.out
+    out_file.parent.mkdir(parents=True, exist_ok=True)
 
+    logger.info(f"START extracting from: {raw_dir}")
+    prompts = []
+    file_count = 0
+
+    for root, dirs, files in os.walk(raw_dir, topdown=True):
+        dirs[:] = [d for d in dirs if d.lower() not in SKIP_DIRS]
         for fname in files:
-            count += 1
-            file_path = Path(root) / fname
-            ext = file_path.suffix.lower()
-            if ext in SKIP_EXTS:
-                logger.debug(f"Skipping extension {ext}: {file_path}")
+            file_count += 1
+            fp = Path(root) / fname
+            ext = fp.suffix.lower()
+            if ext in SKIP_EXTS or fp.name.startswith('.') or fp.name in {'.gitignore', '.gitattributes'}:
+                logger.debug(f"SKIP file: {fp.relative_to(raw_dir)}")
                 continue
-
-            sample = extract_all_code(file_path)
+            sample = extract_all_code(fp, raw_dir)
             if sample:
-                dataset.append(sample)
+                prompts.append(sample)
+            if file_count % 100 == 0:
+                logger.info(f"Processed {file_count} files; extracted {len(prompts)} prompts so far")
 
-            if count % 100 == 0:
-                logger.info(f"Processed {count} files, collected {len(dataset)} samples so far...")
-
-    # Write JSONL
-    logger.info(f"Writing {len(dataset)} prompts to {OUT_PATH}...")
-    with OUT_PATH.open('w', encoding='utf-8') as out:
-        for item in dataset:
+    logger.info(f"Writing {len(prompts)} prompts to {out_file}")
+    with out_file.open("w", encoding="utf-8") as out:
+        for item in prompts:
             out.write(json.dumps(item, ensure_ascii=False) + "\n")
 
-    logger.info(f"✅ Extraction complete: {len(dataset)} files into {OUT_PATH}")
+    logger.info("✅ Extraction complete")
 
 
 if __name__ == "__main__":
