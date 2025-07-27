@@ -2,60 +2,64 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>AI Ever</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Ever</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    /* Glassmorphism backdrop */
+    body { font-family: 'Inter', sans-serif; }
     .glass {
-      @apply bg-white/20 backdrop-blur-lg;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
     }
-    /* Floating animation */
-    @keyframes float {
-      0%,100%{ transform: translateY(0) }
-      50%{ transform: translateY(-6px) }
-    }
-    .animate-float { animation: float 6s ease-in-out infinite }
-    /* Fade-in */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px) }
-      to   { opacity: 1; transform: translateY(0) }
-    }
-    .animate-fade-in { animation: fadeIn 1s ease-out both }
   </style>
 </head>
-<body class="min-h-screen bg-gradient-to-b from-gray-800 via-gray-900 to-black text-white overflow-x-hidden">
+<body class="bg-gray-100 text-gray-900">
 
-  <!-- Glass Header -->
-  <header class="fixed top-0 w-full glass shadow-xl z-50 transition hover:shadow-2xl">
-    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-      <h1 class="text-2xl font-bold text-indigo-300 hover:text-indigo-400 transition">AI Ever</h1>
-      <nav class="space-x-8 text-gray-200">
-        <a href="/" class="hover:text-yellow-400 transition">Home</a>
-        <a href="/train" class="hover:text-yellow-400 transition">Train</a>
-        <a href="/inference" class="hover:text-yellow-400 transition">Inference</a>
-        <a href="extract" class="hover:text-yellow-400 transition">Extract</a>
-        <a href="/about" class="hover:text-yellow-400 transition">About</a>
-        <a href="/contact" class="hover:text-yellow-400 transition">Contact</a>
-      </nav>
-    </div>
-  </header>
+  <!-- Wrapper with soft edges -->
+  <div class="min-h-screen rounded-3xl m-4 shadow-2xl overflow-hidden bg-white">
 
-  <!-- Main (child pages inject here) -->
-  <main class="container mx-auto px-6 pt-28 pb-12 animate-fade-in">
-    {% block content %}{% endblock %}
-  </main>
+    <!-- Navbar -->
+    <header class="w-full border-b border-gray-200 bg-white">
+      <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <!-- Logo -->
+        <a href="/" class="text-xl font-bold text-gray-800">🧠 AI Ever</a>
 
-  <!-- Glass Footer -->
-  <footer class="glass border-t border-gray-700 mt-12">
-    <div class="container mx-auto px-6 py-6 text-center text-gray-300 text-sm">
-      <p class="mb-2">© 2025 AI Ever. Built with Flask & Tailwind CSS.</p>
-      <p class="space-x-4">
-        <a href="#" class="hover:text-yellow-400 transition">Privacy</a>
-        <a href="#" class="hover:text-yellow-400 transition">Terms</a>
-      </p>
-    </div>
-  </footer>
+        <!-- Navigation Links -->
+        <nav class="hidden md:flex space-x-6 text-sm font-medium">
+          <a href="/" class="text-gray-600 hover:text-black transition">Home</a>
+          <a href="#features" class="text-gray-600 hover:text-black transition">Features</a>
+          <a href="/about" class="text-gray-600 hover:text-black transition">About</a>
+          <a href="/train" class="text-gray-600 hover:text-black transition">Train</a>
+          <a href="/inference" class="text-gray-600 hover:text-black transition">Inference</a>
+          <a href="/extract" class="text-gray-600 hover:text-black transition">Extract</a>
+        </nav>
 
+        <!-- Auth Buttons -->
+        <div class="space-x-4">
+          <a href="/login" class="bg-black text-white px-4 py-1.5 rounded-full text-sm hover:bg-gray-800 transition">Login</a>
+          <a href="/signup" class="bg-white border border-gray-400 text-black px-4 py-1.5 rounded-full text-sm hover:bg-gray-100 transition">Sign Up</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <main class="max-w-7xl mx-auto px-6 py-12">
+      {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-200 bg-gray-50">
+      <div class="max-w-7xl mx-auto px-6 py-6 text-center text-gray-500 text-sm">
+        <p class="mb-2">© 2025 AI Ever. All rights reserved.</p>
+        <div class="space-x-4">
+          <a href="#" class="hover:text-gray-700">Privacy</a>
+          <a href="#" class="hover:text-gray-700">Terms</a>
+        </div>
+      </div>
+    </footer>
+
+  </div>
 </body>
 </html>
