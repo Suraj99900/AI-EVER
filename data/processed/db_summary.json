@@ -1,0 +1,1030 @@
+{
+  "database": "app_sm_loan",
+  "extracted_at": "2025-07-16T12:31:57.205490",
+  "tables": {
+    "app_borrower_document": {
+      "columns": [
+        {
+          "Field": "id",
+          "Type": "int",
+          "Null": "NO",
+          "Key": "PRI",
+          "Default": null,
+          "Extra": "auto_increment"
+        },
+        {
+          "Field": "borrower_id",
+          "Type": "int",
+          "Null": "NO",
+          "Key": "MUL",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "document_name",
+          "Type": "varchar(100)",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "document_path",
+          "Type": "varchar(255)",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "added_on",
+          "Type": "timestamp",
+          "Null": "YES",
+          "Key": "",
+          "Default": "CURRENT_TIMESTAMP",
+          "Extra": "DEFAULT_GENERATED"
+        },
+        {
+          "Field": "status",
+          "Type": "tinyint",
+          "Null": "YES",
+          "Key": "",
+          "Default": "1",
+          "Extra": ""
+        },
+        {
+          "Field": "deleted",
+          "Type": "tinyint",
+          "Null": "YES",
+          "Key": "",
+          "Default": "0",
+          "Extra": ""
+        }
+      ],
+      "row_count": 0,
+      "create_statement": "CREATE TABLE `app_borrower_document` (\n  `id` int NOT NULL AUTO_INCREMENT,\n  `borrower_id` int NOT NULL,\n  `document_name` varchar(100) DEFAULT NULL,\n  `document_path` varchar(255) DEFAULT NULL,\n  `added_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  `status` tinyint DEFAULT '1',\n  `deleted` tinyint DEFAULT '0',\n  PRIMARY KEY (`id`),\n  KEY `borrower_id` (`borrower_id`),\n  CONSTRAINT `app_borrower_document_ibfk_1` FOREIGN KEY (`borrower_id`) REFERENCES `app_borrower_master` (`id`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"
+    },
+    "app_borrower_loan_payments": {
+      "columns": [
+        {
+          "Field": "payment_id",
+          "Type": "int",
+          "Null": "NO",
+          "Key": "PRI",
+          "Default": null,
+          "Extra": "auto_increment"
+        },
+        {
+          "Field": "loan_id",
+          "Type": "int",
+          "Null": "YES",
+          "Key": "MUL",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "payment_amount",
+          "Type": "decimal(10,2)",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "penalty_amount",
+          "Type": "decimal(10,2)",
+          "Null": "YES",
+          "Key": "",
+          "Default": "0.00",
+          "Extra": ""
+        },
+        {
+          "Field": "referral_share_amount",
+          "Type": "decimal(10,2)",
+          "Null": "YES",
+          "Key": "",
+          "Default": "0.00",
+          "Extra": ""
+        },
+        {
+          "Field": "final_amount",
+          "Type": "decimal(10,2)",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "received_date",
+          "Type": "date",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "interest_paid",
+          "Type": "decimal(10,2)",
+          "Null": "YES",
+          "Key": "",
+          "Default": "0.00",
+          "Extra": ""
+        },
+        {
+          "Field": "principal_paid",
+          "Type": "decimal(10,2)",
+          "Null": "YES",
+          "Key": "",
+          "Default": "0.00",
+          "Extra": ""
+        },
+        {
+          "Field": "payment_status",
+          "Type": "varchar(20)",
+          "Null": "YES",
+          "Key": "",
+          "Default": "pending",
+          "Extra": ""
+        },
+        {
+          "Field": "mode_of_payment",
+          "Type": "varchar(50)",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "comments",
+          "Type": "varchar(255)",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "interest_date",
+          "Type": "date",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "added_on",
+          "Type": "timestamp",
+          "Null": "YES",
+          "Key": "",
+          "Default": "CURRENT_TIMESTAMP",
+          "Extra": "DEFAULT_GENERATED"
+        },
+        {
+          "Field": "status",
+          "Type": "tinyint",
+          "Null": "YES",
+          "Key": "",
+          "Default": "1",
+          "Extra": ""
+        },
+        {
+          "Field": "deleted",
+          "Type": "tinyint",
+          "Null": "YES",
+          "Key": "",
+          "Default": "0",
+          "Extra": ""
+        }
+      ],
+      "row_count": 0,
+      "create_statement": "CREATE TABLE `app_borrower_loan_payments` (\n  `payment_id` int NOT NULL AUTO_INCREMENT,\n  `loan_id` int DEFAULT NULL,\n  `payment_amount` decimal(10,2) DEFAULT NULL,\n  `penalty_amount` decimal(10,2) DEFAULT '0.00',\n  `referral_share_amount` decimal(10,2) DEFAULT '0.00',\n  `final_amount` decimal(10,2) DEFAULT NULL,\n  `received_date` date DEFAULT NULL,\n  `interest_paid` decimal(10,2) DEFAULT '0.00',\n  `principal_paid` decimal(10,2) DEFAULT '0.00',\n  `payment_status` varchar(20) DEFAULT 'pending',\n  `mode_of_payment` varchar(50) DEFAULT NULL,\n  `comments` varchar(255) DEFAULT NULL,\n  `interest_date` date DEFAULT NULL,\n  `added_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  `status` tinyint DEFAULT '1',\n  `deleted` tinyint DEFAULT '0',\n  PRIMARY KEY (`payment_id`),\n  KEY `loan_id` (`loan_id`),\n  CONSTRAINT `app_borrower_loan_payments_ibfk_1` FOREIGN KEY (`loan_id`) REFERENCES `app_loan_details` (`loan_id`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"
+    },
+    "app_borrower_master": {
+      "columns": [
+        {
+          "Field": "id",
+          "Type": "int",
+          "Null": "NO",
+          "Key": "PRI",
+          "Default": null,
+          "Extra": "auto_increment"
+        },
+        {
+          "Field": "unique_borrower_id",
+          "Type": "varchar(10)",
+          "Null": "NO",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "name",
+          "Type": "varchar(100)",
+          "Null": "NO",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "phone_no",
+          "Type": "varchar(255)",
+          "Null": "NO",
+          "Key": "UNI",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "gender",
+          "Type": "varchar(255)",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "address",
+          "Type": "text",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "email",
+          "Type": "varchar(100)",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "added_on",
+          "Type": "timestamp",
+          "Null": "YES",
+          "Key": "",
+          "Default": "CURRENT_TIMESTAMP",
+          "Extra": "DEFAULT_GENERATED"
+        },
+        {
+          "Field": "status",
+          "Type": "tinyint",
+          "Null": "YES",
+          "Key": "",
+          "Default": "1",
+          "Extra": ""
+        },
+        {
+          "Field": "deleted",
+          "Type": "tinyint",
+          "Null": "YES",
+          "Key": "",
+          "Default": "0",
+          "Extra": ""
+        }
+      ],
+      "row_count": 0,
+      "create_statement": "CREATE TABLE `app_borrower_master` (\n  `id` int NOT NULL AUTO_INCREMENT,\n  `unique_borrower_id` varchar(10) NOT NULL,\n  `name` varchar(100) NOT NULL,\n  `phone_no` varchar(255) NOT NULL,\n  `gender` varchar(255) DEFAULT NULL,\n  `address` text,\n  `email` varchar(100) DEFAULT NULL,\n  `added_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  `status` tinyint DEFAULT '1',\n  `deleted` tinyint DEFAULT '0',\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `phone_no` (`phone_no`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"
+    },
+    "app_borrower_ref_map": {
+      "columns": [
+        {
+          "Field": "id",
+          "Type": "int",
+          "Null": "NO",
+          "Key": "PRI",
+          "Default": null,
+          "Extra": "auto_increment"
+        },
+        {
+          "Field": "reference_Id",
+          "Type": "int",
+          "Null": "YES",
+          "Key": "MUL",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "borrower_id",
+          "Type": "int",
+          "Null": "YES",
+          "Key": "MUL",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "relationship",
+          "Type": "varchar(50)",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "added_on",
+          "Type": "timestamp",
+          "Null": "YES",
+          "Key": "",
+          "Default": "CURRENT_TIMESTAMP",
+          "Extra": "DEFAULT_GENERATED"
+        },
+        {
+          "Field": "status",
+          "Type": "tinyint",
+          "Null": "YES",
+          "Key": "",
+          "Default": "1",
+          "Extra": ""
+        },
+        {
+          "Field": "deleted",
+          "Type": "tinyint",
+          "Null": "YES",
+          "Key": "",
+          "Default": "0",
+          "Extra": ""
+        }
+      ],
+      "row_count": 0,
+      "create_statement": "CREATE TABLE `app_borrower_ref_map` (\n  `id` int NOT NULL AUTO_INCREMENT,\n  `reference_Id` int DEFAULT NULL,\n  `borrower_id` int DEFAULT NULL,\n  `relationship` varchar(50) DEFAULT NULL,\n  `added_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  `status` tinyint DEFAULT '1',\n  `deleted` tinyint DEFAULT '0',\n  PRIMARY KEY (`id`),\n  KEY `reference_Id` (`reference_Id`),\n  KEY `borrower_id` (`borrower_id`),\n  CONSTRAINT `app_borrower_ref_map_ibfk_1` FOREIGN KEY (`reference_Id`) REFERENCES `app_referral_user` (`reference_Id`),\n  CONSTRAINT `app_borrower_ref_map_ibfk_2` FOREIGN KEY (`borrower_id`) REFERENCES `app_borrower_master` (`id`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"
+    },
+    "app_loan_details": {
+      "columns": [
+        {
+          "Field": "loan_id",
+          "Type": "int",
+          "Null": "NO",
+          "Key": "PRI",
+          "Default": null,
+          "Extra": "auto_increment"
+        },
+        {
+          "Field": "borrower_id",
+          "Type": "int",
+          "Null": "YES",
+          "Key": "MUL",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "principal_amount",
+          "Type": "decimal(10,2)",
+          "Null": "NO",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "interest_rate",
+          "Type": "decimal(5,2)",
+          "Null": "NO",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "loan_period",
+          "Type": "int",
+          "Null": "NO",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "disbursed_date",
+          "Type": "date",
+          "Null": "NO",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "top_up_payment",
+          "Type": "decimal(10,2)",
+          "Null": "YES",
+          "Key": "",
+          "Default": "0.00",
+          "Extra": ""
+        },
+        {
+          "Field": "EMI_amount",
+          "Type": "decimal(10,2)",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "closure_amount",
+          "Type": "decimal(10,2)",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "closure_date",
+          "Type": "date",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "ending_principal",
+          "Type": "decimal(10,2)",
+          "Null": "YES",
+          "Key": "",
+          "Default": "0.00",
+          "Extra": ""
+        },
+        {
+          "Field": "repaid_principal",
+          "Type": "decimal(10,2)",
+          "Null": "YES",
+          "Key": "",
+          "Default": "0.00",
+          "Extra": ""
+        },
+        {
+          "Field": "part_payment_status",
+          "Type": "tinyint",
+          "Null": "YES",
+          "Key": "",
+          "Default": "0",
+          "Extra": ""
+        },
+        {
+          "Field": "closer_payment_status",
+          "Type": "tinyint",
+          "Null": "YES",
+          "Key": "",
+          "Default": "0",
+          "Extra": ""
+        },
+        {
+          "Field": "loan_status",
+          "Type": "varchar(20)",
+          "Null": "YES",
+          "Key": "",
+          "Default": "active",
+          "Extra": ""
+        },
+        {
+          "Field": "added_on",
+          "Type": "timestamp",
+          "Null": "YES",
+          "Key": "",
+          "Default": "CURRENT_TIMESTAMP",
+          "Extra": "DEFAULT_GENERATED"
+        },
+        {
+          "Field": "status",
+          "Type": "tinyint",
+          "Null": "YES",
+          "Key": "",
+          "Default": "1",
+          "Extra": ""
+        },
+        {
+          "Field": "deleted",
+          "Type": "tinyint",
+          "Null": "YES",
+          "Key": "",
+          "Default": "0",
+          "Extra": ""
+        }
+      ],
+      "row_count": 0,
+      "create_statement": "CREATE TABLE `app_loan_details` (\n  `loan_id` int NOT NULL AUTO_INCREMENT,\n  `borrower_id` int DEFAULT NULL,\n  `principal_amount` decimal(10,2) NOT NULL,\n  `interest_rate` decimal(5,2) NOT NULL,\n  `loan_period` int NOT NULL,\n  `disbursed_date` date NOT NULL,\n  `top_up_payment` decimal(10,2) DEFAULT '0.00',\n  `EMI_amount` decimal(10,2) DEFAULT NULL,\n  `closure_amount` decimal(10,2) DEFAULT NULL,\n  `closure_date` date DEFAULT NULL,\n  `ending_principal` decimal(10,2) DEFAULT '0.00',\n  `repaid_principal` decimal(10,2) DEFAULT '0.00',\n  `part_payment_status` tinyint DEFAULT '0',\n  `closer_payment_status` tinyint DEFAULT '0',\n  `loan_status` varchar(20) DEFAULT 'active',\n  `added_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  `status` tinyint DEFAULT '1',\n  `deleted` tinyint DEFAULT '0',\n  PRIMARY KEY (`loan_id`),\n  KEY `borrower_id` (`borrower_id`),\n  CONSTRAINT `app_loan_details_ibfk_1` FOREIGN KEY (`borrower_id`) REFERENCES `app_borrower_master` (`id`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"
+    },
+    "app_loan_emi_schedule": {
+      "columns": [
+        {
+          "Field": "schedule_id",
+          "Type": "int",
+          "Null": "NO",
+          "Key": "PRI",
+          "Default": null,
+          "Extra": "auto_increment"
+        },
+        {
+          "Field": "loan_id",
+          "Type": "int",
+          "Null": "YES",
+          "Key": "MUL",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "month_no",
+          "Type": "int",
+          "Null": "NO",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "beginning_principal",
+          "Type": "decimal(10,2)",
+          "Null": "NO",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "interest_amount",
+          "Type": "decimal(10,2)",
+          "Null": "NO",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "emi_amount",
+          "Type": "decimal(10,2)",
+          "Null": "NO",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "principal_repaid",
+          "Type": "decimal(10,2)",
+          "Null": "NO",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "ending_principal",
+          "Type": "decimal(10,2)",
+          "Null": "NO",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "payment_due_date",
+          "Type": "date",
+          "Null": "NO",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "penalty_amount",
+          "Type": "decimal(10,2)",
+          "Null": "YES",
+          "Key": "",
+          "Default": "0.00",
+          "Extra": ""
+        },
+        {
+          "Field": "payment_status",
+          "Type": "varchar(20)",
+          "Null": "YES",
+          "Key": "",
+          "Default": "pending",
+          "Extra": ""
+        },
+        {
+          "Field": "added_on",
+          "Type": "timestamp",
+          "Null": "YES",
+          "Key": "",
+          "Default": "CURRENT_TIMESTAMP",
+          "Extra": "DEFAULT_GENERATED"
+        },
+        {
+          "Field": "status",
+          "Type": "tinyint",
+          "Null": "YES",
+          "Key": "",
+          "Default": "1",
+          "Extra": ""
+        },
+        {
+          "Field": "deleted",
+          "Type": "tinyint",
+          "Null": "YES",
+          "Key": "",
+          "Default": "0",
+          "Extra": ""
+        }
+      ],
+      "row_count": 0,
+      "create_statement": "CREATE TABLE `app_loan_emi_schedule` (\n  `schedule_id` int NOT NULL AUTO_INCREMENT,\n  `loan_id` int DEFAULT NULL,\n  `month_no` int NOT NULL,\n  `beginning_principal` decimal(10,2) NOT NULL,\n  `interest_amount` decimal(10,2) NOT NULL,\n  `emi_amount` decimal(10,2) NOT NULL,\n  `principal_repaid` decimal(10,2) NOT NULL,\n  `ending_principal` decimal(10,2) NOT NULL,\n  `payment_due_date` date NOT NULL,\n  `penalty_amount` decimal(10,2) DEFAULT '0.00',\n  `payment_status` varchar(20) DEFAULT 'pending',\n  `added_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  `status` tinyint DEFAULT '1',\n  `deleted` tinyint DEFAULT '0',\n  PRIMARY KEY (`schedule_id`),\n  KEY `loan_id` (`loan_id`),\n  CONSTRAINT `app_loan_emi_schedule_ibfk_1` FOREIGN KEY (`loan_id`) REFERENCES `app_loan_details` (`loan_id`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"
+    },
+    "app_loan_transactions": {
+      "columns": [
+        {
+          "Field": "transaction_id",
+          "Type": "int",
+          "Null": "NO",
+          "Key": "PRI",
+          "Default": null,
+          "Extra": "auto_increment"
+        },
+        {
+          "Field": "loan_id",
+          "Type": "int",
+          "Null": "YES",
+          "Key": "MUL",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "transaction_type",
+          "Type": "varchar(50)",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "amount",
+          "Type": "decimal(10,2)",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "transaction_date",
+          "Type": "date",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "added_on",
+          "Type": "timestamp",
+          "Null": "YES",
+          "Key": "",
+          "Default": "CURRENT_TIMESTAMP",
+          "Extra": "DEFAULT_GENERATED"
+        },
+        {
+          "Field": "status",
+          "Type": "tinyint",
+          "Null": "YES",
+          "Key": "",
+          "Default": "1",
+          "Extra": ""
+        },
+        {
+          "Field": "deleted",
+          "Type": "tinyint",
+          "Null": "YES",
+          "Key": "",
+          "Default": "0",
+          "Extra": ""
+        }
+      ],
+      "row_count": 0,
+      "create_statement": "CREATE TABLE `app_loan_transactions` (\n  `transaction_id` int NOT NULL AUTO_INCREMENT,\n  `loan_id` int DEFAULT NULL,\n  `transaction_type` varchar(50) DEFAULT NULL,\n  `amount` decimal(10,2) DEFAULT NULL,\n  `transaction_date` date DEFAULT NULL,\n  `added_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  `status` tinyint DEFAULT '1',\n  `deleted` tinyint DEFAULT '0',\n  PRIMARY KEY (`transaction_id`),\n  KEY `loan_id` (`loan_id`),\n  CONSTRAINT `app_loan_transactions_ibfk_1` FOREIGN KEY (`loan_id`) REFERENCES `app_loan_details` (`loan_id`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"
+    },
+    "app_referral_document": {
+      "columns": [
+        {
+          "Field": "id",
+          "Type": "int",
+          "Null": "NO",
+          "Key": "PRI",
+          "Default": null,
+          "Extra": "auto_increment"
+        },
+        {
+          "Field": "referral_id",
+          "Type": "int",
+          "Null": "NO",
+          "Key": "MUL",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "document_name",
+          "Type": "varchar(100)",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "document_path",
+          "Type": "varchar(255)",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "added_on",
+          "Type": "timestamp",
+          "Null": "YES",
+          "Key": "",
+          "Default": "CURRENT_TIMESTAMP",
+          "Extra": "DEFAULT_GENERATED"
+        },
+        {
+          "Field": "status",
+          "Type": "tinyint",
+          "Null": "YES",
+          "Key": "",
+          "Default": "1",
+          "Extra": ""
+        },
+        {
+          "Field": "deleted",
+          "Type": "tinyint",
+          "Null": "YES",
+          "Key": "",
+          "Default": "0",
+          "Extra": ""
+        }
+      ],
+      "row_count": 0,
+      "create_statement": "CREATE TABLE `app_referral_document` (\n  `id` int NOT NULL AUTO_INCREMENT,\n  `referral_id` int NOT NULL,\n  `document_name` varchar(100) DEFAULT NULL,\n  `document_path` varchar(255) DEFAULT NULL,\n  `added_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  `status` tinyint DEFAULT '1',\n  `deleted` tinyint DEFAULT '0',\n  PRIMARY KEY (`id`),\n  KEY `referral_id` (`referral_id`),\n  CONSTRAINT `app_referral_document_ibfk_1` FOREIGN KEY (`referral_id`) REFERENCES `app_referral_user` (`reference_Id`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"
+    },
+    "app_referral_user": {
+      "columns": [
+        {
+          "Field": "reference_Id",
+          "Type": "int",
+          "Null": "NO",
+          "Key": "PRI",
+          "Default": null,
+          "Extra": "auto_increment"
+        },
+        {
+          "Field": "ref_name",
+          "Type": "varchar(100)",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "ref_phone_number",
+          "Type": "varchar(15)",
+          "Null": "YES",
+          "Key": "UNI",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "ref_percentage",
+          "Type": "decimal(5,2)",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "added_on",
+          "Type": "timestamp",
+          "Null": "YES",
+          "Key": "",
+          "Default": "CURRENT_TIMESTAMP",
+          "Extra": "DEFAULT_GENERATED"
+        },
+        {
+          "Field": "status",
+          "Type": "tinyint",
+          "Null": "YES",
+          "Key": "",
+          "Default": "1",
+          "Extra": ""
+        },
+        {
+          "Field": "deleted",
+          "Type": "tinyint",
+          "Null": "YES",
+          "Key": "",
+          "Default": "0",
+          "Extra": ""
+        }
+      ],
+      "row_count": 0,
+      "create_statement": "CREATE TABLE `app_referral_user` (\n  `reference_Id` int NOT NULL AUTO_INCREMENT,\n  `ref_name` varchar(100) DEFAULT NULL,\n  `ref_phone_number` varchar(15) DEFAULT NULL,\n  `ref_percentage` decimal(5,2) DEFAULT NULL,\n  `added_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  `status` tinyint DEFAULT '1',\n  `deleted` tinyint DEFAULT '0',\n  PRIMARY KEY (`reference_Id`),\n  UNIQUE KEY `ref_phone_number` (`ref_phone_number`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"
+    },
+    "app_revenue_report": {
+      "columns": [
+        {
+          "Field": "report_id",
+          "Type": "int",
+          "Null": "NO",
+          "Key": "PRI",
+          "Default": null,
+          "Extra": "auto_increment"
+        },
+        {
+          "Field": "loan_id",
+          "Type": "int",
+          "Null": "YES",
+          "Key": "MUL",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "total_interest",
+          "Type": "decimal(10,2)",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "penalty_income",
+          "Type": "decimal(10,2)",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "referral_expense",
+          "Type": "decimal(10,2)",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "net_revenue",
+          "Type": "decimal(10,2)",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "emi_count",
+          "Type": "int",
+          "Null": "YES",
+          "Key": "",
+          "Default": "0",
+          "Extra": ""
+        },
+        {
+          "Field": "outstanding_principal",
+          "Type": "decimal(10,2)",
+          "Null": "YES",
+          "Key": "",
+          "Default": "0.00",
+          "Extra": ""
+        },
+        {
+          "Field": "calculated_on",
+          "Type": "date",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "added_on",
+          "Type": "timestamp",
+          "Null": "YES",
+          "Key": "",
+          "Default": "CURRENT_TIMESTAMP",
+          "Extra": "DEFAULT_GENERATED"
+        },
+        {
+          "Field": "status",
+          "Type": "tinyint",
+          "Null": "YES",
+          "Key": "",
+          "Default": "1",
+          "Extra": ""
+        },
+        {
+          "Field": "deleted",
+          "Type": "tinyint",
+          "Null": "YES",
+          "Key": "",
+          "Default": "0",
+          "Extra": ""
+        }
+      ],
+      "row_count": 0,
+      "create_statement": "CREATE TABLE `app_revenue_report` (\n  `report_id` int NOT NULL AUTO_INCREMENT,\n  `loan_id` int DEFAULT NULL,\n  `total_interest` decimal(10,2) DEFAULT NULL,\n  `penalty_income` decimal(10,2) DEFAULT NULL,\n  `referral_expense` decimal(10,2) DEFAULT NULL,\n  `net_revenue` decimal(10,2) DEFAULT NULL,\n  `emi_count` int DEFAULT '0',\n  `outstanding_principal` decimal(10,2) DEFAULT '0.00',\n  `calculated_on` date DEFAULT NULL,\n  `added_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  `status` tinyint DEFAULT '1',\n  `deleted` tinyint DEFAULT '0',\n  PRIMARY KEY (`report_id`),\n  KEY `loan_id` (`loan_id`),\n  CONSTRAINT `app_revenue_report_ibfk_1` FOREIGN KEY (`loan_id`) REFERENCES `app_loan_details` (`loan_id`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"
+    },
+    "app_user": {
+      "columns": [
+        {
+          "Field": "id",
+          "Type": "int",
+          "Null": "NO",
+          "Key": "PRI",
+          "Default": null,
+          "Extra": "auto_increment"
+        },
+        {
+          "Field": "user_id",
+          "Type": "varchar(255)",
+          "Null": "NO",
+          "Key": "UNI",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "staff_name",
+          "Type": "varchar(255)",
+          "Null": "NO",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "email",
+          "Type": "varchar(255)",
+          "Null": "NO",
+          "Key": "UNI",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "phone",
+          "Type": "varchar(15)",
+          "Null": "YES",
+          "Key": "UNI",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "password",
+          "Type": "varchar(255)",
+          "Null": "NO",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "user_type",
+          "Type": "int",
+          "Null": "NO",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "added_on",
+          "Type": "timestamp",
+          "Null": "YES",
+          "Key": "",
+          "Default": "CURRENT_TIMESTAMP",
+          "Extra": "DEFAULT_GENERATED"
+        },
+        {
+          "Field": "status",
+          "Type": "int",
+          "Null": "YES",
+          "Key": "",
+          "Default": "1",
+          "Extra": ""
+        },
+        {
+          "Field": "deleted",
+          "Type": "int",
+          "Null": "YES",
+          "Key": "",
+          "Default": "0",
+          "Extra": ""
+        }
+      ],
+      "row_count": 0,
+      "create_statement": "CREATE TABLE `app_user` (\n  `id` int NOT NULL AUTO_INCREMENT,\n  `user_id` varchar(255) NOT NULL,\n  `staff_name` varchar(255) NOT NULL,\n  `email` varchar(255) NOT NULL,\n  `phone` varchar(15) DEFAULT NULL,\n  `password` varchar(255) NOT NULL,\n  `user_type` int NOT NULL,\n  `added_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  `status` int DEFAULT '1',\n  `deleted` int DEFAULT '0',\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `user_id` (`user_id`),\n  UNIQUE KEY `email` (`email`),\n  UNIQUE KEY `phone` (`phone`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"
+    },
+    "client_code": {
+      "columns": [
+        {
+          "Field": "client_id",
+          "Type": "varchar(255)",
+          "Null": "YES",
+          "Key": "UNI",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "client_key",
+          "Type": "varchar(255)",
+          "Null": "YES",
+          "Key": "UNI",
+          "Default": null,
+          "Extra": ""
+        },
+        {
+          "Field": "client_name",
+          "Type": "varchar(255)",
+          "Null": "YES",
+          "Key": "",
+          "Default": null,
+          "Extra": ""
+        }
+      ],
+      "row_count": 1,
+      "create_statement": "CREATE TABLE `client_code` (\n  `client_id` varchar(255) DEFAULT NULL,\n  `client_key` varchar(255) DEFAULT NULL,\n  `client_name` varchar(255) DEFAULT NULL,\n  UNIQUE KEY `client_id` (`client_id`),\n  UNIQUE KEY `client_key` (`client_key`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"
+    }
+  }
+}

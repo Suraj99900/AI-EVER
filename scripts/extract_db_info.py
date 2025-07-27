@@ -12,8 +12,8 @@ DB_CONFIG = {
 }
 
 # OUTPUT PATHS
-db_summary_json = Path("../data/processed/db_summary.json")
-db_summary_text = Path("../data/processed/db_summary.txt")
+db_summary_json = Path("data/processed/db_summary.json")
+db_summary_text = Path("data/processed/db_summary.txt")
 db_summary_json.parent.mkdir(parents=True, exist_ok=True)
 
 INPUT_PATH = "../data/processed/db_summary.json"
