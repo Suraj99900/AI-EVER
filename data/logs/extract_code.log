@@ -358,3 +358,22 @@
 2025-07-21 09:15:23 DEBUG: EXTRACT: view/viewStudentInfo.php
 2025-07-21 09:15:23 INFO: Writing 62 prompts to ../data/processed/train_data.jsonl
 2025-07-21 09:15:23 INFO: ✅ Extraction complete
+2025-07-27 08:59:50 INFO: Using source directory: /mnt/New Volume/Code Base/Projeoct/PUBMD-Research-Papers
+2025-07-27 08:59:51 INFO: START extracting from: /mnt/New Volume/Code Base/Projeoct/PUBMD-Research-Papers
+2025-07-27 08:59:51 DEBUG: EXTRACT: poetry.lock
+2025-07-27 08:59:51 DEBUG: EXTRACT: pyproject.toml
+2025-07-27 08:59:51 DEBUG: EXTRACT: README.md
+2025-07-27 08:59:51 DEBUG: EXTRACT: results.csv
+2025-07-27 08:59:51 DEBUG: EXTRACT: get_papers/cli.py
+2025-07-27 08:59:51 DEBUG: EXTRACT: get_papers/csv_writer.py
+2025-07-27 08:59:51 DEBUG: EXTRACT: get_papers/data_parser.py
+2025-07-27 08:59:51 DEBUG: EXTRACT: get_papers/pubmed_api.py
+2025-07-27 08:59:51 DEBUG: EXTRACT: get_papers/web_app.py
+2025-07-27 08:59:51 DEBUG: SKIP empty: get_papers/__init__.py
+2025-07-27 08:59:51 DEBUG: EXTRACT: get_papers/templates/footer.html
+2025-07-27 08:59:51 DEBUG: EXTRACT: get_papers/templates/header.html
+2025-07-27 08:59:51 DEBUG: EXTRACT: get_papers/templates/index.html
+2025-07-27 08:59:51 DEBUG: EXTRACT: tests/test_pubmed_api.py
+2025-07-27 08:59:51 DEBUG: SKIP empty: tests/__init__.py
+2025-07-27 08:59:51 INFO: Writing 13 prompts to ../data/processed/train_data.jsonl
+2025-07-27 08:59:51 INFO: ✅ Extraction complete

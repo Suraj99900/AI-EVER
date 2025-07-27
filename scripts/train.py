@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 # ── Config ──────────────────────────────────────────────
 MODEL_DIR  = "../model/deepseek-coder-1.3b-base"
 DATA_PATH  = "../data/processed/train_data.jsonl"
+# DATA_PATH  = "../data/content/datasets/extracted_python_code.jsonl"
 
 # Create timestamped checkpoint directory for uniqueness
 timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -88,25 +89,71 @@ def compute_metrics(eval_preds):
     return {"perplexity": math.exp(loss.item())}
 
 # ── TrainingArgs ────────────────────────────────────────
+# training_args = TrainingArguments(
+#     output_dir=OUTPUT_DIR,
+#     per_device_train_batch_size=2,
+#     gradient_accumulation_steps=12,
+#     learning_rate=1e-4,
+#     num_train_epochs=5,
+#     logging_steps=10,
+#     eval_steps=200,
+#     warmup_steps=300,
+#     save_steps=200,
+#     save_strategy="steps",
+#     save_total_limit=3,
+#     metric_for_best_model="perplexity",
+#     fp16=torch.cuda.is_available(),
+#     bf16=False,
+#     optim="adamw_torch",
+#     report_to=[],
+#     logging_dir=os.path.join(OUTPUT_DIR, "logs"),
+# )
+
+# For Large Datasets, Reduce Epochs
+# training_args = TrainingArguments(
+#     output_dir=OUTPUT_DIR,
+#     per_device_train_batch_size=4,
+#     gradient_accumulation_steps=2,
+#     learning_rate=2e-4,
+#     num_train_epochs=1,                      # Reduced due to small dataset
+#     logging_steps=10,
+#     eval_steps=50,
+#     warmup_steps=10,
+#     save_steps=50,
+#     save_strategy="steps",
+#     save_total_limit=1,
+#     metric_for_best_model="eval_loss",
+#     fp16=torch.cuda.is_available(),
+#     bf16=False,
+#     optim="adamw_torch",
+#     report_to=[],
+#     logging_dir=os.path.join(OUTPUT_DIR, "logs"),
+#     greater_is_better=False,
+# )
+
+# For Small Datasets, Increase Epochs
 training_args = TrainingArguments(
     output_dir=OUTPUT_DIR,
-    per_device_train_batch_size=2,
-    gradient_accumulation_steps=12,
-    learning_rate=1e-4,
-    num_train_epochs=5,
-    logging_steps=10,
-    eval_steps=200,
-    warmup_steps=300,
-    save_steps=200,
+    per_device_train_batch_size=1,
+    gradient_accumulation_steps=1,
+    max_steps = 20,
+    learning_rate=2e-4,
+    num_train_epochs=3,                      # Increased for small dataset
+    logging_steps=2,
+    eval_steps=5,
+    warmup_steps=5,
+    save_steps=20,
     save_strategy="steps",
-    save_total_limit=3,
-    metric_for_best_model="perplexity",
+    save_total_limit=1,
+    metric_for_best_model="eval_loss",
     fp16=torch.cuda.is_available(),
     bf16=False,
+    greater_is_better=False,
     optim="adamw_torch",
     report_to=[],
     logging_dir=os.path.join(OUTPUT_DIR, "logs"),
 )
+
 
 # ── Resume from Last Checkpoint ─────────────────────────
 last_checkpoint = None
