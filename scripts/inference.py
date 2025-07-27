@@ -3,129 +3,63 @@ import argparse
 import os
 import math
 import torch
-from transformers import (
-    AutoTokenizer,
-    AutoModelForCausalLM,
-    BitsAndBytesConfig,
-)
+from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 from peft import PeftModel
 from datasets import load_dataset
 
-def compute_perplexity(model, tokenizer, eval_path, device):
-    ds = load_dataset("json", data_files={"eval": eval_path}, split="eval")
-    losses = []
-    for ex in ds:
-        text = ex.get("text") or ex.get("prompt")
-        inputs = tokenizer(text, return_tensors="pt", truncation=True,
-                           padding="longest", max_length=1024).to(device)
-        with torch.no_grad():
-            outputs = model(**inputs, labels=inputs.input_ids)
-            losses.append(outputs.loss.item())
-    avg_loss = sum(losses) / len(losses)
-    return math.exp(avg_loss)
 
-
-def main():
-    parser = argparse.ArgumentParser(
-        description="Run inference or evaluation on fine-tuned DeepSeek-Coder model"
-    )
-    parser.add_argument(
-        '--model_dir', type=str, default=None,
-        help='Path to your PEFT-fine-tuned model folder'
-    )
-    parser.add_argument(
-        '--prompt', type=str, default=None,
-        help='Prompt text including ### Instruction: and ### Response:'
-    )
-    parser.add_argument(
-        '--language', type=str, default=None,
-        help='Optional language tag (e.g., python, sql, javascript)'
-    )
-    parser.add_argument(
-        '--max_new_tokens', type=int, default=512,
-        help='Maximum number of tokens to generate'
-    )
-    parser.add_argument(
-        '--temperature', type=float, default=0.7,
-        help='Sampling temperature'
-    )
-    parser.add_argument(
-        '--top_p', type=float, default=0.95,
-        help='Nucleus sampling top-p'
-    )
-    parser.add_argument(
-        '--stop_token', type=str, default=None,
-        help='Optional stop token to truncate output'
-    )
-    parser.add_argument(
-        '--eval_file', type=str, default=None,
-        help='Optional JSONL file for perplexity evaluation'
-    )
-    args = parser.parse_args()
-
-    # Determine model directory
-
-    def get_latest_checkpoint(base_dir):
-        if not os.path.exists(base_dir):
-            raise FileNotFoundError(f"Checkpoint base directory not found: {base_dir}")
-
-        subdirs = [
-            os.path.join(base_dir, name)
-            for name in os.listdir(base_dir)
-            if os.path.isdir(os.path.join(base_dir, name))
-        ]
-        if not subdirs:
-            raise FileNotFoundError("No subdirectories found in checkpoint base directory")
-
-        latest = max(subdirs, key=os.path.getmtime)
-        return latest
-    
-    checkpoint_base_dir = os.path.abspath(
-        os.path.join(os.path.dirname(__file__), '..', 'model', 'checkpoints')
-    )
-    model_dir = args.model_dir or get_latest_checkpoint(checkpoint_base_dir)
-    print(f"Using model checkpoint: {model_dir}")
-
-    # Load tokenizer
+def load_tokenizer(model_dir: str):
     tokenizer = AutoTokenizer.from_pretrained(model_dir, use_fast=False)
     if tokenizer.pad_token_id is None:
         tokenizer.add_special_tokens({'pad_token': tokenizer.eos_token})
     tokenizer.pad_token = tokenizer.eos_token
+    return tokenizer
 
-    # BitsAndBytes config for 4-bit loading
-    bnb_config = BitsAndBytesConfig(
+
+def load_model(model_dir: str):
+    """Load a 4-bit Quantized + LoRA‑wrapped model on GPU/CPU."""
+    bnb = BitsAndBytesConfig(
         load_in_4bit=True,
         bnb_4bit_quant_type="nf4",
-        bnb_4bit_compute_dtype=torch.float16
+        bnb_4bit_compute_dtype=torch.float16,
     )
-
-    # Load base model and wrap with LoRA adapter
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = AutoModelForCausalLM.from_pretrained(
-        model_dir,
-        quantization_config=bnb_config,
-        device_map='auto',
-        trust_remote_code=False,
+    # base + adapter
+    base = AutoModelForCausalLM.from_pretrained(
+        model_dir, quantization_config=bnb, device_map='auto', trust_remote_code=False
     )
-    model = PeftModel.from_pretrained(model, model_dir, device_map='auto')
-    model.to(device).eval()
+    model = PeftModel.from_pretrained(base, model_dir, device_map='auto')
+    model.eval()
+    return model
 
-    # Evaluation mode
-    if args.eval_file:
-        ppl = compute_perplexity(model, tokenizer, args.eval_file, device)
-        print(f"Perplexity: {ppl:.2f}")
-        return
 
-    # Inference mode
-    if not args.prompt:
-        raise ValueError("--prompt is required for inference mode")
+def compute_perplexity(model, tokenizer, eval_file: str, device):
+    ds = load_dataset("json", data_files={"eval": eval_file}, split="eval")
+    losses = []
+    for ex in ds:
+        text = ex.get("text") or ex.get("prompt")
+        inputs = tokenizer(text, return_tensors="pt",
+                           truncation=True, padding="longest", max_length=1024).to(device)
+        with torch.no_grad():
+            loss = model(**inputs, labels=inputs.input_ids).loss.item()
+        losses.append(loss)
+    avg = sum(losses) / len(losses)
+    return math.exp(avg)
 
-    # Ensure prompt markers present
-    prompt = args.prompt.strip()
-    if "### Response:" not in prompt:
-        raise ValueError("Prompt must include '### Response:' marker.")
 
-    # Tokenize input without extra code fences
+def generate_response(
+    model,
+    tokenizer,
+    prompt: str,
+    max_new_tokens: int = 512,
+    temperature: float = 0.7,
+    top_p: float = 0.95,
+    repetition_penalty: float = 1.2,
+    no_repeat_ngram_size: int = 3,
+    do_sample: bool = True,
+    num_beams: int = None,
+    stop_token: str = None,
+):
+    device = next(model.parameters()).device
     inputs = tokenizer(
         prompt,
         return_tensors='pt',
@@ -134,36 +68,84 @@ def main():
         max_length=1024
     ).to(device)
 
-    # Generation with anti-repetition
-    max_length = inputs.input_ids.shape[1] + args.max_new_tokens
+    max_len = inputs.input_ids.shape[1] + max_new_tokens
+    gen_kwargs = dict(
+        max_length=max_len,
+        temperature=temperature,
+        top_p=top_p,
+        repetition_penalty=repetition_penalty,
+        no_repeat_ngram_size=no_repeat_ngram_size,
+        do_sample=do_sample,
+        eos_token_id=tokenizer.eos_token_id,
+        pad_token_id=tokenizer.pad_token_id,
+    )
+    if not do_sample and num_beams:
+        gen_kwargs.pop('temperature')
+        gen_kwargs.pop('top_p')
+        gen_kwargs['num_beams'] = num_beams
+
     with torch.no_grad():
-        outputs = model.generate(
-            **inputs,
-            max_length=max_length,
-            temperature=args.temperature,
-            top_p=args.top_p,
-            repetition_penalty=1.2,
-            no_repeat_ngram_size=3,
-            do_sample=True,
-            eos_token_id=tokenizer.eos_token_id,
-            pad_token_id=tokenizer.pad_token_id,
-        )
+        out = model.generate(**inputs, **gen_kwargs)
 
-    # Decode and extract response
-    raw = tokenizer.decode(outputs[0], skip_special_tokens=True)
-    text = raw.split("### Response:")[-1].strip()
+    decoded = tokenizer.decode(out[0], skip_special_tokens=True)
+    # only split once
+    parts = decoded.split("### Response:", 1)
+    resp = parts[1].strip() if len(parts) > 1 else decoded
+    if stop_token and stop_token in resp:
+        resp = resp.split(stop_token)[0] + stop_token
+    return resp
 
-    # Stop-token truncation
-    if args.stop_token:
-        idx = text.find(args.stop_token)
-        if idx != -1:
-            text = text[: idx + len(args.stop_token)]
 
-    # Wrap output if needed
-    if args.language:
-        print(f"```{args.language}\n{text}\n```")
+def main():
+    p = argparse.ArgumentParser(description="DeepSeek‑Coder Inference/Eval")
+    p.add_argument('--model_dir',    type=str, help="path to checkpoints")
+    p.add_argument('--prompt',       type=str, help="full prompt with markers")
+    p.add_argument('--eval_file',    type=str, help="JSONL for perplexity")
+    p.add_argument('--max_new_tokens', type=int, default=512)
+    p.add_argument('--temperature',  type=float, default=0.7)
+    p.add_argument('--top_p',        type=float, default=0.95)
+    p.add_argument('--stop_token',   type=str, default=None)
+    p.add_argument('--no_sample',    action='store_true', help="use beam search")
+    p.add_argument('--beams',        type=int, default=5, help="# beams if no_sample")
+    args = p.parse_args()
+
+    # locate latest if not given
+    base = os.path.join(os.path.dirname(__file__), '..', 'model', 'checkpoints')
+    if args.model_dir:
+        model_dir = args.model_dir
     else:
-        print(text)
+        subs = [os.path.join(base, d) for d in os.listdir(base) if os.path.isdir(os.path.join(base, d))]
+        model_dir = max(subs, key=os.path.getmtime)
+
+    print("Loading tokenizer…")
+    tokenizer = load_tokenizer(model_dir)
+
+    print("Loading model…")
+    model = load_model(model_dir)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
+
+    if args.eval_file:
+        ppl = compute_perplexity(model, tokenizer, args.eval_file, device)
+        print(f"Perplexity: {ppl:.2f}")
+        return
+
+    if not args.prompt:
+        raise ValueError("Please pass --prompt for inference")
+
+    resp = generate_response(
+        model,
+        tokenizer,
+        args.prompt,
+        max_new_tokens=args.max_new_tokens,
+        temperature=args.temperature,
+        top_p=args.top_p,
+        do_sample=not args.no_sample,
+        num_beams=args.beams,
+        stop_token=args.stop_token
+    )
+    print(resp)
+
 
 if __name__ == "__main__":
     main()
