@@ -14,8 +14,8 @@ logger = logging.getLogger(__name__)
 
 # ── Config ──────────────────────────────────────────────
 MODEL_DIR  = "../model/deepseek-coder-1.3b-base"
-DATA_PATH  = "../data/processed/train_data.jsonl"
-# DATA_PATH  = "../data/content/datasets/extracted_python_code.jsonl"
+# DATA_PATH  = "../data/processed/train_data.jsonl"
+DATA_PATH  = "../data/content/datasets/extracted_python_code.jsonl"
 
 # Create timestamped checkpoint directory for uniqueness
 timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -137,8 +137,8 @@ training_args = TrainingArguments(
     per_device_train_batch_size=1,
     gradient_accumulation_steps=1,
     max_steps = 20,
-    learning_rate=2e-4,
-    num_train_epochs=3,                      # Increased for small dataset
+    learning_rate=1e-4,
+    num_train_epochs=10,                      # Increased for small dataset
     logging_steps=2,
     eval_steps=5,
     warmup_steps=5,
