@@ -228,8 +228,3 @@ git push origin main  # or master
 
 ---
 
-Would you like me to also generate:
-
-* A `.gitignore`?
-* A `LICENSE` file?
-* Auto CI/CD setup (GitHub Actions)?
