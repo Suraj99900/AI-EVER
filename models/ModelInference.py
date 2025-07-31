@@ -55,7 +55,7 @@ class ModelInference:
         return math.exp(avg)
 
     def generate_response(self, prompt, max_new_tokens=512, temperature=0.2, top_p=0.95,
-                          repetition_penalty=1.2, no_repeat_ngram_size=3, do_sample=True,
+                          repetition_penalty=1.2, no_repeat_ngram_size=3, do_sample=False,
                           num_beams=None, stop_token=None):
         inputs = self.tokenizer(
             prompt,
