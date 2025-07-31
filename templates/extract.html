@@ -1,199 +1,416 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="flex h-screen bg-gray-100 text-gray-900">
-  <!-- Offcanvas Sidebar -->
-  <div id="sidebar"
-    class="fixed top-0 left-0 w-64 h-full bg-white shadow-lg transform -translate-x-full transition-transform duration-300 z-50">
-    <div class="p-6 border-b border-gray-300">
-      <h2 class="text-xl font-bold text-blue-600">Extraction Options</h2>
-    </div>
-    <nav class="flex flex-col p-4 space-y-4">
-      <button onclick="showSection('code')" class="text-left px-4 py-2 rounded hover:bg-blue-100 transition">📂 Codebase
-        Extraction</button>
-      <button onclick="showSection('sql')" class="text-left px-4 py-2 rounded hover:bg-green-100 transition">🛢️ SQL
-        Schema Extraction</button>
-    </nav>
-  </div>
+<div class="flex flex-col md:flex-row h-full">
 
-  <!-- Main Content -->
-  <div class="flex-1 flex flex-col">
-    <!-- Header -->
-    <header class="flex items-center justify-between p-4 bg-white border-b border-gray-300">
-      <button onclick="toggleSidebar()" class="text-gray-700 focus:outline-none">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
+  <!-- Off‑canvas Sidebar (mobile) & Static on desktop -->
+  <aside id="sidebar"
+    class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg transform -translate-x-full md:translate-x-0 transition-transform duration-300 z-40">
+    <div class="px-6 py-9 border-b border-gray-200" style="padding-top: 5rem;">
+      <h2 class="text-2xl font-extrabold text-indigo-600">Extraction Options</h2>
+    </div>
+    <nav class="px-4 py-6 space-y-2">
+      <button onclick="showSection('code')"
+        class="w-full flex items-center px-4 py-3 rounded-lg hover:bg-indigo-50 transition">
+        <span class="text-xl mr-3">📂</span>
+        <span class="font-medium text-gray-700">Codebase Extraction</span>
       </button>
-      <h1 class="text-xl font-bold text-indigo-700">📊 Extraction Dashboard</h1>
+      <button onclick="showSection('sql')"
+        class="w-full flex items-center px-4 py-3 rounded-lg hover:bg-green-50 transition">
+        <span class="text-xl mr-3">🛢️</span>
+        <span class="font-medium text-gray-700">SQL Schema Extraction</span>
+      </button>
+      <button onclick="showSection('train')"
+        class="w-full flex items-center px-4 py-3 rounded-lg hover:bg-blue-50 transition">
+        <span class="text-xl mr-3">⚙️</span>
+        <span class="font-medium text-gray-700 px-8">Training</span>
+      </button>
+    </nav>
+  </aside>
+
+  <!-- Content Area -->
+  <div class="flex-1 flex flex-col md:pl-64">
+
+    <!-- Page Header -->
+    <header class="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200">
+      <div class="flex items-center">
+        <button onclick="toggleSidebar()" class="md:hidden mr-4 focus:outline-none text-gray-600">
+          <!-- hamburger -->
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+        <h1 class="text-2xl font-bold text-indigo-600">Extraction Dashboard</h1>
+      </div>
     </header>
 
-    <!-- Code Extraction Form -->
-    <section id="code-section" class="p-8">
-      <h2 class="text-2xl font-bold mb-4 text-blue-600">Codebase Extraction</h2>
-      <form id="extract-form" class="space-y-4">
-        <label for="repo_path" class="block font-medium">Local project path:</label>
-        <input type="text" id="repo_path" name="repo_path" placeholder="/home/user/myrepo"
-          class="w-full bg-white border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-        <input type="hidden" name="type" value="code">
-        <button type="submit"
-          class="w-full bg-blue-600 hover:bg-blue-500 text-white rounded px-4 py-2 font-semibold transition">🔄 Start
-          Extraction</button>
-      </form>
+    <!-- Extract Forms -->
+    <main class="flex-1 overflow-auto p-6 space-y-12">
 
-      <div id="extract-status" class="mt-6">
-        <div id="spinner-extract"
-          class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin hidden mx-auto"></div>
-        <pre id="extract-log"
-          class="mt-4 p-4 bg-black text-green-400 border border-gray-700 rounded hidden text-sm overflow-auto max-h-64 font-mono">$ Waiting for extraction...</pre>
-        <div id="download-link" class="text-center mt-4 hidden">
-          <a href="{{ url_for('extract.extract_downloads', type='code') }}"
-            class="bg-green-500 hover:bg-green-400 text-black px-6 py-2 rounded">📥 Download JSONL</a>
+      <!-- Code Extraction -->
+      <section id="code-section" class="space-y-4">
+        <h2 class="text-3xl font-bold text-indigo-600">Codebase Extraction</h2>
+        <form id="extract-form" class="bg-white p-6 rounded-2xl shadow-md grid gap-4 md:grid-cols-2">
+          <div class="md:col-span-2">
+            <label for="repo_path" class="block text-sm font-medium text-gray-700">Local Project Path</label>
+            <input type="text" id="repo_path" name="repo_path" placeholder="/home/user/myrepo"
+              class="mt-1 block w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500" />
+            <input type="hidden" name="type" value="code" />
+          </div>
+          <button type="submit"
+            class="md:col-span-2 w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-lg transition">
+            🔄 Start Extraction
+          </button>
+        </form>
+
+        <div id="extract-status" class="mt-4 space-y-4">
+          <div id="spinner-extract"
+            class="mx-auto w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin hidden">
+          </div>
+          <pre id="extract-log"
+            class="hidden bg-gray-800 text-green-400 p-4 rounded-lg overflow-auto max-h-64 font-mono text-sm">$ Waiting for extraction...</pre>
+          <div id="download-link" class="text-center hidden">
+            <a href="{{ url_for('extract.extract_downloads', type='code') }}"
+              class="inline-block px-6 py-2 bg-green-500 hover:bg-green-400 text-white rounded-lg font-medium">📥
+              Download JSONL</a>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- SQL Extraction Form -->
-    <section id="sql-section" class="p-8 hidden">
-      <h2 class="text-2xl font-bold mb-4 text-green-600">SQL Schema Extraction</h2>
-      <form id="sql-form" class="space-y-4">
-        <div class="grid md:grid-cols-2 gap-4">
+      <!-- SQL Extraction -->
+      <section id="sql-section" class="space-y-4 hidden">
+        <h2 class="text-3xl font-bold text-green-600">SQL Schema Extraction</h2>
+        <form id="sql-form" class="bg-white p-6 rounded-2xl shadow-md grid gap-4 md:grid-cols-2">
           <input type="text" id="host" name="host" placeholder="Host (e.g. localhost)"
-            class="w-full bg-white border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400">
+            class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500" />
           <input type="text" id="port" name="port" placeholder="Port (e.g. 3306)"
-            class="w-full bg-white border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400">
+            class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500" />
           <input type="text" id="username" name="username" placeholder="Username"
-            class="w-full bg-white border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400">
+            class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500" />
           <input type="password" id="password" name="password" placeholder="Password"
-            class="w-full bg-white border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400">
+            class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500" />
           <input type="text" id="database" name="database" placeholder="Database Name"
-            class="w-full bg-white border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400">
-          <input type="hidden" name="type" value="sql">
-        </div>
-        <button type="submit"
-          class="w-full bg-green-600 hover:bg-green-500 text-white rounded px-4 py-2 font-semibold transition">🔄
-          Extract Schema</button>
-      </form>
+            class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500" />
+          <input type="hidden" name="type" value="sql" />
+          <button type="submit"
+            class="md:col-span-2 w-full py-3 bg-green-600 hover:bg-green-500 text-white font-semibold rounded-lg transition">
+            🔄 Extract Schema
+          </button>
+        </form>
 
-      <div id="sql-status" class="mt-6">
-        <pre id="sql-log"
-          class="mt-4 p-4 bg-black text-green-400 border border-gray-700 rounded hidden text-sm overflow-auto max-h-64 font-mono">$ Awaiting connection...</pre>
-        <div id="sql-download-link" class="text-center mt-4 hidden">
-          <a href="{{ url_for('extract.extract_downloads', type='sql') }}"
-            class="bg-green-500 hover:bg-green-400 text-black px-6 py-2 rounded">📥 Download SQL JSONL</a>
+        <div id="sql-status" class="mt-4 space-y-4">
+          <pre id="sql-log"
+            class="hidden bg-gray-800 text-green-400 p-4 rounded-lg overflow-auto max-h-64 font-mono text-sm">$ Awaiting connection...</pre>
+          <div id="sql-download-link" class="text-center hidden">
+            <a href="{{ url_for('extract.extract_downloads', type='sql') }}"
+              class="inline-block px-6 py-2 bg-green-500 hover:bg-green-400 text-white rounded-lg font-medium">📥
+              Download SQL JSONL</a>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+
+      <!-- Training Section -->
+      <section id="train-section" class="space-y-4 hidden">
+        <h2 class="text-3xl font-bold text-blue-600">Train Model</h2>
+        <form id="train-form" class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-6 rounded-2xl shadow-md">
+          <!-- Max Steps -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Max Steps</label>
+            <input type="number" name="max_steps" value="20" class="mt-1 w-full border rounded-lg px-3 py-2" />
+          </div>
+          <!-- Batch Size -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Batch Size</label>
+            <input type="number" name="per_device_train_batch_size" value="1"
+              class="mt-1 w-full border rounded-lg px-3 py-2" />
+          </div>
+          <!-- Gradient Accumulation Steps -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Gradient Accum Steps</label>
+            <input type="number" name="gradient_accumulation_steps" value="1"
+              class="mt-1 w-full border rounded-lg px-3 py-2" />
+          </div>
+          <!-- Learning Rate -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Learning Rate</label>
+            <input type="text" name="learning_rate" value="1e-4" class="mt-1 w-full border rounded-lg px-3 py-2" />
+          </div>
+          <!-- Num Epochs -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Num Epochs</label>
+            <input type="number" name="num_train_epochs" value="10" class="mt-1 w-full border rounded-lg px-3 py-2" />
+          </div>
+          <!-- Logging Steps -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Logging Steps</label>
+            <input type="number" name="logging_steps" value="2" class="mt-1 w-full border rounded-lg px-3 py-2" />
+          </div>
+          <!-- Eval Steps -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Eval Steps</label>
+            <input type="number" name="eval_steps" value="5" class="mt-1 w-full border rounded-lg px-3 py-2" />
+          </div>
+          <!-- Warmup Steps -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Warmup Steps</label>
+            <input type="number" name="warmup_steps" value="5" class="mt-1 w-full border rounded-lg px-3 py-2" />
+          </div>
+          <!-- Save Steps -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Save Steps</label>
+            <input type="number" name="save_steps" value="20" class="mt-1 w-full border rounded-lg px-3 py-2" />
+          </div>
+          <!-- Save Strategy -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Save Strategy</label>
+            <input type="text" name="save_strategy" value="steps" class="mt-1 w-full border rounded-lg px-3 py-2" />
+          </div>
+          <!-- Save Total Limit -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Save Total Limit</label>
+            <input type="number" name="save_total_limit" value="1" class="mt-1 w-full border rounded-lg px-3 py-2" />
+          </div>
+          <!-- Metric for Best Model -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Metric for Best Model</label>
+            <input type="text" name="metric_for_best_model" value="eval_loss"
+              class="mt-1 w-full border rounded-lg px-3 py-2" />
+          </div>
+          <!-- FP16 -->
+          <div class="flex items-center">
+            <input type="checkbox" name="fp16" checked class="h-4 w-4 text-indigo-600" />
+            <label class="ml-2 text-sm text-gray-700">Use FP16</label>
+          </div>
+          <!-- BF16 -->
+          <div class="flex items-center">
+            <input type="checkbox" name="bf16" class="h-4 w-4 text-indigo-600" />
+            <label class="ml-2 text-sm text-gray-700">Use BF16</label>
+          </div>
+          <!-- Greater is Better -->
+          <div class="flex items-center">
+            <input type="checkbox" name="greater_is_better" class="h-4 w-4 text-indigo-600" />
+            <label class="ml-2 text-sm text-gray-700">Greater Metric is Better</label>
+          </div>
+          <!-- Optimizer -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Optimizer</label>
+            <input type="text" name="optim" value="adamw_torch" class="mt-1 w-full border rounded-lg px-3 py-2" />
+          </div>
+          <!-- Report To -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Report To (comma-separated)</label>
+            <input type="text" name="report_to" placeholder="e.g. tensorboard,wandb"
+              class="mt-1 w-full border rounded-lg px-3 py-2" />
+          </div>
+          <!-- Logging Dir -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Logging Dir</label>
+            <input type="text" name="logging_dir" placeholder="/logs" class="mt-1 w-full border rounded-lg px-3 py-2" />
+          </div>
+          <!-- Is SQL? -->
+          <div class="flex items-center">
+            <input type="checkbox" name="is_sql" class="h-4 w-4 text-indigo-600" />
+            <label class="ml-2 text-sm text-gray-700">Train on SQL Schema</label>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="md:col-span-2 flex justify-end">
+            <button type="submit" class="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg">
+              🚀 Start Training
+            </button>
+          </div>
+        </form>
+
+        <!-- Training Log Output -->
+        <pre id="train-log"
+          class="hidden bg-gray-800 text-green-400 p-4 rounded-lg overflow-auto max-h-64 font-mono text-sm">
+            $ Ready to train...
+        </pre>
+      </section>
+
+    </main>
   </div>
-</div>
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const codeSection = document.getElementById('code-section');
+    const sqlSection = document.getElementById('sql-section');
 
-<script>
-  const sidebar = document.getElementById('sidebar');
-  const codeSection = document.getElementById('code-section');
-  const sqlSection = document.getElementById('sql-section');
+    function toggleSidebar() {
+      sidebar.classList.toggle('-translate-x-full');
+    }
 
-  function toggleSidebar() {
-    sidebar.classList.toggle('-translate-x-full');
-  }
+    function showSection(type) {
+      codeSection.classList.add('hidden');
+      sqlSection.classList.add('hidden');
+      if (type === 'code') codeSection.classList.remove('hidden');
+      if (type === 'sql') sqlSection.classList.remove('hidden');
+      if (type === 'train') {
+        document.getElementById('train-section').classList.remove('hidden');
+      } else {
+        document.getElementById('train-section').classList.add('hidden');
+      }
+      toggleSidebar();
+    }
 
-  function showSection(type) {
-    codeSection.classList.add('hidden');
-    sqlSection.classList.add('hidden');
-    if (type === 'code') codeSection.classList.remove('hidden');
-    if (type === 'sql') sqlSection.classList.remove('hidden');
-    toggleSidebar();
-  }
+    const form = document.getElementById("extract-form");
+    form.addEventListener("submit", async e => {
+      e.preventDefault();
 
-  const form = document.getElementById("extract-form");
-  form.addEventListener("submit", async e => {
-    e.preventDefault();
+      const spinner = document.getElementById("spinner-extract");
+      const logEl = document.getElementById("extract-log");
+      const downloadLink = document.getElementById("download-link");
 
-    const spinner = document.getElementById("spinner-extract");
-    const logEl = document.getElementById("extract-log");
-    const downloadLink = document.getElementById("download-link");
+      spinner.classList.remove("hidden");
+      logEl.classList.remove("hidden");
+      logEl.textContent = "$ Starting extraction...\n";
+      downloadLink.classList.add("hidden");
 
-    spinner.classList.remove("hidden");
-    logEl.classList.remove("hidden");
-    logEl.textContent = "$ Starting extraction...\n";
-    downloadLink.classList.add("hidden");
+      try {
+        const response = await fetch("/extract", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams(new FormData(form))
+        });
 
-    try {
+        if (!response.ok) {
+          throw new Error("Extraction failed: " + response.statusText);
+        }
+
+        const data = await response.json();
+        logEl.textContent += "$ " + data.message + "\n";
+      } catch (err) {
+        logEl.textContent += "$ ❌ " + err.message + "\n";
+        spinner.classList.add("hidden");
+        return;
+      }
+
+      // Polling log updates
+      const poll = setInterval(async () => {
+        const res = await fetch("/extract/logs");
+        const { logs } = await res.json();
+
+        logEl.textContent = "$ " + logs.join("\n$ ");
+
+        const isDone = logs.some(l => l.includes("extraction finished") || l.includes("✅ Code extraction finished"));
+        const isError = logs.some(l => l.includes("❌"));
+
+        if (isDone || isError) {
+          clearInterval(poll);
+          spinner.classList.add("hidden");
+
+          if (isDone) {
+            downloadLink.classList.remove("hidden");
+            logEl.textContent += "\n$ ✅ All done.";
+          } else {
+            logEl.textContent += "\n$ ❌ An error occurred.";
+          }
+        }
+      }, 500);
+    });
+    const sqlForm = document.getElementById("sql-form");
+
+    sqlForm.addEventListener("submit", async e => {
+      e.preventDefault();
+
+      const logEl = document.getElementById("sql-log");
+      logEl.classList.remove("hidden");
+      logEl.textContent = "$ Connecting to database...\n";
+
       const response = await fetch("/extract", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams(new FormData(form))
+        body: new URLSearchParams(new FormData(sqlForm))
       });
 
-      if (!response.ok) {
-        throw new Error("Extraction failed: " + response.statusText);
+      const result = await response.json();
+      if (result.status === "started") {
+        // Start polling for logs
+        const pollLogs = setInterval(async () => {
+          const logRes = await fetch("/extract/logs");
+          const logs = await logRes.text();
+          logEl.textContent = logs;
+
+          if (logs.includes("✅") || logs.includes("❌")) {
+            clearInterval(pollLogs);
+            if (logs.includes("✅")) {
+              document.getElementById("sql-download-link").classList.remove("hidden");
+            }
+          }
+        }, 1000);
+      } else {
+        logEl.textContent += `❌ ${result.message}\n`;
       }
-
-      const data = await response.json();
-      logEl.textContent += "$ " + data.message + "\n";
-    } catch (err) {
-      logEl.textContent += "$ ❌ " + err.message + "\n";
-      spinner.classList.add("hidden");
-      return;
-    }
-
-    // Polling log updates
-    const poll = setInterval(async () => {
-      const res = await fetch("/extract/logs");
-      const { logs } = await res.json();
-
-      logEl.textContent = "$ " + logs.join("\n$ ");
-
-      const isDone = logs.some(l => l.includes("extraction finished") || l.includes("✅ Code extraction finished"));
-      const isError = logs.some(l => l.includes("❌"));
-
-      if (isDone || isError) {
-        clearInterval(poll);
-        spinner.classList.add("hidden");
-
-        if (isDone) {
-          downloadLink.classList.remove("hidden");
-          logEl.textContent += "\n$ ✅ All done.";
-        } else {
-          logEl.textContent += "\n$ ❌ An error occurred.";
-        }
-      }
-    }, 500);
-  });
-  const sqlForm = document.getElementById("sql-form");
-
-  sqlForm.addEventListener("submit", async e => {
-    e.preventDefault();
-
-    const logEl = document.getElementById("sql-log");
-    logEl.classList.remove("hidden");
-    logEl.textContent = "$ Connecting to database...\n";
-
-    const response = await fetch("/extract", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams(new FormData(sqlForm))
     });
 
-    const result = await response.json();
-    if (result.status === "started") {
-      // Start polling for logs
-      const pollLogs = setInterval(async () => {
-        const logRes = await fetch("/extract/logs");
-        const logs = await logRes.text();
-        logEl.textContent = logs;
+  </script>
 
-        if (logs.includes("✅") || logs.includes("❌")) {
-          clearInterval(pollLogs);
-          if (logs.includes("✅")) {
-            document.getElementById("sql-download-link").classList.remove("hidden");
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <script>
+    $(function () {
+      $('#train-form').on('submit', function (e) {
+        e.preventDefault();
+
+        // 1. Serialize form into a plain object
+        const formArray = $(this).serializeArray();
+        const data = {};
+        formArray.forEach(({ name, value }) => {
+          data[name] = value;
+        });
+
+        // 2. Handle checkboxes
+        data.fp16 = !!this.fp16.checked;
+        data.bf16 = !!this.bf16.checked;
+        data.greater_is_better = !!this.greater_is_better.checked;
+        data.is_sql = !!this.is_sql.checked;
+
+        // 3. Convert numeric fields
+        [
+          'max_steps',
+          'per_device_train_batch_size',
+          'gradient_accumulation_steps',
+          'num_train_epochs',
+          'logging_steps',
+          'eval_steps',
+          'warmup_steps',
+          'save_steps',
+          'save_total_limit'
+        ].forEach(key => {
+          data[key] = Number(data[key]);
+        });
+
+        // 4. Split report_to into array
+        data.report_to = data.report_to
+          ? data.report_to.split(',').map(s => s.trim()).filter(Boolean)
+          : [];
+
+        // 5. Send AJAX request
+        $.ajax({
+          url: '/train',
+          method: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify(data),
+          success: function (resp) {
+            if (resp.status === 'started') {
+              $('#train-log')
+                .removeClass('hidden')
+                .text('$ Training started successfully.');
+              // TODO: start polling /train/logs here if you have it
+            } else {
+              $('#train-log')
+                .removeClass('hidden')
+                .text('$ ❌ ' + (resp.error || resp.message));
+            }
+          },
+          error: function (xhr) {
+            $('#train-log')
+              .removeClass('hidden')
+              .text('$ ❌ ' + xhr.status + ' ' + xhr.statusText);
           }
-        }
-      }, 1000);
-    } else {
-      logEl.textContent += `❌ ${result.message}\n`;
-    }
-  });
-
-</script>
+        });
+      });
+    });
+  </script>
 
 
-{% endblock %}
+  {% endblock %}
