@@ -1,56 +1,197 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="max-w-xl mx-auto glass p-8 rounded-2xl shadow-xl animate-float">
-  <h2 class="text-3xl font-extrabold text-indigo-200 mb-6 text-center">🧪 Run Inference</h2>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-php.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
 
-  <label for="prompt" class="block text-gray-200 font-medium mb-2">Enter your prompt:</label>
-  <textarea
-    id="prompt"
-    rows="6"
-    class="w-full bg-white/30 backdrop-blur-sm border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
-    placeholder="### Instruction:\nDescribe the schema of the users table\n\n### Response:"
-  ></textarea>
+<style>
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 
-  <button
-    id="go"
-    class="w-full mt-4 bg-green-500 hover:bg-green-400 text-white font-semibold rounded-lg py-3 shadow-lg transition transform hover:-translate-y-1"
-  >
-    Generate
-  </button>
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 
-  <div id="infer-status" class="mt-8 text-center">
-    <div id="spinner-infer" class="mx-auto mb-4 w-10 h-10 border-4 border-green-400 border-t-transparent rounded-full animate-spin hidden"></div>
-    <pre
-      id="infer-output"
-      class="hidden mt-4 p-4 bg-black bg-opacity-50 rounded-lg text-left text-green-200 overflow-auto"
-      style="max-height: 250px;"
-    ></pre>
+  .chat-bg {
+    background-color: #f7f7f8;
+  }
+
+  .user-bubble {
+    background-color: #e0eaff;
+    border-radius: 18px 18px 0 18px;
+    color: #1a1a1a;
+    white-space: pre-wrap;
+  }
+
+  .ai-bubble {
+    background-color: #ffffff;
+    border-radius: 18px 18px 18px 0;
+    color: #1a1a1a;
+    white-space: pre-wrap;
+  }
+
+  pre {
+    background: #1e1e1e;
+    color: #fff;
+    border-radius: 8px;
+    padding: 12px;
+    overflow-x: auto;
+    font-size: 14px;
+  }
+</style>
+
+<div class="flex h-screen bg-white">
+  <!-- Sidebar -->
+  <aside class="w-64 bg-white border-r border-gray-200 flex flex-col">
+    <div class="px-4 py-4 border-b border-gray-200 flex items-center justify-center">
+      <svg class="w-7 h-7 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 0L24 6.928v13.856L12 27.712 0 20.784V6.928z" />
+      </svg>
+    </div>
+    <button
+      class="mx-3 mt-2 flex items-center justify-center gap-2 px-3 py-2.5 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition-all">
+      <span class="text-lg">+</span><span>New Chat</span>
+    </button>
+    <nav class="flex-1 mt-2 overflow-y-auto no-scrollbar px-2">
+      <div class="text-xs font-medium text-gray-500 px-3 py-2">Recent chats</div>
+      <ul>
+        {% for cp in checkpoints %}
+        <li class="mb-1">
+          <a href="?session={{ cp.id }}" class="block px-3 py-2.5 text-sm rounded-lg hover:bg-gray-50 transition-colors
+             {% if request.args.get('session') == cp.id %}
+               sidebar-item-active font-medium
+             {% else %}
+               text-gray-700
+             {% endif %}">
+            {{ cp.title }}
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </nav>
+    <div class="p-3 border-t border-gray-200">
+      <a href="#" class="flex items-center gap-2 px-2 py-1.5 text-sm rounded-lg hover:bg-gray-50">⚙️ Settings</a>
+    </div>
+  </aside>
+
+  <!-- Chat Panel -->
+  <div class="flex-1 flex flex-col h-full">
+    <header class="h-12 flex items-center px-6 bg-white border-b border-gray-200">
+      <h1 class="text-base font-medium text-gray-800">{{ current_chat_title or "New Chat" }}</h1>
+    </header>
+
+    <!-- Messages -->
+    <main id="chat-window" class="flex-1 px-4 py-6 chat-bg space-y-6 overflow-y-auto no-scrollbar">
+      <div class="text-center text-gray-400 mt-8 italic">Start the conversation below…</div>
+    </main>
+
+    <!-- Input -->
+    <div class="bg-white border-t border-gray-200 px-4 py-4">
+      <form id="chat-form" class="max-w-4xl mx-auto">
+        <div class="relative flex items-center">
+          <textarea id="chat-input" rows="1"
+            class="flex-1 bg-gray-100 rounded-xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+            placeholder="Message..." style="min-height: 44px; max-height: 200px;"></textarea>
+          <button type="submit"
+            class="absolute right-2 w-8 h-8 flex items-center justify-center send-button text-white rounded-lg">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+            </svg>
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
-</section>
+</div>
 
 <script>
-  const btn = document.getElementById("go");
-  const spinner = document.getElementById("spinner-infer");
-  const output = document.getElementById("infer-output");
+  function scrollBottom() {
+    $('#chat-window').scrollTop($('#chat-window')[0].scrollHeight);
+  }
 
-  btn.addEventListener("click", async () => {
-    // show spinner, hide previous output
-    spinner.classList.remove("hidden");
-    output.classList.add("hidden");
-    output.textContent = "";
+  function escapeHTML(html) {
+    return $('<div>').text(html).html();
+  }
 
-    const prompt = document.getElementById("prompt").value;
-    const res = await fetch("/inference", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt })
+  // Add normal text bubble
+  function addMsg(text, me) {
+    $('#chat-window').find('div.italic').remove();
+    const bubbleClass = me ? 'user-bubble' : 'ai-bubble';
+    const msg = $(`<div class="flex ${me ? 'justify-end' : 'justify-start'} px-4">
+    <div class="${bubbleClass} px-4 py-3 max-w-[80%] break-words">${escapeHTML(text).replace(/\n/g, '<br>')}</div>
+  </div>`);
+    $('#chat-window').append(msg);
+    scrollBottom();
+  }
+
+  // Add code bubble
+  function addCode(code, lang) {
+    $('#chat-window').find('div.italic').remove();
+    const safeCode = escapeHTML(code);
+    const msg = $(`<div class="flex justify-start px-4 w-full">
+    <pre><code class="language-${lang}">${safeCode}</code></pre>
+  </div>`);
+    $('#chat-window').append(msg);
+    Prism.highlightAll();
+    scrollBottom();
+  }
+
+  $(document).ready(function () {
+    $('#chat-form').on('submit', function (e) {
+      e.preventDefault();
+      const prompt = $('#chat-input').val().trim();
+      if (!prompt) return;
+      addMsg(prompt, true);
+      $('#chat-input').val('').css('height', 'auto');
+      addMsg('Thinking...', false);
+
+      $.ajax({
+        url: '/inference',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ prompt }),
+        success: function (res) {
+          $('#chat-window').children().last().remove(); // remove Thinking...
+
+          if (res.status === 'success') {
+            // Check for ```lang code``` block
+            const match = res.result.match(/```(\w+)?\n([\s\S]*?)```/);
+            if (match) {
+              const lang = match[1] || 'plaintext';
+              const code = match[2];
+              addCode(code, lang);
+            } else {
+              addMsg(res.result, false);
+            }
+          } else {
+            addMsg(`❗ ${res.result}`, false);
+          }
+        },
+        error: function () {
+          addMsg('❗ Network error', false);
+        }
+      });
     });
-    const { output: result } = await res.json();
 
-    // hide spinner, show result
-    spinner.classList.add("hidden");
-    output.classList.remove("hidden");
-    output.textContent = result;
+    // Auto-grow textarea
+    $('#chat-input').on('input', function () {
+      $(this).css('height', 'auto').css('height', Math.min(this.scrollHeight, 200) + 'px');
+    });
+
+    // Submit on Enter, new line on Shift+Enter
+    $('#chat-input').on('keydown', function (e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        $('#chat-form').trigger('submit');
+      }
+    });
   });
 </script>
 {% endblock %}
