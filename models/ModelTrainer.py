@@ -140,16 +140,16 @@ class ModelTrainer:
         self,
         max_steps=20,
         per_device_train_batch_size=1,
-        gradient_accumulation_steps=1,
+        gradient_accumulation_steps=4,
         learning_rate=1e-4,
-        num_train_epochs=10,
+        num_train_epochs=3,
         logging_steps=2,
-        eval_steps=5,
+        eval_steps=50,
         warmup_steps=5,
-        save_steps=20,
+        save_steps=200,
         save_strategy="steps",
-        save_total_limit=1,
-        metric_for_best_model="eval_loss",
+        save_total_limit=2,
+        metric_for_best_model="loss",
         fp16=torch.cuda.is_available(),
         bf16=False,
         greater_is_better=False,
@@ -164,12 +164,6 @@ class ModelTrainer:
 
             # Detect existing checkpoint to resume
             base_cp_path = self.output_dir.parent
-            # existing = sorted(
-            #     [d for d in base_cp_path.iterdir() if d.is_dir() and d.name.startswith(self.model_dir.name)],
-            #     key=lambda p: p.stat().st_ctime,
-            #     reverse=True
-            # )
-            # last_checkpoint = existing[0] if existing else None
 
             last_checkpoint = None
             if os.path.isdir(self.output_dir.parent):
@@ -205,9 +199,15 @@ class ModelTrainer:
                 metric_for_best_model=metric_for_best_model,
                 fp16=fp16,
                 bf16=bf16,
+                warmup_ratio = 0.03,
                 greater_is_better=greater_is_better,
                 optim=optim,
                 report_to=report_to,
+                gradient_checkpointing=True,
+                ddp_find_unused_parameters =False,
+                dataloader_num_workers=2,
+                group_by_length=True,
+                weight_decay=0.01,
                 logging_dir=str(logging_dir or self.output_dir / "logs")
             )
 

@@ -7,7 +7,7 @@ bp_infer = Blueprint("infer", __name__)
 
 # Model instance should ideally be loaded once (singleton-like behavior)
 model = None
-log = AIEverLog()
+
 
 
 def load_model():
@@ -30,6 +30,7 @@ CHECKPOINTS = [
 @bp_infer.route("/inference", methods=["GET", "POST"])
 def infer():
     load_model()
+    log = AIEverLog()
 
     if request.method == "POST":
         data = request.get_json() or {}
@@ -43,12 +44,13 @@ def infer():
         try:
             result = model.generate_response(
                 prompt=prompt,
-                max_new_tokens=int(data.get("max_new_tokens", 700)),
-                temperature=float(data.get("temperature", 0.2)),
+                max_new_tokens=int(data.get("max_new_tokens", 1000)),
+                temperature=float(data.get("temperature", 0.1)),
                 top_p=float(data.get("top_p", 0.95)),
                 repetition_penalty=float(data.get("repetition_penalty", 1.2)),
                 no_repeat_ngram_size=int(data.get("no_repeat_ngram_size", 3)),
-                num_beams=int(data.get("num_beams", 1)),
+                num_beams=int(data.get("num_beams", 4)),
+                do_sample=False
             )
             return jsonify(status="success", result=result)
         except Exception as e:

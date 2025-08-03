@@ -1,68 +1,74 @@
 {% extends "base.html" %}
 {% block content %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-php.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+
 <style>
-  /* hide all scrollbars */
-  .no-scrollbar::-webkit-scrollbar { display: none; }
-  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-  
-  /* DeepSeek-like styles */
-  .deepseek-bg {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .chat-bg {
     background-color: #f7f7f8;
   }
+
   .user-bubble {
-    background-color: #f0f4ff;
+    background-color: #e0eaff;
     border-radius: 18px 18px 0 18px;
-  color: #1a1a1a;
+    color: #1a1a1a;
+    white-space: pre-wrap;
   }
+
   .ai-bubble {
     background-color: #ffffff;
     border-radius: 18px 18px 18px 0;
     color: #1a1a1a;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    white-space: pre-wrap;
   }
-  .send-button {
-    background-color: #1e6bff;
-    transition: all 0.2s;
-  }
-  .send-button:hover {
-    background-color: #1a5ee8;
-  }
-  .sidebar-item-active {
-    background-color: #f0f4ff;
-    color: #1e6bff;
+
+  pre {
+    background: #1e1e1e;
+    color: #fff;
+    border-radius: 8px;
+    padding: 12px;
+    overflow-x: auto;
+    font-size: 14px;
   }
 </style>
 
 <div class="flex h-screen bg-white">
-  <!-- ▷ Sidebar -->
+  <!-- Sidebar -->
   <aside class="w-64 bg-white border-r border-gray-200 flex flex-col">
-    <div class="px-4 py-5 border-b border-gray-200">
-      <h2 class="font-bold text-xl text-gray-800 flex items-center">
-        <svg class="w-6 h-6 mr-2 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2L4 7v10l8 5 8-5V7l-8-5z"></path>
-        </svg>
-        DeepSeek
-      </h2>
+    <div class="px-4 py-4 border-b border-gray-200 flex items-center justify-center">
+      <svg class="w-7 h-7 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 0L24 6.928v13.856L12 27.712 0 20.784V6.928z" />
+      </svg>
     </div>
     <button
-      class="mx-3 mt-2 flex items-center justify-center gap-2 px-3 py-2.5 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition-all"
-    >
-      <span class="text-lg">+</span>
-      <span>New chat</span>
+      class="mx-3 mt-2 flex items-center justify-center gap-2 px-3 py-2.5 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition-all">
+      <span class="text-lg">+</span><span>New Chat</span>
     </button>
     <nav class="flex-1 mt-2 overflow-y-auto no-scrollbar px-2">
       <div class="text-xs font-medium text-gray-500 px-3 py-2">Recent chats</div>
       <ul>
         {% for cp in checkpoints %}
         <li class="mb-1">
-          <a href="?session={{ cp.id }}"
-             class="block px-3 py-2.5 text-sm rounded-lg hover:bg-gray-50 transition-colors
-               {% if request.args.get('session') == cp.id %}
-                 sidebar-item-active font-medium
-               {% else %}
-                 text-gray-700
-               {% endif %}
-             ">
+          <a href="?session={{ cp.id }}" class="block px-3 py-2.5 text-sm rounded-lg hover:bg-gray-50 transition-colors
+             {% if request.args.get('session') == cp.id %}
+               sidebar-item-active font-medium
+             {% else %}
+               text-gray-700
+             {% endif %}">
             {{ cp.title }}
           </a>
         </li>
@@ -70,130 +76,122 @@
       </ul>
     </nav>
     <div class="p-3 border-t border-gray-200">
-      <div class="text-xs text-gray-500 mb-2 px-2">Settings & Account</div>
-      <a href="#" class="flex items-center gap-2 px-2 py-1.5 text-sm rounded-lg hover:bg-gray-50">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-        </svg>
-        Settings
-      </a>
+      <a href="#" class="flex items-center gap-2 px-2 py-1.5 text-sm rounded-lg hover:bg-gray-50">⚙️ Settings</a>
     </div>
   </aside>
 
-  <!-- ▷ Chat Panel -->
+  <!-- Chat Panel -->
   <div class="flex-1 flex flex-col h-full">
-    <!-- header -->
-    <header class="h-16 flex items-center px-6 bg-white border-b border-gray-200">
-      <h1 class="text-lg font-medium text-gray-800">{{ current_chat_title or "New Chat" }}</h1>
+    <header class="h-12 flex items-center px-6 bg-white border-b border-gray-200">
+      <h1 class="text-base font-medium text-gray-800">{{ current_chat_title or "New Chat" }}</h1>
     </header>
 
-    <!-- messages -->
-    <main id="chat-window"
-          class="flex-1 px-4 py-6 deepseek-bg space-y-6 overflow-y-auto no-scrollbar">
-      <div class="text-center text-gray-400 mt-8 italic">
-        Start the conversation below…
-      </div>
+    <!-- Messages -->
+    <main id="chat-window" class="flex-1 px-4 py-6 chat-bg space-y-6 overflow-y-auto no-scrollbar">
+      <div class="text-center text-gray-400 mt-8 italic">Start the conversation below…</div>
     </main>
 
-    <!-- input -->
+    <!-- Input -->
     <div class="bg-white border-t border-gray-200 px-4 py-4">
       <form id="chat-form" class="max-w-4xl mx-auto">
         <div class="relative flex items-center">
-          <textarea
-            id="chat-input"
-            rows="1"
+          <textarea id="chat-input" rows="1"
             class="flex-1 bg-gray-100 rounded-xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
-            placeholder="Message DeepSeek..."
-            style="min-height: 44px; max-height: 200px;"
-          ></textarea>
-          <button type="submit" class="absolute right-2 w-8 h-8 flex items-center justify-center
-                                     send-button text-white rounded-lg">
+            placeholder="Message..." style="min-height: 44px; max-height: 200px;"></textarea>
+          <button type="submit"
+            class="absolute right-2 w-8 h-8 flex items-center justify-center send-button text-white rounded-lg">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
             </svg>
           </button>
         </div>
-        <p class="text-xs text-gray-500 mt-2 text-center">DeepSeek can make mistakes. Consider checking important information.</p>
       </form>
     </div>
   </div>
 </div>
 
 <script>
-  const chatWin = document.getElementById('chat-window');
-  const form    = document.getElementById('chat-form');
-  const input   = document.getElementById('chat-input');
+  function scrollBottom() {
+    $('#chat-window').scrollTop($('#chat-window')[0].scrollHeight);
+  }
 
-  const scrollBottom = () => {
-    chatWin.scrollTo({
-      top: chatWin.scrollHeight,
-      behavior: 'smooth'
-    });
-  };
+  function escapeHTML(html) {
+    return $('<div>').text(html).html();
+  }
 
+  // Add normal text bubble
   function addMsg(text, me) {
-    // remove placeholder
-    chatWin.querySelector('div.italic')?.remove();
-
-    const wrap = document.createElement('div');
-    wrap.className = `flex ${me ? 'justify-end' : 'justify-start'} px-4`;
-
-    const bubble = document.createElement('div');
-    bubble.className = me ? 'user-bubble' : 'ai-bubble';
-    bubble.classList.add('px-4', 'py-3', 'max-w-[80%]', 'break-words');
-    
-    // Format message with line breaks
-    const formattedText = text.replace(/\n/g, '<br>');
-    bubble.innerHTML = formattedText;
-
-    wrap.appendChild(bubble);
-    chatWin.appendChild(wrap);
+    $('#chat-window').find('div.italic').remove();
+    const bubbleClass = me ? 'user-bubble' : 'ai-bubble';
+    const msg = $(`<div class="flex ${me ? 'justify-end' : 'justify-start'} px-4">
+    <div class="${bubbleClass} px-4 py-3 max-w-[80%] break-words">${escapeHTML(text).replace(/\n/g, '<br>')}</div>
+  </div>`);
+    $('#chat-window').append(msg);
     scrollBottom();
   }
 
-  form.addEventListener('submit', async e => {
-    e.preventDefault();
-    const prompt = input.value.trim();
-    if (!prompt) return;
-    addMsg(prompt, true);
-    input.value = '';
-    input.style.height = 'auto';
-    addMsg('<div class="flex justify-center"><div class="animate-pulse">Thinking...</div></div>', false);
+  // Add code bubble
+  function addCode(code, lang) {
+    $('#chat-window').find('div.italic').remove();
+    const safeCode = escapeHTML(code);
+    const msg = $(`<div class="flex justify-start px-4 w-full">
+    <pre><code class="language-${lang}">${safeCode}</code></pre>
+  </div>`);
+    $('#chat-window').append(msg);
+    Prism.highlightAll();
+    scrollBottom();
+  }
 
-    try {
-      const res = await fetch('/inference', {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ prompt })
-      });
-      const { status, result } = await res.json();
-      
-      // replace loading message
-      const lastMsg = chatWin.lastElementChild;
-      if (lastMsg) {
-        const bubble = lastMsg.querySelector('div');
-        if (bubble) {
-          bubble.className = 'ai-bubble px-4 py-3 max-w-[80%] break-words';
-          bubble.innerHTML = status === 'success' ? result : `❗ ${result}`;
-        }
-      }
-    } catch {
-      addMsg('❗ Network error', false);
-    }
-  });
-
-  // auto-grow textarea
-  input.addEventListener('input', () => {
-    input.style.height = 'auto';
-    input.style.height = Math.min(input.scrollHeight, 200) + 'px';
-  });
-  
-  // allow Shift+Enter for new line, Enter to submit
-  input.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+  $(document).ready(function () {
+    $('#chat-form').on('submit', function (e) {
       e.preventDefault();
-      form.dispatchEvent(new Event('submit'));
-    }
+      const prompt = $('#chat-input').val().trim();
+      if (!prompt) return;
+      addMsg(prompt, true);
+      $('#chat-input').val('').css('height', 'auto');
+      addMsg('Thinking...', false);
+
+      $.ajax({
+        url: '/inference',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ prompt }),
+        success: function (res) {
+          $('#chat-window').children().last().remove(); // remove Thinking...
+
+          if (res.status === 'success') {
+            // Check for ```lang code``` block
+            const match = res.result.match(/```(\w+)?\n([\s\S]*?)```/);
+            if (match) {
+              const lang = match[1] || 'plaintext';
+              const code = match[2];
+              addCode(code, lang);
+            } else {
+              addMsg(res.result, false);
+            }
+          } else {
+            addMsg(`❗ ${res.result}`, false);
+          }
+        },
+        error: function () {
+          addMsg('❗ Network error', false);
+        }
+      });
+    });
+
+    // Auto-grow textarea
+    $('#chat-input').on('input', function () {
+      $(this).css('height', 'auto').css('height', Math.min(this.scrollHeight, 200) + 'px');
+    });
+
+    // Submit on Enter, new line on Shift+Enter
+    $('#chat-input').on('keydown', function (e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        $('#chat-form').trigger('submit');
+      }
+    });
   });
 </script>
 {% endblock %}

@@ -7,7 +7,7 @@ from sql.CheckpointTrackMaster import CheckpointTrackMaster
 bp_train = Blueprint("train", __name__)
 training_logs = []  # In-memory training logs
 
-def run_training(isSQL=False,max_steps=20,per_device_train_batch_size=1,gradient_accumulation_steps=1,learning_rate=1e-4,num_train_epochs=10,logging_steps=2,eval_steps=5,warmup_steps=5,save_steps=20,save_strategy="steps",save_total_limit=1,metric_for_best_model="eval_loss",fp16=True,bf16=False,greater_is_better=False,optim="adamw_torch",report_to=[],logging_dir=None):
+def run_training(isSQL=False,max_steps=20,per_device_train_batch_size=1,gradient_accumulation_steps=1,learning_rate=1e-4,num_train_epochs=10,logging_steps=2,eval_steps=5,warmup_steps=5,save_steps=20,save_strategy="steps",save_total_limit=1,metric_for_best_model="loss",fp16=True,bf16=False,greater_is_better=False,optim="adamw_torch",report_to=[],logging_dir=None):
     global training_logs
     training_logs = []
 
@@ -40,16 +40,16 @@ def start_training():
         return jsonify(error="No training parameters provided."), 400
     max = data.get("max_steps", 20)
     per_device_train_batch_size = data.get("per_device_train_batch_size", 1)
-    gradient_accumulation_steps = data.get("gradient_accumulation_steps", 1)
+    gradient_accumulation_steps = data.get("gradient_accumulation_steps", 4)
     learning_rate = data.get("learning_rate", 1e-4)
-    num_train_epochs = data.get("num_train_epochs", 10)
-    logging_steps = data.get("logging_steps", 2)
-    eval_steps = data.get("eval_steps", 5)
+    num_train_epochs = data.get("num_train_epochs", 3)
+    logging_steps = data.get("logging_steps", 5)
+    eval_steps = data.get("eval_steps", 50)
     warmup_steps = data.get("warmup_steps", 5)
-    save_steps = data.get("save_steps", 20)
+    save_steps = data.get("save_steps", 200)
     save_strategy = data.get("save_strategy", "steps")
-    save_total_limit = data.get("save_total_limit", 1)
-    metric_for_best_model = data.get("metric_for_best_model", "eval_loss")
+    save_total_limit = data.get("save_total_limit", 2)
+    metric_for_best_model = data.get("metric_for_best_model", "loss")
     fp16 = data.get("fp16", True)
     bf16 = data.get("bf16", False)
     greater_is_better = data.get("greater_is_better", False)

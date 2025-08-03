@@ -31,8 +31,9 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 logger.info(f"Using device: {device}")
 
 # ── Tokenizer ───────────────────────────────────────────
-tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR, use_fast=False)
+tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR, use_fast=True)
 tokenizer.pad_token = tokenizer.eos_token
+tokenizer.padding_side = "right"
 
 # ── Load & Prep Model ───────────────────────────────────
 logger.info("Loading base model in 4‑bit…")
@@ -46,7 +47,7 @@ base_model = prepare_model_for_kbit_training(base_model)
 lora_cfg = LoraConfig(
     r=8, lora_alpha=16,
     target_modules=["q_proj","v_proj","k_proj","o_proj"],
-    lora_dropout=0.1,
+    lora_dropout=0.05,
     bias="none", task_type=TaskType.CAUSAL_LM
 )
 model = get_peft_model(base_model, lora_cfg)
@@ -61,22 +62,30 @@ train_ds = splits["train"]
 eval_ds  = splits["test"]
 
 def tokenize_fn(batch):
-    toks = tokenizer(batch["text"], truncation=True,
-                     padding="longest", max_length=512)
+    toks = tokenizer(
+        batch["text"], 
+        truncation=True,
+        padding="max_length",
+        max_length=1024
+    )
     input_ids = toks["input_ids"]
     labels = [
         [tok if tok != tokenizer.pad_token_id else -100 for tok in seq]
         for seq in input_ids
     ]
-    return {"input_ids": input_ids,
-            "attention_mask": toks["attention_mask"],
-            "labels": labels}
+    return {
+        "input_ids": input_ids,
+        "attention_mask": toks["attention_mask"],
+        "labels": labels
+        }
 
 train_ds = train_ds.map(tokenize_fn, batched=True, remove_columns=["text"])
 eval_ds  = eval_ds.map (tokenize_fn, batched=True, remove_columns=["text"])
 
 data_collator = DataCollatorForLanguageModeling(
-    tokenizer, mlm=False, pad_to_multiple_of=8
+    tokenizer,
+    mlm=False, 
+    pad_to_multiple_of=8
 )
 
 # ── Metrics ─────────────────────────────────────────────
@@ -86,7 +95,11 @@ def compute_metrics(eval_preds):
     shift_labels = labels[..., 1:].reshape(-1)
     loss_fct = torch.nn.CrossEntropyLoss(ignore_index=-100)
     loss = loss_fct(shift_logits, shift_labels)
-    return {"perplexity": math.exp(loss.item())}
+    try:
+        perplexity = math.exp(loss.item())
+    except OverflowError:
+        perplexity = float("inf")
+    return {"perplexity": perplexity}
 
 # ── TrainingArgs ────────────────────────────────────────
 # training_args = TrainingArguments(
@@ -135,16 +148,16 @@ def compute_metrics(eval_preds):
 training_args = TrainingArguments(
     output_dir=OUTPUT_DIR,
     per_device_train_batch_size=1,
-    gradient_accumulation_steps=1,
-    max_steps = 20,
-    learning_rate=1e-4,
-    num_train_epochs=10,                      # Increased for small dataset
+    gradient_accumulation_steps=4,
+    learning_rate=2e-4,
+    num_train_epochs=3,                      # Increased for small dataset
     logging_steps=2,
-    eval_steps=5,
+    eval_steps=50,
     warmup_steps=5,
-    save_steps=20,
+    warmup_ratio=0.03,
+    save_steps=200,
     save_strategy="steps",
-    save_total_limit=1,
+    save_total_limit=2,
     metric_for_best_model="eval_loss",
     fp16=torch.cuda.is_available(),
     bf16=False,
@@ -182,3 +195,4 @@ trainer.train(resume_from_checkpoint=last_checkpoint)
 # ── Save Final Model ────────────────────────────────────
 trainer.save_model(OUTPUT_DIR)
 tokenizer.save_pretrained(OUTPUT_DIR)
+model.save_pretrained(os.path.join(OUTPUT_DIR, "lora_adapter"))
