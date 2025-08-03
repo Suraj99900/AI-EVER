@@ -110,7 +110,7 @@ def main():
     args = p.parse_args()
 
     # locate latest if not given
-    base = os.path.join(os.path.dirname(__file__), '..', 'model', 'checkpoints')
+    base = os.path.join(os.path.dirname(__file__), '..', 'LLMModels', 'checkpoints')
     if args.model_dir:
         model_dir = args.model_dir
     else:
