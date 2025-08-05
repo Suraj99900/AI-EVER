@@ -16,7 +16,7 @@ class CodeExtractor:
 
         self.out_path = Path(__file__).resolve().parent / "../data/processed/train_data.jsonl"
         self.max_size_bytes = max_size_bytes
-        self.skip_dirs = {"vendor", ".git", ".svn", ".hg", "__pycache__"}
+        self.skip_dirs = {"vendor", ".git", ".svn", ".hg", "__pycache__,node_modules", "dist", "build"}
         self.skip_exts = {
             '.png', '.jpg', '.jpeg', '.gif', '.bmp', '.exe', '.dll',
             '.so', '.bin', '.zip', '.tar', '.gz', '.rar', '.7z', '.pdf',

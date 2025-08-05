@@ -20,11 +20,19 @@ class CheckpointTrackMaster(BaseDB):
 
     def get_all_checkpoints(self):
         try:
-            self.cursor.execute("SELECT * FROM checkpoint_track_master WHERE deleted = 0")
+            self.cursor.execute("SELECT * FROM checkpoint_track_master WHERE deleted = 0 order by id desc")
             return self.cursor.fetchall()
         except sqlite3.Error as e:
             print(f"[❌ ERROR] Failed to fetch checkpoints: {e}")
             return []
+    
+    def get_checkpoint_by_id(self, checkpoint_id):
+        try:
+            self.cursor.execute("SELECT * FROM checkpoint_track_master WHERE id = ? AND deleted = 0", (checkpoint_id,))
+            return self.cursor.fetchone()
+        except sqlite3.Error as e:
+            print(f"[❌ ERROR] Failed to fetch checkpoint {checkpoint_id}: {e}")
+            return None
 
     def update_checkpoint(self, checkpoint_id, **kwargs):
         try:
