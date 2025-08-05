@@ -135,6 +135,16 @@ class ModelTrainer:
         except Exception as e:
             self.logger.error("Metric computation failed: %s", e)
             return {}
+    def find_latest_checkpoint(self,base_dir):
+        latest_ckpt = None
+        latest_time = 0
+        for run_dir in Path(base_dir).glob(f"{self.model_dir.name}-lora-*"):
+            for ckpt_dir in run_dir.glob("checkpoint-*"):
+                mtime = ckpt_dir.stat().st_mtime
+                if mtime > latest_time:
+                    latest_time = mtime
+                    latest_ckpt = ckpt_dir
+        return str(latest_ckpt) if latest_ckpt else None
 
     def train(
         self,
@@ -165,16 +175,11 @@ class ModelTrainer:
             # Detect existing checkpoint to resume
             base_cp_path = self.output_dir.parent
 
-            last_checkpoint = None
-            if os.path.isdir(self.output_dir.parent):
-                checkpoints = [os.path.join(self.output_dir.parent, d) for d in os.listdir(self.output_dir.parent)
-                            if d.startswith("checkpoint")]
-                if checkpoints:
-                    last_checkpoint = max(checkpoints, key=os.path.getctime)
-                    self.logger.info(f"Resuming training from last checkpoint: {last_checkpoint}")
-                else:
-                    self.logger.info("No checkpoint found. Starting fresh training.")
-
+            last_checkpoint = self.find_latest_checkpoint(self.output_dir.parent)
+            if last_checkpoint:
+                self.logger.info(f"Resuming training from last checkpoint: {last_checkpoint}")
+            else:
+                self.logger.info("No checkpoint found. Starting fresh training.")
             # Create fresh run directory
             self.output_dir.mkdir(parents=True, exist_ok=True)
             self.logger.info("Output directory: %s", self.output_dir)
@@ -233,6 +238,13 @@ class ModelTrainer:
             # Start training with optional resume
             resume_arg = str(last_checkpoint) if last_checkpoint else None
             self.logger.info("Starting training loop with resume: %s", resume_arg)
+            if resume_arg:
+                opt_file = Path(resume_arg) / "optimizer.pt"
+                sched_file = Path(resume_arg) / "scheduler.pt"
+                if opt_file.exists():
+                    opt_file.unlink()
+                if sched_file.exists():
+                    sched_file.unlink()
             trainer.train(resume_from_checkpoint=resume_arg)
             trainer.save_model(str(self.output_dir))
             self.tokenizer.save_pretrained(str(self.output_dir))

@@ -59,19 +59,16 @@
       <span class="text-lg">+</span><span>New Chat</span>
     </button>
     <nav class="flex-1 mt-2 overflow-y-auto no-scrollbar px-2">
-      <div class="text-xs font-medium text-gray-500 px-3 py-2">Recent chats</div>
+      <div class="text-xs font-medium text-gray-500 px-3 py-2">Recent checkpoints</div>
       <ul>
         {% for cp in checkpoints %}
-        <li class="mb-1">
-          <a href="?session={{ cp.id }}" class="block px-3 py-2.5 text-sm rounded-lg hover:bg-gray-50 transition-colors
-             {% if request.args.get('session') == cp.id %}
-               sidebar-item-active font-medium
-             {% else %}
-               text-gray-700
-             {% endif %}">
-            {{ cp.title }}
+        <div class="flex justify-between items-center px-3 py-2.5 hover:bg-gray-100 rounded-lg">
+          <a href="?session={{ cp[0] }}" class="text-sm text-gray-700 hover:underline">
+            {{ cp[1] }}
           </a>
-        </li>
+          <button onclick="renameCheckpoint('{{ cp[0] }}', '{{ cp[1] }}')"
+            class="text-xs text-blue-500 hover:text-blue-700">Rename</button>
+        </div>
         {% endfor %}
       </ul>
     </nav>
@@ -112,6 +109,25 @@
 </div>
 
 <script>
+
+  function renameCheckpoint(id, oldName) {
+    const newName = prompt("Enter new name for checkpoint:", oldName);
+    if (newName && newName.trim() !== "" && newName !== oldName) {
+      fetch(`/rename_checkpoint/${id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ new_name: newName })
+      }).then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            location.reload();
+          } else {
+            alert("Rename failed: " + data.error);
+          }
+        });
+    }
+  }
+  
   function scrollBottom() {
     $('#chat-window').scrollTop($('#chat-window')[0].scrollHeight);
   }

@@ -40,7 +40,7 @@ class ModelInference:
         return 0
 
     # ---------------- Dynamic Token Handling ---------------- #
-    def dynamic_max_new_tokens(self, prompt, model_max=2048, min_output=128, max_output=2024):
+    def dynamic_max_new_tokens(self, prompt, model_max=1048, min_output=128, max_output=2024):
         """Adjust max_new_tokens dynamically based on prompt size and VRAM."""
         prompt_tokens = len(self.tokenizer.encode(prompt))
         print(f"[Dynamic Tokens] Prompt length: {prompt_tokens} tokens")
@@ -116,7 +116,7 @@ class ModelInference:
             # Tokenize input
             inputs = self.tokenizer(
                 prompt, return_tensors="pt", padding=True, truncation=True,
-                max_length=2048 - max_new_tokens
+                max_length=1048 - max_new_tokens
             ).to(self.device)
 
             # Generation settings
