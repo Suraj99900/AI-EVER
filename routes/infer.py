@@ -1,6 +1,7 @@
 import os
 from flask import Blueprint, request, jsonify, render_template, current_app
 from models.ModelInference import ModelInference
+from sql.CheckpointTrackMaster import CheckpointTrackMaster
 from sql.AIEverLog import AIEverLog
 
 bp_infer = Blueprint("infer", __name__)
@@ -19,18 +20,31 @@ def load_model():
     except Exception as e:
         log.log_error("load_model", str(e))
 
+def fetch_checkpoints():
+    """Fetch available checkpoints from the model DB."""
+    CHECKPOINTS = []
+    try:
+        # Assuming a function to fetch checkpoints from the database
+        CHECKPOINTS = CheckpointTrackMaster().get_all_checkpoints()
 
-CHECKPOINTS = [
-    {"id": "2025-07-01", "title": "30 Days"},
-    {"id": "2025-05-23", "title": "Optimizing Training Script"},
-    {"id": "2025-03-29", "title": "Video Player UI"},
-]
+    except Exception as e:
+        log.log_error("fetch_checkpoints", str(e))
+    return CHECKPOINTS
+
+
+# CHECKPOINTS = [
+#     {"id": "2025-07-01", "title": "30 Days"},
+#     {"id": "2025-05-23", "title": "Optimizing Training Script"},
+#     {"id": "2025-03-29", "title": "Video Player UI"},
+# ]
 
 
 @bp_infer.route("/inference", methods=["GET", "POST"])
 def infer():
     load_model()
     log = AIEverLog()
+    CHECKPOINTS = fetch_checkpoints()
+    print(f"Available checkpoints: {CHECKPOINTS}")
 
     if request.method == "POST":
         data = request.get_json() or {}
@@ -56,6 +70,35 @@ def infer():
         except Exception as e:
             log.log_error("inference", str(e))
             return jsonify(status="error", message=str(e)), 500
+    formatted_checkpoints = []
+    seen = set()
+    for cp in CHECKPOINTS:
+        folder_name = os.path.basename(cp[2])
+        if folder_name not in seen:
+            seen.add(folder_name)
+            formatted_checkpoints.append((cp[0], folder_name, cp[2]))
 
     # on GET, render the chat page and pass your saved checkpoints
-    return render_template("inference.html", checkpoints=CHECKPOINTS)
+    return render_template("inference.html", checkpoints=formatted_checkpoints)
+
+
+@bp_infer.route("/rename_checkpoint/<int:cp_id>", methods=["POST"])
+def rename_checkpoint(cp_id):
+    data = request.get_json()
+    new_name = data.get("new_name", "").strip()
+    if not new_name:
+        return jsonify({"success": False, "error": "Invalid name"})
+
+    try:
+        cp = CheckpointTrackMaster().get_checkpoint_by_id(cp_id)  # your DB fetch
+        if not cp:
+            return jsonify({"success": False, "error": "Checkpoint not found"})
+
+        old_path = cp[2]
+        new_path = os.path.join(os.path.dirname(old_path), new_name)
+        os.rename(old_path, new_path)
+
+        CheckpointTrackMaster().update_checkpoint(cp_id, new_path)  # update DB
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
