@@ -1,56 +1,194 @@
 {% extends "base.html" %}
 {% block content %}
-  <!-- Hero -->
-  <section class="py-16 md:py-24 px-6">
-    <div
-      class="max-w-4xl mx-auto bg-gradient-to-br from-purple-400 via-pink-300 to-indigo-300 rounded-2xl p-10 shadow-md text-center">
-      <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">AI Ever</h1>
-      <p class="text-white/90 text-lg mb-6">
-        Train AI locally on your code and SQL schema — get fast, private, context‑aware assistance for smarter development.
-      </p>
-      <div class="flex justify-center space-x-4">
-        <a href="/extract#code"
-           class="bg-black text-white px-6 py-2 rounded-full font-semibold shadow hover:bg-gray-900">
-          Extract
-        </a>
-        <a href="/extract#train"
-           class="bg-white text-black px-6 py-2 rounded-full font-semibold shadow hover:bg-gray-100">
-          Start Training
-        </a>
-      </div>
-    </div>
-  </section>
+<!-- HERO -->
+<section class="hero-bg relative rounded-2xl p-3 overflow-hidden" aria-label="Hero">
+  <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 items-center gap-6 py-16">
+    <!-- LEFT: hero copy -->
+    <div class="lg:col-span-6">
+      <div class="max-w-xl">
+        <!-- Feature tags -->
+        <div class="inline-flex items-center gap-3 mb-4">
+          <span class="px-3 py-1 rounded-full text-sm font-semibold bg-white/10 text-white">Private · On Your
+            Machine</span>
+          <span class="px-3 py-1 rounded-full text-sm font-semibold bg-white/5 text-white">Custom LLM Training</span>
+        </div>
 
-  <!-- Features -->
-  <section id="features" class="py-20 px-6 bg-white">
-    <div class="max-w-6xl mx-auto">
-      <h2 class="text-3xl font-bold text-center mb-12">Features</h2>
-      <div class="grid md:grid-cols-3 gap-6">
-        <div
-          class="bg-gray-50 rounded-xl border border-gray-200 p-6 text-center shadow-sm hover:shadow-md transition">
-          <div class="text-3xl mb-2">📂</div>
-          <h3 class="font-semibold text-lg mb-1">Extract</h3>
-          <p class="text-sm text-gray-600">
-            Convert your codebase and SQL schema into AI‑ready prompts in seconds.
-          </p>
+        <!-- Hero heading -->
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight text-white drop-shadow-md">
+          Your Local AI Copilot.
+        </h1>
+
+        <!-- Hero description -->
+        <p class="mt-4 text-lg text-white/90 max-w-xl">
+          A unified, developer-first AI platform to extract and understand code,
+          train on your custom datasets, fine-tune powerful models, and run
+          private, lightning-fast inference — all without sending data to the cloud.
+        </p>
+
+        <!-- Buttons -->
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="/extract#code"
+            class="inline-flex items-center gap-3 px-5 py-3 rounded-full bg-white text-purple-700 font-semibold shadow hover:scale-[1.01] transition-transform">
+            <i class="fa-solid fa-file-code"></i> Extract & Analyze Code
+          </a>
+          <a href="/extract#train"
+            class="inline-flex items-center gap-3 px-5 py-3 rounded-full border border-white/20 text-white hover:bg-white/5 transition-colors">
+            <i class="fa-solid fa-robot"></i> Train Your Model
+          </a>
+          <a href="https://github.com/Suraj99900/AI-EVER" target="_blank"
+            class="inline-flex items-center gap-3 px-4 py-2 rounded-md bg-white/10 text-white hover:bg-white/20 transition-colors">
+            <i class="fa-brands fa-github"></i> View on GitHub
+          </a>
         </div>
-        <div
-          class="bg-gray-50 rounded-xl border border-gray-200 p-6 text-center shadow-sm hover:shadow-md transition">
-          <div class="text-3xl mb-2">⚙️</div>
-          <h3 class="font-semibold text-lg mb-1">Train</h3>
-          <p class="text-sm text-gray-600">
-            Fine‑tune models locally, safeguarding your private data.
-          </p>
-        </div>
-        <div
-          class="bg-gray-50 rounded-xl border border-gray-200 p-6 text-center shadow-sm hover:shadow-md transition">
-          <div class="text-3xl mb-2">🧪</div>
-          <h3 class="font-semibold text-lg mb-1">Inference</h3>
-          <p class="text-sm text-gray-600">
-            Once training’s done, run inference for instant, context‑aware code help.
-          </p>
+
+        <!-- Quick specs -->
+        <div class="mt-7 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm text-white/90">
+          <div class="p-3 rounded-lg bg-white/6">Models: StarCoder, CodeLLaMA</div>
+          <div class="p-3 rounded-lg bg-white/6">Training: LoRA, QLoRA, PEFT</div>
+          <div class="p-3 rounded-lg bg-white/6">Framework: Flask + Tailwind</div>
+          <div class="p-3 rounded-lg bg-white/6">Runs on: Local GPU (RTX 3050)</div>
         </div>
       </div>
     </div>
-  </section>
+
+
+    <!-- RIGHT: hero visuals (overlapping cards + foreground) -->
+    <div class="lg:col-span-6 relative flex justify-center lg:justify-end">
+
+      <!-- foreground big screenshot / laptop -->
+      <div class="relative w-full max-w-xl">
+        <img src="static/img/image1.png" alt="AI Ever UI" class="w-full rounded-2xl card-shadow">
+
+      </div>
+    </div>
+  </div>
+
+  <!-- subtle gradient overlay -->
+  <div class="absolute inset-0 -z-0"
+    style="background: linear-gradient(180deg, rgba(124,58,237,0.18), rgba(217,70,239,0.12)); filter: blur(24px); opacity:0.9;">
+  </div>
+</section>
+
+<!-- FEATURES / interactive panel (similar to your previous layout) -->
+<section class="mt-8">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="card-shadow p-6">
+      <h3 class="text-2xl font-semibold mb-3">Overview</h3>
+      <p class="text-slate-700">Scan repositories, extract files and DB schemas as .jsonl training examples, prepare
+        datasets, then run QLoRA/LoRA training with checkpoints and low-VRAM optimizations.</p>
+
+      <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+        <div class="rounded-lg bg-indigo-50 p-3">
+          <div class="font-semibold text-indigo-700">1. Extract</div>
+          <div class="text-gray-600 mt-1">Create instruction/response pairs from code.</div>
+        </div>
+        <div class="rounded-lg bg-purple-50 p-3">
+          <div class="font-semibold text-purple-600">2. Prepare</div>
+          <div class="text-gray-600 mt-1">Format dataset & metadata.</div>
+        </div>
+        <div class="rounded-lg bg-emerald-50 p-3">
+          <div class="font-semibold text-emerald-600">3. Train</div>
+          <div class="text-gray-600 mt-1">Run QLoRA/LoRA & save checkpoints.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- interactive right panel -->
+    <aside class="card-shadow p-4">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-xl font-semibold">Core features & details</h3>
+        <div class="text-sm text-slate-500">Click an item</div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div class="feature-list md:col-span-1">
+          <div class="feature-item active flex items-start gap-3 p-3 rounded-lg cursor-pointer" data-key="extract">
+            <div class="w-12 h-12 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center"><i
+                class="fa-solid fa-file-lines"></i></div>
+            <div>
+              <div class="font-semibold">Extract Code & Schema</div>
+              <div class="text-sm text-slate-500">Traverse repo, produce .jsonl</div>
+            </div>
+          </div>
+
+          <div class="feature-item flex items-start gap-3 p-3 rounded-lg cursor-pointer" data-key="training">
+            <div class="w-12 h-12 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center"><i
+                class="fa-solid fa-microchip"></i></div>
+            <div>
+              <div class="font-semibold">One-Click Training</div>
+              <div class="text-sm text-slate-500">QLoRA/LoRA workflows</div>
+            </div>
+          </div>
+
+          <div class="feature-item flex items-start gap-3 p-3 rounded-lg cursor-pointer" data-key="inference">
+            <div class="w-12 h-12 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center"><i
+                class="fa-solid fa-bolt"></i></div>
+            <div>
+              <div class="font-semibold">Smart Inference UI</div>
+              <div class="text-sm text-slate-500">Context-aware replies</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="md:col-span-2">
+          <div class="image-panel mb-4">
+            <img src="static/img/image.png" data-key="extract" class="active w-full rounded-md" alt="Extract">
+            <img src="/static/images/training.png" data-key="training" class="hidden w-full rounded-md" alt="Training">
+            <img src="/static/images/inference.png" data-key="inference" class="hidden w-full rounded-md"
+              alt="Inference">
+          </div>
+
+          <div id="detail-container" class="h-48 overflow-auto px-1">
+            <article id="extract" class="detail-item">
+              <h4 class="text-lg font-semibold mb-2">Extract Code & Schema — detailed steps</h4>
+              <ol class="list-decimal list-inside text-sm text-slate-700 space-y-2">
+                <li><strong>Upload or point</strong> to the project directory (local path or archive).</li>
+                <li><strong>Scan</strong> recursively and select valid code files (.py, .php, .js, .sql).</li>
+                <li><strong>Export</strong> results as newline-delimited JSON (.jsonl).</li>
+              </ol>
+            </article>
+
+            <article id="training" class="detail-item hidden">
+              <h4 class="text-lg font-semibold mb-2">One-Click Training (QLoRA / LoRA)</h4>
+              <p class="text-sm text-slate-700">Select dataset, base model, adapter method, and launch training.
+                Checkpoints and logs are available in UI.</p>
+            </article>
+
+            <article id="inference" class="detail-item hidden">
+              <h4 class="text-lg font-semibold mb-2">Smart Inference UI</h4>
+              <p class="text-sm text-slate-700">Interactive textbox, context-window injection, and copy/download
+                outputs.</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- JS to switch feature panels and images -->
+{% block scripts %}
+<script>
+  (function () {
+    const items = document.querySelectorAll('.feature-item');
+    const details = document.querySelectorAll('.detail-item');
+    const images = document.querySelectorAll('.image-panel img');
+
+    function setActive(key) {
+      items.forEach(i => i.classList.toggle('active', i.dataset.key === key));
+      details.forEach(d => d.classList.toggle('hidden', d.id !== key));
+      images.forEach(img => {
+        if (img.dataset.key === key) { img.classList.remove('hidden'); img.classList.add('active'); }
+        else { img.classList.add('hidden'); img.classList.remove('active'); }
+      });
+      const cont = document.getElementById('detail-container');
+      if (cont) cont.scrollTop = 0;
+    }
+
+    items.forEach(i => i.addEventListener('click', () => setActive(i.dataset.key)));
+    // ensure default
+    setActive('extract');
+  })();
+</script>
+{% endblock %}
 {% endblock %}
