@@ -30,7 +30,7 @@ class ModelTrainer:
             # Resolve model & data paths
             self.model_dir = Path(model_dir or base_folder / "../LLMModels/deepseek-coder-1.3b-base").resolve()
             self.code_data_path = Path(code_data_path or base_folder / "../data/processed/train_data.jsonl").resolve()
-            self.sql_data_path = Path(sql_data_path or base_folder / "../data/processed/train_sql_data.jsonl").resolve()
+            self.sql_data_path = Path(sql_data_path or base_folder / "../data/processed/train_sql.jsonl").resolve()
             self.data_path = self.sql_data_path if is_sql else self.code_data_path
 
             # Prepare output directory base
@@ -238,13 +238,18 @@ class ModelTrainer:
             # Start training with optional resume
             resume_arg = str(last_checkpoint) if last_checkpoint else None
             self.logger.info("Starting training loop with resume: %s", resume_arg)
+
             if resume_arg:
-                opt_file = Path(resume_arg) / "optimizer.pt"
-                sched_file = Path(resume_arg) / "scheduler.pt"
-                if opt_file.exists():
-                    opt_file.unlink()
-                if sched_file.exists():
-                    sched_file.unlink()
+                # Remove state so we restart training from step 0 but keep weights
+                for fname in ["optimizer.pt", "scheduler.pt", "trainer_state.json"]:
+                    fpath = Path(resume_arg) / fname
+                    if fpath.exists():
+                        fpath.unlink()
+                        self.logger.info(f"Removed {fname} to reset training state.")
+
+                # Pass None so Trainer won't expect the deleted files
+                resume_arg = None
+
             trainer.train(resume_from_checkpoint=resume_arg)
             trainer.save_model(str(self.output_dir))
             self.tokenizer.save_pretrained(str(self.output_dir))

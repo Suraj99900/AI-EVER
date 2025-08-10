@@ -1,14 +1,33 @@
+from math import log
 import os
-from flask import Blueprint, request, jsonify, render_template, current_app
+from flask import Blueprint, request, jsonify, render_template, current_app,Response, stream_with_context
+
 from models.ModelInference import ModelInference
 from sql.CheckpointTrackMaster import CheckpointTrackMaster
 from sql.AIEverLog import AIEverLog
+import logging
+from pathlib import Path
 
 bp_infer = Blueprint("infer", __name__)
 
 # Model instance should ideally be loaded once (singleton-like behavior)
 model = None
+log_dir = Path(__file__).parent.parent / "log"
+log_dir.mkdir(exist_ok=True)
+log_file = log_dir / "model_inference.log"
 
+# Lodding the model...
+logging.basicConfig(
+    filename=log_file,
+    filemode="a",
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    level=logging.INFO
+)
+# Also log to console
+console = logging.StreamHandler()
+console.setLevel(logging.INFO)
+console.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
+logging.getLogger().addHandler(console)
 
 
 def load_model():
@@ -18,7 +37,7 @@ def load_model():
             model = ModelInference()
             pass
     except Exception as e:
-        log.log_error("load_model", str(e))
+        logging.error("load_model", str(e))
 
 def fetch_checkpoints():
     """Fetch available checkpoints from the model DB."""
@@ -28,7 +47,7 @@ def fetch_checkpoints():
         CHECKPOINTS = CheckpointTrackMaster().get_all_checkpoints()
 
     except Exception as e:
-        log.log_error("fetch_checkpoints", str(e))
+        logging.error("fetch_checkpoints", str(e))
     return CHECKPOINTS
 
 
@@ -44,7 +63,6 @@ def infer():
     load_model()
     log = AIEverLog()
     CHECKPOINTS = fetch_checkpoints()
-    print(f"Available checkpoints: {CHECKPOINTS}")
 
     if request.method == "POST":
         data = request.get_json() or {}
@@ -54,21 +72,31 @@ def infer():
 
         # Making prompt properly in the template 
         prompt = '### Instruction:\n' + prompt + '\n### Response:'
-        print(f"Received prompt: {prompt}")
+        logging.info(f"Received prompt: {prompt}")
         try:
-            result = model.generate_response(
+            # result = model.generate_response(
+            #     prompt=prompt,
+            #     max_new_tokens=int(data.get("max_new_tokens", 1000)),
+            #     temperature=float(data.get("temperature", 0.1)),
+            #     top_p=float(data.get("top_p", 0.95)),
+            #     repetition_penalty=float(data.get("repetition_penalty", 1.2)),
+            #     no_repeat_ngram_size=int(data.get("no_repeat_ngram_size", 3)),
+            #     num_beams=int(data.get("num_beams", 4)),
+            #     do_sample=False
+            # )
+            result = model.generate_response_stream(
                 prompt=prompt,
                 max_new_tokens=int(data.get("max_new_tokens", 1000)),
-                temperature=float(data.get("temperature", 0.1)),
-                top_p=float(data.get("top_p", 0.95)),
-                repetition_penalty=float(data.get("repetition_penalty", 1.2)),
+                temperature=float(data.get("temperature", 0.2)),
+                top_p=float(data.get("top_p", 0.9)),
+                repetition_penalty=float(data.get("repetition_penalty", 1.1)),
                 no_repeat_ngram_size=int(data.get("no_repeat_ngram_size", 3)),
+                do_sample=False,
                 num_beams=int(data.get("num_beams", 4)),
-                do_sample=False
             )
             return jsonify(status="success", result=result)
         except Exception as e:
-            log.log_error("inference", str(e))
+            logging.error("inference", str(e))
             return jsonify(status="error", message=str(e)), 500
     formatted_checkpoints = []
     seen = set()
@@ -80,6 +108,40 @@ def infer():
 
     # on GET, render the chat page and pass your saved checkpoints
     return render_template("inference.html", checkpoints=formatted_checkpoints)
+
+@bp_infer.route("/stream_inference", methods=["POST"])
+def stream_inference():
+    load_model()
+    data = request.get_json() or {}
+    prompt = data.get("prompt", "").strip()
+
+    if not prompt:
+        return jsonify(status="error", message="Prompt is required"), 400
+
+    prompt = '### Instruction:\n' + prompt + '\n### Response:'
+    logging.info(f"Received streaming prompt: {prompt}")
+
+    try:
+        # Generator that yields tokens from the model streaming method
+        def generate_tokens():
+            for token in model.generate_response_stream(
+                prompt=prompt,
+                max_new_tokens=int(data.get("max_new_tokens", 1000)),
+                temperature=float(data.get("temperature", 0.1)),
+                top_p=float(data.get("top_p", 0.95)),
+                repetition_penalty=float(data.get("repetition_penalty", 1.1)),
+                no_repeat_ngram_size=int(data.get("no_repeat_ngram_size", 4)),
+                do_sample=False,
+                num_beams=int(data.get("num_beams", 1)),
+            ):
+                yield token
+
+        # Use Flask's streaming response, yielding tokens as text/event-stream or plain text chunks
+        return Response(stream_with_context(generate_tokens()), mimetype="text/plain")
+
+    except Exception as e:
+        logging.error("stream_inference", str(e))
+        return jsonify(status="error", message=str(e)), 500
 
 
 @bp_infer.route("/rename_checkpoint/<int:cp_id>", methods=["POST"])
