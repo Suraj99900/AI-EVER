@@ -1,6 +1,7 @@
 from math import log
 import os
 from flask import Blueprint, request, jsonify, render_template, current_app,Response, stream_with_context
+from transformers import pipeline
 
 from models.ModelInference import ModelInference
 from sql.CheckpointTrackMaster import CheckpointTrackMaster
@@ -30,14 +31,19 @@ console.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)
 logging.getLogger().addHandler(console)
 
 
+model_instance = None
+
 def load_model():
-    global model
-    try:
-        if not model:
-            model = ModelInference()
-            pass
-    except Exception as e:
-        logging.error("load_model", str(e))
+    global model_instance
+    if model_instance is None:
+        try:
+            logging.info("[Model Loader] Initializing ModelInference...")
+            model_instance = ModelInference()
+            logging.info("[Model Loader] Model loaded successfully")
+        except Exception as e:
+            logging.error(f"[Model Loader] Failed: {str(e)}")
+            raise
+    return model_instance
 
 def fetch_checkpoints():
     """Fetch available checkpoints from the model DB."""
@@ -124,7 +130,7 @@ def stream_inference():
     try:
         # Generator that yields tokens from the model streaming method
         def generate_tokens():
-            for token in model.generate_response_stream(
+            for token in model_instance.generate_response_stream(
                 prompt=prompt,
                 max_new_tokens=int(data.get("max_new_tokens", 1000)),
                 temperature=float(data.get("temperature", 0.1)),
@@ -164,3 +170,72 @@ def rename_checkpoint(cp_id):
         return jsonify({"success": True})
     except Exception as e:
         return jsonify({"success": False, "error": str(e)})
+
+
+@bp_infer.route("/complete", methods=["POST"])
+def complete():
+    """
+    Endpoint for VS Code / TabNine-like integrations.
+    Expects JSON: { "context": "...", "task": "completion|bug_fix|docstring", "stream": true/false }
+    """
+    try:
+        model_instance = load_model()
+
+        data = request.get_json() or {}
+        context = data.get("context", "").strip()
+        task = data.get("task", "completion")   # default: completion
+        stream = data.get("stream", False)
+
+        if not context:
+            return jsonify(status="error", message="Context is required"), 400
+
+        # ----- Prompt engineering -----
+        if task == "bug_fix":
+            prompt = f"### Buggy Code:\n{context}\n### Fixed Code:\n"
+        elif task == "docstring":
+            prompt = f"### Code:\n{context}\n### Add a detailed docstring:\n"
+        else:
+            prompt = context
+
+        logging.info(f"[Completion] Task={task}, Stream={stream}, Prompt length={len(prompt)}")
+
+        # ---------------- STREAMING MODE ---------------- #
+        if stream:
+            def generate_tokens():
+                try:
+                    for token in model_instance.generate_response_stream(
+                        prompt=prompt,
+                        max_new_tokens=int(data.get("max_new_tokens", 256)),
+                        temperature=float(data.get("temperature", 0.2)),
+                        top_p=float(data.get("top_p", 0.95)),
+                        repetition_penalty=float(data.get("repetition_penalty", 1.1)),
+                        no_repeat_ngram_size=int(data.get("no_repeat_ngram_size", 3)),
+                        do_sample=True,
+                        num_beams=int(data.get("num_beams", 1)),
+                    ):
+                        yield token
+                except Exception as e:
+                    logging.error(f"[Stream Error] {str(e)}")
+                    yield f"\n[Error] {str(e)}"
+
+            return Response(stream_with_context(generate_tokens()), mimetype="text/plain")
+
+        # ---------------- ONE-SHOT MODE ---------------- #
+        else:
+            completion = model_instance.generate_response(
+                prompt=prompt,
+                max_new_tokens=int(data.get("max_new_tokens", 256)),
+                temperature=float(data.get("temperature", 0.2)),
+                top_p=float(data.get("top_p", 0.95)),
+                repetition_penalty=float(data.get("repetition_penalty", 1.1)),
+                no_repeat_ngram_size=int(data.get("no_repeat_ngram_size", 3)),
+                do_sample=True,
+                num_beams=int(data.get("num_beams", 1)),
+            )
+            logging.info(f"[Completion] Generated {len(completion)} tokens")
+            logging.info(f"[Completion] Content: {completion}")
+            return jsonify(status="success", completion=completion)
+
+    except Exception as e:
+        logging.error(f"[Error in /complete] {str(e)}", exc_info=True)
+        return jsonify(status="error", message=str(e)), 500
