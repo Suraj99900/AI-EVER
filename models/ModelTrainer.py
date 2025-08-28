@@ -4,7 +4,6 @@ import os
 import math
 import torch
 import datetime
-import logging
 from pathlib import Path
 from datasets import load_dataset
 from transformers import (
@@ -12,8 +11,12 @@ from transformers import (
     TrainingArguments, Trainer, DataCollatorForLanguageModeling
 )
 from peft import LoraConfig, get_peft_model, TaskType, prepare_model_for_kbit_training
+from models.log_manager import LogManager
 from sql.CheckpointTrackMaster import CheckpointTrackMaster
 from sql.AIEverLog import AIEverLog
+
+logmgr = LogManager()
+logger = logmgr.setup_logger("model_trainer")
 
 
 class ModelTrainer:
@@ -27,39 +30,40 @@ class ModelTrainer:
     ):
         try:
             base_folder = Path(__file__).parent
-            # Resolve model & data paths
+
+            # Paths
             self.model_dir = Path(model_dir or base_folder / "../LLMModels/deepseek-coder-1.3b-base").resolve()
             self.code_data_path = Path(code_data_path or base_folder / "../data/processed/train_data.jsonl").resolve()
             self.sql_data_path = Path(sql_data_path or base_folder / "../data/processed/train_sql.jsonl").resolve()
             self.data_path = self.sql_data_path if is_sql else self.code_data_path
 
-            # Prepare output directory base
+            # Output dir
             self.timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
             out_base = Path(base_output_path) if base_output_path else base_folder / "../LLMModels/checkpoints"
             self.output_dir = (out_base / f"{self.model_dir.name}-lora-{self.timestamp}").resolve()
             self.output_dir.mkdir(parents=True, exist_ok=True)
 
-            # Setup logging
-            logging.basicConfig(
-                level=logging.INFO,
-                format="%(asctime)s %(levelname)s %(name)s - %(message)s"
-            )
-            self.logger = logging.getLogger(__name__)
-
-            # Database interfaces
+            # DB interfaces
             self.checkpoint_db = CheckpointTrackMaster()
             self.log_db = AIEverLog()
 
             # Device
             self.device = "cuda" if torch.cuda.is_available() else "cpu"
-            self.logger.info("Using device: %s", self.device)
+            logger.info("Using device: %s", self.device)
+            self.log_db.add_log("init", f"Initialized ModelTrainer with device={self.device}", None)
+
         except Exception as e:
-            logging.error("Initialization failed: %s", e)
+            logger.error("Initialization failed: %s", e)
             raise
+
+    def log_step(self, event_type: str, message: str, checkpoint_id=None):
+        """ Helper for consistent logging to file + DB """
+        logger.info(message)
+        self.log_db.add_log(event_type, message, checkpoint_id)
 
     def load_model_and_tokenizer(self):
         try:
-            self.logger.info("Loading model and tokenizer from %s...", self.model_dir)
+            self.log_step("load", f"Loading model and tokenizer from {self.model_dir}...")
             bnb_config = BitsAndBytesConfig(
                 load_in_4bit=True,
                 bnb_4bit_quant_type="nf4",
@@ -99,13 +103,15 @@ class ModelTrainer:
             self.model.gradient_checkpointing_enable()
             self.model.config.use_cache = False
             self.model.to(self.device)
+
+            self.log_step("load", "Model and tokenizer loaded successfully.")
         except Exception as e:
-            self.logger.error("Model/tokenizer loading failed: %s", e)
+            self.log_step("load_failed", f"❌ Model/tokenizer loading failed: {e}")
             raise
 
     def prepare_data(self):
         try:
-            self.logger.info("Preparing dataset from %s...", self.data_path)
+            self.log_step("data", f"Preparing dataset from {self.data_path}...")
             ds = load_dataset("json", data_files=str(self.data_path), split="train")
             splits = ds.train_test_split(test_size=0.1, seed=42)
             train_ds, eval_ds = splits["train"], splits["test"]
@@ -120,8 +126,9 @@ class ModelTrainer:
 
             self.train_ds = train_ds.map(tokenize_fn, batched=True, remove_columns=["text"])
             self.eval_ds = eval_ds.map(tokenize_fn, batched=True, remove_columns=["text"])
+            self.log_step("data", f"Dataset ready: {len(self.train_ds)} train, {len(self.eval_ds)} eval samples.")
         except Exception as e:
-            self.logger.error("Data preparation failed: %s", e)
+            self.log_step("data_failed", f"❌ Data preparation failed: {e}")
             raise
 
     def compute_metrics(self, eval_preds):
@@ -131,11 +138,14 @@ class ModelTrainer:
             shift_labels = labels[..., 1:].reshape(-1)
             loss_fct = torch.nn.CrossEntropyLoss(ignore_index=-100)
             loss = loss_fct(shift_logits, shift_labels)
-            return {"perplexity": math.exp(loss.item())}
+            ppl = math.exp(loss.item())
+            self.log_step("metrics", f"Evaluation perplexity: {ppl:.4f}")
+            return {"perplexity": ppl}
         except Exception as e:
-            self.logger.error("Metric computation failed: %s", e)
+            self.log_step("metrics_failed", f"Metric computation failed: {e}")
             return {}
-    def find_latest_checkpoint(self,base_dir):
+
+    def find_latest_checkpoint(self, base_dir):
         latest_ckpt = None
         latest_time = 0
         for run_dir in Path(base_dir).glob(f"{self.model_dir.name}-lora-*"):
@@ -170,21 +180,16 @@ class ModelTrainer:
         report_to = report_to or []
         checkpoint_id = None
         try:
-            self.logger.info("Initializing training configuration...")
-
-            # Detect existing checkpoint to resume
-            base_cp_path = self.output_dir.parent
-
+            self.log_step("train", "Initializing training configuration...")
             last_checkpoint = self.find_latest_checkpoint(self.output_dir.parent)
             if last_checkpoint:
-                self.logger.info(f"Resuming training from last checkpoint: {last_checkpoint}")
+                self.log_step("train", f"Resuming from checkpoint: {last_checkpoint}")
             else:
-                self.logger.info("No checkpoint found. Starting fresh training.")
-            # Create fresh run directory
-            self.output_dir.mkdir(parents=True, exist_ok=True)
-            self.logger.info("Output directory: %s", self.output_dir)
+                self.log_step("train", "No checkpoint found. Starting fresh.")
 
-            # Load components
+            self.output_dir.mkdir(parents=True, exist_ok=True)
+
+            # Load everything
             self.load_model_and_tokenizer()
             self.prepare_data()
 
@@ -216,15 +221,8 @@ class ModelTrainer:
                 logging_dir=str(logging_dir or self.output_dir / "logs")
             )
 
-            # Register checkpoint entry
-            checkpoint_id = self.checkpoint_db.add_checkpoint(
-                model_name=self.model_dir.name,
-                checkpoint_dir=str(self.output_dir),
-                epoch=0, train_loss=0.0, val_loss=0.0, accuracy=0.0
-            )
-            self.log_db.add_log("training_started", f"Training started at {self.output_dir}", checkpoint_id)
-            self.logger.info("training_args : %s", training_args)
-            # Instantiate Trainer
+            self.log_step("train", f"TrainingArguments: {training_args}", checkpoint_id)
+
             trainer = Trainer(
                 model=self.model,
                 args=training_args,
@@ -235,32 +233,41 @@ class ModelTrainer:
                 compute_metrics=self.compute_metrics
             )
 
-            # Start training with optional resume
             resume_arg = str(last_checkpoint) if last_checkpoint else None
-            self.logger.info("Starting training loop with resume: %s", resume_arg)
-
             if resume_arg:
-                # Remove state so we restart training from step 0 but keep weights
                 for fname in ["optimizer.pt", "scheduler.pt", "trainer_state.json"]:
                     fpath = Path(resume_arg) / fname
                     if fpath.exists():
                         fpath.unlink()
-                        self.logger.info(f"Removed {fname} to reset training state.")
-
-                # Pass None so Trainer won't expect the deleted files
+                        self.log_step("train", f"Removed {fname} for fresh restart.")
                 resume_arg = None
 
-            trainer.train(resume_from_checkpoint=resume_arg)
+            self.log_step("train", f"Starting training loop resume={resume_arg}", checkpoint_id)
+            result = trainer.train(resume_from_checkpoint=resume_arg)
+
             trainer.save_model(str(self.output_dir))
             self.tokenizer.save_pretrained(str(self.output_dir))
+            self.log_step("train", f"✅ Model saved at {self.output_dir}", checkpoint_id)
+            # eval_metrics = trainer.evaluate()
+            # val_loss = eval_metrics.get("eval_loss", 0.0)
+            # accuracy = eval_metrics.get("eval_accuracy", 0.0)
 
-            # Success logging
-            self.logger.info("Training completed successfully.")
-            self.checkpoint_db.update_checkpoint(checkpoint_id, epoch=num_train_epochs, train_loss=0.0, val_loss=0.0, accuracy=0.0)
-            self.log_db.add_log("training_completed", "Training completed successfully.", checkpoint_id)
+            # Register checkpoint entry
+            checkpoint_id = self.checkpoint_db.add_checkpoint(
+                model_name=self.model_dir.name,
+                checkpoint_dir=str(self.output_dir),
+                epoch=0, train_loss=0.0, val_loss=0.0, accuracy=0.0
+            )
+            self.log_step("train_completed", "✅ Training completed successfully.", checkpoint_id)
+            return {
+                        "model_name": self.model_dir.name,
+                        "checkpoint_dir": str(self.output_dir),
+                        "epoch": num_train_epochs,
+                        "train_loss": 0,
+                        "val_loss": 0,
+                        "accuracy": 0
+                    }
 
         except Exception as e:
-            self.logger.error("Training failed: %s", e)
-            if checkpoint_id is not None:
-                self.log_db.add_log("training_failed", f"Training failed with error: {e}", checkpoint_id)
+            self.log_step("train_failed", f"❌ Training failed: {e}", checkpoint_id)
             raise

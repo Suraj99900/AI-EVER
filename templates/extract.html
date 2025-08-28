@@ -1,416 +1,532 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="flex flex-col md:flex-row h-full">
 
-  <!-- Off‑canvas Sidebar (mobile) & Static on desktop -->
-  <aside id="sidebar"
-    class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg transform -translate-x-full md:translate-x-0 transition-transform duration-300 z-40">
-    <div class="px-6 py-9 border-b border-gray-200" style="padding-top: 5rem;">
-      <h2 class="text-2xl font-extrabold text-indigo-600">Extraction Options</h2>
-    </div>
-    <nav class="px-4 py-6 space-y-2">
-      <button onclick="showSection('code')"
-        class="w-full flex items-center px-4 py-3 rounded-lg hover:bg-indigo-50 transition">
-        <span class="text-xl mr-3">📂</span>
-        <span class="font-medium text-gray-700">Codebase Extraction</span>
-      </button>
-      <button onclick="showSection('sql')"
-        class="w-full flex items-center px-4 py-3 rounded-lg hover:bg-green-50 transition">
-        <span class="text-xl mr-3">🛢️</span>
-        <span class="font-medium text-gray-700">SQL Schema Extraction</span>
-      </button>
-      <button onclick="showSection('train')"
-        class="w-full flex items-center px-4 py-3 rounded-lg hover:bg-blue-50 transition">
-        <span class="text-xl mr-3">⚙️</span>
-        <span class="font-medium text-gray-700 px-8">Training</span>
-      </button>
-    </nav>
-  </aside>
+<div class="container py-5">
 
-  <!-- Content Area -->
-  <div class="flex-1 flex flex-col md:pl-64">
+  <!-- Stepper Navigation -->
+  <ul class="nav nav-pills mb-3 justify-content-center stepper-animated" id="stepper-tabs">
+    <li class="nav-item">
+      <a class="nav-link active px-4 py-2 rounded-pill" data-step="1"><span class="step-circle">1</span> Code
+        Extraction</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link px-4 py-2 rounded-pill" data-step="2"><span class="step-circle">2</span> SQL Extraction</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link px-4 py-2 rounded-pill" data-step="3"><span class="step-circle">3</span> Train Model</a>
+    </li>
+  </ul>
 
-    <!-- Page Header -->
-    <header class="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200">
-      <div class="flex items-center">
-        <button onclick="toggleSidebar()" class="md:hidden mr-4 focus:outline-none text-gray-600">
-          <!-- hamburger -->
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-        <h1 class="text-2xl font-bold text-indigo-600">Extraction Dashboard</h1>
+  <!-- Step 1 -->
+  <div id="step-1" class="step-section card shadow-lg p-4 mb-4">
+    <h4 class="fw-bold text-primary mb-3"><i class="fas fa-code"></i> Codebase Extraction</h4>
+    <form id="extract-form" autocomplete="off">
+      <div class="mb-3">
+        <label for="repo_path" class="form-label">Local Project Path</label>
+        <input type="text" id="repo_path" name="repo_path" class="form-control" placeholder="/home/user/myrepo"
+          required>
+        <input type="hidden" name="type" value="code">
       </div>
-    </header>
-
-    <!-- Extract Forms -->
-    <main class="flex-1 overflow-auto p-6 space-y-12">
-
-      <!-- Code Extraction -->
-      <section id="code-section" class="space-y-4">
-        <h2 class="text-3xl font-bold text-indigo-600">Codebase Extraction</h2>
-        <form id="extract-form" class="bg-white p-6 rounded-2xl shadow-md grid gap-4 md:grid-cols-2">
-          <div class="md:col-span-2">
-            <label for="repo_path" class="block text-sm font-medium text-gray-700">Local Project Path</label>
-            <input type="text" id="repo_path" name="repo_path" placeholder="/home/user/myrepo"
-              class="mt-1 block w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500" />
-            <input type="hidden" name="type" value="code" />
-          </div>
-          <button type="submit"
-            class="md:col-span-2 w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-lg transition">
-            🔄 Start Extraction
-          </button>
-        </form>
-
-        <div id="extract-status" class="mt-4 space-y-4">
-          <div id="spinner-extract"
-            class="mx-auto w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin hidden">
-          </div>
-          <pre id="extract-log"
-            class="hidden bg-gray-800 text-green-400 p-4 rounded-lg overflow-auto max-h-64 font-mono text-sm">$ Waiting for extraction...</pre>
-          <div id="download-link" class="text-center hidden">
-            <a href="{{ url_for('extract.extract_downloads', type='code') }}"
-              class="inline-block px-6 py-2 bg-green-500 hover:bg-green-400 text-white rounded-lg font-medium">📥
-              Download JSONL</a>
-          </div>
-        </div>
-      </section>
-
-      <!-- SQL Extraction -->
-      <section id="sql-section" class="space-y-4 hidden">
-        <h2 class="text-3xl font-bold text-green-600">SQL Schema Extraction</h2>
-        <form id="sql-form" class="bg-white p-6 rounded-2xl shadow-md grid gap-4 md:grid-cols-2">
-          <input type="text" id="host" name="host" placeholder="Host (e.g. localhost)"
-            class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500" />
-          <input type="text" id="port" name="port" placeholder="Port (e.g. 3306)"
-            class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500" />
-          <input type="text" id="username" name="username" placeholder="Username"
-            class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500" />
-          <input type="password" id="password" name="password" placeholder="Password"
-            class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500" />
-          <input type="text" id="database" name="database" placeholder="Database Name"
-            class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500" />
-          <input type="hidden" name="type" value="sql" />
-          <button type="submit"
-            class="md:col-span-2 w-full py-3 bg-green-600 hover:bg-green-500 text-white font-semibold rounded-lg transition">
-            🔄 Extract Schema
-          </button>
-        </form>
-
-        <div id="sql-status" class="mt-4 space-y-4">
-          <pre id="sql-log"
-            class="hidden bg-gray-800 text-green-400 p-4 rounded-lg overflow-auto max-h-64 font-mono text-sm">$ Awaiting connection...</pre>
-          <div id="sql-download-link" class="text-center hidden">
-            <a href="{{ url_for('extract.extract_downloads', type='sql') }}"
-              class="inline-block px-6 py-2 bg-green-500 hover:bg-green-400 text-white rounded-lg font-medium">📥
-              Download SQL JSONL</a>
-          </div>
-        </div>
-      </section>
-
-
-      <!-- Training Section -->
-      <section id="train-section" class="space-y-4 hidden">
-        <h2 class="text-3xl font-bold text-blue-600">Train Model</h2>
-        <form id="train-form" class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-6 rounded-2xl shadow-md">
-          <!-- Max Steps -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Max Steps</label>
-            <input type="number" name="max_steps" value="20" class="mt-1 w-full border rounded-lg px-3 py-2" />
-          </div>
-          <!-- Batch Size -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Batch Size</label>
-            <input type="number" name="per_device_train_batch_size" value="1"
-              class="mt-1 w-full border rounded-lg px-3 py-2" />
-          </div>
-          <!-- Gradient Accumulation Steps -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Gradient Accum Steps</label>
-            <input type="number" name="gradient_accumulation_steps" value="1"
-              class="mt-1 w-full border rounded-lg px-3 py-2" />
-          </div>
-          <!-- Learning Rate -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Learning Rate</label>
-            <input type="text" name="learning_rate" value="1e-4" class="mt-1 w-full border rounded-lg px-3 py-2" />
-          </div>
-          <!-- Num Epochs -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Num Epochs</label>
-            <input type="number" name="num_train_epochs" value="10" class="mt-1 w-full border rounded-lg px-3 py-2" />
-          </div>
-          <!-- Logging Steps -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Logging Steps</label>
-            <input type="number" name="logging_steps" value="2" class="mt-1 w-full border rounded-lg px-3 py-2" />
-          </div>
-          <!-- Eval Steps -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Eval Steps</label>
-            <input type="number" name="eval_steps" value="5" class="mt-1 w-full border rounded-lg px-3 py-2" />
-          </div>
-          <!-- Warmup Steps -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Warmup Steps</label>
-            <input type="number" name="warmup_steps" value="5" class="mt-1 w-full border rounded-lg px-3 py-2" />
-          </div>
-          <!-- Save Steps -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Save Steps</label>
-            <input type="number" name="save_steps" value="20" class="mt-1 w-full border rounded-lg px-3 py-2" />
-          </div>
-          <!-- Save Strategy -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Save Strategy</label>
-            <input type="text" name="save_strategy" value="steps" class="mt-1 w-full border rounded-lg px-3 py-2" />
-          </div>
-          <!-- Save Total Limit -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Save Total Limit</label>
-            <input type="number" name="save_total_limit" value="1" class="mt-1 w-full border rounded-lg px-3 py-2" />
-          </div>
-          <!-- Metric for Best Model -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Metric for Best Model</label>
-            <input type="text" name="metric_for_best_model" value="eval_loss"
-              class="mt-1 w-full border rounded-lg px-3 py-2" />
-          </div>
-          <!-- FP16 -->
-          <div class="flex items-center">
-            <input type="checkbox" name="fp16" checked class="h-4 w-4 text-indigo-600" />
-            <label class="ml-2 text-sm text-gray-700">Use FP16</label>
-          </div>
-          <!-- BF16 -->
-          <div class="flex items-center">
-            <input type="checkbox" name="bf16" class="h-4 w-4 text-indigo-600" />
-            <label class="ml-2 text-sm text-gray-700">Use BF16</label>
-          </div>
-          <!-- Greater is Better -->
-          <div class="flex items-center">
-            <input type="checkbox" name="greater_is_better" class="h-4 w-4 text-indigo-600" />
-            <label class="ml-2 text-sm text-gray-700">Greater Metric is Better</label>
-          </div>
-          <!-- Optimizer -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Optimizer</label>
-            <input type="text" name="optim" value="adamw_torch" class="mt-1 w-full border rounded-lg px-3 py-2" />
-          </div>
-          <!-- Report To -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Report To (comma-separated)</label>
-            <input type="text" name="report_to" placeholder="e.g. tensorboard,wandb"
-              class="mt-1 w-full border rounded-lg px-3 py-2" />
-          </div>
-          <!-- Logging Dir -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Logging Dir</label>
-            <input type="text" name="logging_dir" placeholder="/logs" class="mt-1 w-full border rounded-lg px-3 py-2" />
-          </div>
-          <!-- Is SQL? -->
-          <div class="flex items-center">
-            <input type="checkbox" name="is_sql" class="h-4 w-4 text-indigo-600" />
-            <label class="ml-2 text-sm text-gray-700">Train on SQL Schema</label>
-          </div>
-
-          <!-- Submit Button -->
-          <div class="md:col-span-2 flex justify-end">
-            <button type="submit" class="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg">
-              🚀 Start Training
-            </button>
-          </div>
-        </form>
-
-        <!-- Training Log Output -->
-        <pre id="train-log"
-          class="hidden bg-gray-800 text-green-400 p-4 rounded-lg overflow-auto max-h-64 font-mono text-sm">
-            $ Ready to train...
-        </pre>
-      </section>
-
-    </main>
+      <button type="submit" class="btn btn-gradient w-100">
+        <span class="spinner-border spinner-border-sm d-none" id="extract-spinner"></span>
+        🚀 Start Extraction
+      </button>
+    </form>
+    <div id="extract-alert" class="alert d-none mt-3"></div>
+    <!-- per-step small log kept for quick view (optional) -->
+    <div id="download-link" class="mt-3 d-none text-center">
+      <a href="{{ url_for('extract.extract_downloads', type='code') }}" class="btn btn-success">📥 Download JSONL</a>
+    </div>
   </div>
-  <script>
-    const sidebar = document.getElementById('sidebar');
-    const codeSection = document.getElementById('code-section');
-    const sqlSection = document.getElementById('sql-section');
 
-    function toggleSidebar() {
-      sidebar.classList.toggle('-translate-x-full');
-    }
+  <!-- Step 2 -->
+  <div id="step-2" class="step-section card shadow-lg p-4 mb-4 d-none">
+    <h4 class="fw-bold text-success mb-3"><i class="fas fa-database"></i> SQL Schema Extraction</h4>
+    <form id="sql-form" autocomplete="off">
+      <div class="row g-3">
+        <div class="col-md-6"><input type="text" name="host" placeholder="Host" class="form-control" required></div>
+        <div class="col-md-6"><input type="text" name="port" placeholder="Port" class="form-control" required></div>
+        <div class="col-md-6"><input type="text" name="username" placeholder="Username" class="form-control" required>
+        </div>
+        <div class="col-md-6"><input type="password" name="password" placeholder="Password" class="form-control"
+            required></div>
+        <div class="col-12"><input type="text" name="database" placeholder="Database Name" class="form-control"
+            required></div>
+      </div>
+      <input type="hidden" name="type" value="sql">
+      <button type="submit" class="btn btn-gradient w-100 mt-3">
+        <span class="spinner-border spinner-border-sm d-none" id="sql-spinner"></span>
+        📊 Extract Schema
+      </button>
+    </form>
+    <div id="sql-alert" class="alert d-none mt-3"></div>
+    <div id="sql-download-link" class="mt-3 d-none text-center">
+      <a href="{{ url_for('extract.extract_downloads', type='sql') }}" class="btn btn-success">📥 Download SQL JSONL</a>
+    </div>
+  </div>
 
-    function showSection(type) {
-      codeSection.classList.add('hidden');
-      sqlSection.classList.add('hidden');
-      if (type === 'code') codeSection.classList.remove('hidden');
-      if (type === 'sql') sqlSection.classList.remove('hidden');
-      if (type === 'train') {
-        document.getElementById('train-section').classList.remove('hidden');
-      } else {
-        document.getElementById('train-section').classList.add('hidden');
-      }
-      toggleSidebar();
-    }
+  <!-- Step 3 -->
+  <div id="step-3" class="step-section card shadow-lg p-4 mb-4 d-none">
+    <h4 class="fw-bold text-indigo-600 mb-4"><i class="fas fa-brain"></i> Train Model</h4>
 
-    const form = document.getElementById("extract-form");
-    form.addEventListener("submit", async e => {
-      e.preventDefault();
+    <!-- Training Preset Cards -->
+    <div class="row mb-4">
+      <div class="col-md-4 mb-2">
+        <div class="card card-hover text-center preset-card" data-preset="low" style="cursor:pointer;">
+          <div class="card-body py-3">
+            <input type="radio" name="preset" id="preset-low" class="form-check-input me-2" checked>
+            <label for="preset-low" class="fw-bold">Low</label>
+            <div class="small text-muted mt-2">Fast, minimal resources</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-2">
+        <div class="card card-hover text-center preset-card" data-preset="mid" style="cursor:pointer;">
+          <div class="card-body py-3">
+            <input type="radio" name="preset" id="preset-mid" class="form-check-input me-2">
+            <label for="preset-mid" class="fw-bold">Mid</label>
+            <div class="small text-muted mt-2">Balanced, moderate resources</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-2">
+        <div class="card card-hover text-center preset-card" data-preset="high" style="cursor:pointer;">
+          <div class="card-body py-3">
+            <input type="radio" name="preset" id="preset-high" class="form-check-input me-2">
+            <label for="preset-high" class="fw-bold">High</label>
+            <div class="small text-muted mt-2">Best quality, slowest</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-      const spinner = document.getElementById("spinner-extract");
-      const logEl = document.getElementById("extract-log");
-      const downloadLink = document.getElementById("download-link");
+    <form id="train-form" autocomplete="off">
+      <div class="row g-3">
+        <div class="col-md-3">
+          <label class="form-label small">Max Steps</label>
+          <input type="number" name="max_steps" class="form-control form-control-sm" value="20" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Batch Size</label>
+          <input type="number" name="per_device_train_batch_size" class="form-control form-control-sm" value="1" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Grad Accum Steps</label>
+          <input type="number" name="gradient_accumulation_steps" class="form-control form-control-sm" value="1" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Learning Rate</label>
+          <input type="text" name="learning_rate" class="form-control form-control-sm" value="1e-4" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Num Epochs</label>
+          <input type="number" name="num_train_epochs" class="form-control form-control-sm" value="10" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Logging Steps</label>
+          <input type="number" name="logging_steps" class="form-control form-control-sm" value="2" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Eval Steps</label>
+          <input type="number" name="eval_steps" class="form-control form-control-sm" value="5" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Warmup Steps</label>
+          <input type="number" name="warmup_steps" class="form-control form-control-sm" value="5" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Save Steps</label>
+          <input type="number" name="save_steps" class="form-control form-control-sm" value="20" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Save Strategy</label>
+          <input type="text" name="save_strategy" class="form-control form-control-sm" value="steps" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Save Total Limit</label>
+          <input type="number" name="save_total_limit" class="form-control form-control-sm" value="1" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Metric for Best Model</label>
+          <input type="text" name="metric_for_best_model" class="form-control form-control-sm" value="eval_loss" />
+        </div>
+        <div class="col-md-3 d-flex align-items-center">
+          <input type="checkbox" name="fp16" id="fp16" class="form-check-input me-2" checked />
+          <label for="fp16" class="form-check-label small">Use FP16</label>
+        </div>
+        <div class="col-md-3 d-flex align-items-center">
+          <input type="checkbox" name="bf16" id="bf16" class="form-check-input me-2" />
+          <label for="bf16" class="form-check-label small">Use BF16</label>
+        </div>
+        <div class="col-md-3 d-flex align-items-center">
+          <input type="checkbox" name="greater_is_better" id="greater_is_better" class="form-check-input me-2" />
+          <label for="greater_is_better" class="form-check-label small">Greater Metric is Better</label>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Optimizer</label>
+          <input type="text" name="optim" class="form-control form-control-sm" value="adamw_torch" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Report To</label>
+          <input type="text" name="report_to" class="form-control form-control-sm"
+            placeholder="e.g. tensorboard,wandb" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Logging Dir</label>
+          <input type="text" name="logging_dir" class="form-control form-control-sm" placeholder="/logs" />
+        </div>
+        <div class="col-md-3 d-flex align-items-center">
+          <input type="checkbox" name="is_sql" id="is_sql" class="form-check-input me-2" />
+          <label for="is_sql" class="form-check-label small">Train on SQL Schema</label>
+        </div>
+        <div class="col-md-12 text-end mt-3">
+          <button type="submit" class="btn btn-gradient px-5 py-2">
+            <span class="spinner-border spinner-border-sm d-none" id="train-spinner"></span>
+            🚀 Start Training
+          </button>
+        </div>
+      </div>
+    </form>
+    <div id="train-alert" class="alert d-none mt-3"></div>
+  </div>
 
-      spinner.classList.remove("hidden");
-      logEl.classList.remove("hidden");
-      logEl.textContent = "$ Starting extraction...\n";
-      downloadLink.classList.add("hidden");
+  <!-- GLOBAL CONSOLE (single, read-only) -->
+  <div class="card shadow-lg mb-4 global-console-card">
+    <div class="card-header d-flex justify-content-between align-items-center bg-dark text-white">
+      <div class="d-flex align-items-center gap-3">
+        <strong>Global Console</strong>
+        <span id="console-status" class="badge bg-secondary">idle</span>
+      </div>
+      <div class="btn-group">
+        <button id="btn-clear-console" class="btn btn-sm btn-outline-light" title="Clear console">Clear</button>
+        <button id="btn-copy-console" class="btn btn-sm btn-outline-light" title="Copy console">Copy</button>
+        <button id="btn-toggle-autoscroll" class="btn btn-sm btn-outline-light" title="Toggle autoscroll">Autoscroll:
+          On</button>
+      </div>
+    </div>
+    <div class="card-body p-0">
+      <pre id="global-console" class="m-0 p-3 bg-black text-success small"
+        style="min-height:160px; max-height:360px; overflow:auto; font-family: 'Fira Mono', monospace;"
+        contenteditable="false" aria-readonly="true">$ Global console ready...</pre>
+    </div>
+  </div>
 
-      try {
-        const response = await fetch("/extract", {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: new URLSearchParams(new FormData(form))
-        });
+</div>
 
-        if (!response.ok) {
-          throw new Error("Extraction failed: " + response.statusText);
-        }
+<style>
+  .btn-gradient {
+    background: linear-gradient(90deg, #6f42c1, #d63384);
+    color: white;
+    font-weight: 600;
+    border: none;
+  }
 
-        const data = await response.json();
-        logEl.textContent += "$ " + data.message + "\n";
-      } catch (err) {
-        logEl.textContent += "$ ❌ " + err.message + "\n";
-        spinner.classList.add("hidden");
-        return;
-      }
+  .btn-gradient:hover {
+    opacity: 0.9;
+  }
 
-      // Polling log updates
-      const poll = setInterval(async () => {
-        const res = await fetch("/extract/logs");
-        const { logs } = await res.json();
+  .stepper-animated .nav-link.active {
+    background: linear-gradient(90deg, #6f42c1, #d63384);
+    color: #fff;
+  }
 
-        logEl.textContent = "$ " + logs.join("\n$ ");
+  .step-circle {
+    display: inline-block;
+    width: 2em;
+    height: 2em;
+    background: #fff;
+    color: #6f42c1;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 2em;
+    font-weight: bold;
+    margin-right: 0.5em;
+    border: 2px solid #d63384;
+    box-shadow: 0 2px 8px rgba(111, 66, 193, 0.08);
+  }
 
-        const isDone = logs.some(l => l.includes("extraction finished") || l.includes("✅ Code extraction finished"));
-        const isError = logs.some(l => l.includes("❌"));
+  .log-area {
+    min-height: 80px;
+    max-height: 220px;
+    overflow-y: auto;
+    font-family: 'Fira Mono', monospace;
+  }
 
-        if (isDone || isError) {
-          clearInterval(poll);
-          spinner.classList.add("hidden");
+  .global-console-card {
+    border-radius: 12px;
+    overflow: hidden;
+  }
 
-          if (isDone) {
-            downloadLink.classList.remove("hidden");
-            logEl.textContent += "\n$ ✅ All done.";
-          } else {
-            logEl.textContent += "\n$ ❌ An error occurred.";
-          }
-        }
-      }, 500);
-    });
-    const sqlForm = document.getElementById("sql-form");
+  /* toolbar buttons smaller look */
+  .global-console-card .btn {
+    font-size: 12px;
+    padding: .25rem .5rem;
+  }
 
-    sqlForm.addEventListener("submit", async e => {
-      e.preventDefault();
+  .preset-card {
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
 
-      const logEl = document.getElementById("sql-log");
-      logEl.classList.remove("hidden");
-      logEl.textContent = "$ Connecting to database...\n";
-
-      const response = await fetch("/extract", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams(new FormData(sqlForm))
-      });
-
-      const result = await response.json();
-      if (result.status === "started") {
-        // Start polling for logs
-        const pollLogs = setInterval(async () => {
-          const logRes = await fetch("/extract/logs");
-          const logs = await logRes.text();
-          logEl.textContent = logs;
-
-          if (logs.includes("✅") || logs.includes("❌")) {
-            clearInterval(pollLogs);
-            if (logs.includes("✅")) {
-              document.getElementById("sql-download-link").classList.remove("hidden");
-            }
-          }
-        }, 1000);
-      } else {
-        logEl.textContent += `❌ ${result.message}\n`;
-      }
-    });
-
-  </script>
+  .preset-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  }
+</style>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(function () {
+    // autoscroll toggle
+    let autoscroll = true;
+    function appendToGlobalConsole(prefix, text) {
+      const $g = $('#global-console');
+      const time = new Date().toLocaleTimeString();
+      const entry = `[${time}] [${prefix}] ${text}\n`;
+      $g.append(entry);
+      if (autoscroll) {
+        $g.scrollTop($g[0].scrollHeight);
+      }
+      // update status badge
+      $('#console-status').text('running').removeClass('bg-secondary').addClass('bg-warning');
+      // if message signals success or error, update status
+      if (text.includes('✅')) {
+        $('#console-status').text('ok').removeClass('bg-warning').addClass('bg-success');
+      } else if (text.includes('❌')) {
+        $('#console-status').text('error').removeClass('bg-warning').addClass('bg-danger');
+      }
+    }
 
-  <script>
-    $(function () {
-      $('#train-form').on('submit', function (e) {
-        e.preventDefault();
-
-        // 1. Serialize form into a plain object
-        const formArray = $(this).serializeArray();
-        const data = {};
-        formArray.forEach(({ name, value }) => {
-          data[name] = value;
-        });
-
-        // 2. Handle checkboxes
-        data.fp16 = !!this.fp16.checked;
-        data.bf16 = !!this.bf16.checked;
-        data.greater_is_better = !!this.greater_is_better.checked;
-        data.is_sql = !!this.is_sql.checked;
-
-        // 3. Convert numeric fields
-        [
-          'max_steps',
-          'per_device_train_batch_size',
-          'gradient_accumulation_steps',
-          'num_train_epochs',
-          'logging_steps',
-          'eval_steps',
-          'warmup_steps',
-          'save_steps',
-          'save_total_limit'
-        ].forEach(key => {
-          data[key] = Number(data[key]);
-        });
-
-        // 4. Split report_to into array
-        data.report_to = data.report_to
-          ? data.report_to.split(',').map(s => s.trim()).filter(Boolean)
-          : [];
-
-        // 5. Send AJAX request
-        $.ajax({
-          url: '/train',
-          method: 'POST',
-          contentType: 'application/json',
-          data: JSON.stringify(data),
-          success: function (resp) {
-            if (resp.status === 'started') {
-              $('#train-log')
-                .removeClass('hidden')
-                .text('$ Training started successfully.');
-              // TODO: start polling /train/logs here if you have it
-            } else {
-              $('#train-log')
-                .removeClass('hidden')
-                .text('$ ❌ ' + (resp.error || resp.message));
-            }
-          },
-          error: function (xhr) {
-            $('#train-log')
-              .removeClass('hidden')
-              .text('$ ❌ ' + xhr.status + ' ' + xhr.statusText);
-          }
-        });
+    // toolbar handlers
+    $('#btn-clear-console').on('click', function () {
+      $('#global-console').text('$ Global console cleared...\n');
+      $('#console-status').text('idle').removeClass('bg-success bg-warning bg-danger').addClass('bg-secondary');
+    });
+    $('#btn-copy-console').on('click', function () {
+      const text = $('#global-console').text();
+      navigator.clipboard?.writeText(text).then(() => {
+        $(this).text('Copied');
+        setTimeout(() => $(this).text('Copy'), 1200);
+      }).catch(() => {
+        alert('Copy failed — use manual copy.');
       });
     });
-  </script>
+    $('#btn-toggle-autoscroll').on('click', function () {
+      autoscroll = !autoscroll;
+      $(this).text('Autoscroll: ' + (autoscroll ? 'On' : 'Off'));
+    });
 
+    // Stepper switching (independent)
+    $('#stepper-tabs .nav-link').on('click', function () {
+      let step = $(this).data('step');
+      $('.nav-link').removeClass('active');
+      $(this).addClass('active');
+      $('.step-section').addClass('d-none');
+      $('#step-' + step).removeClass('d-none');
+    });
 
-  {% endblock %}
+    // Poll helper: read the last line endpoint and append to global console with source tag
+    function pollLogs(endpoint, tag, spinnerId, downloadSelector) {
+      let interval = setInterval(function () {
+        $.get(endpoint, function (res) {
+          // support both array and string payloads
+          let logs = Array.isArray(res.logs) ? res.logs.join('\n') : (res.logs || '');
+          if (!logs) logs = '$ (no logs)';
+          appendToGlobalConsole(tag, logs);
+          // if final marker found, stop spinner and show download if provided
+          if (logs.includes('✅') || logs.includes('❌')) {
+            $(spinnerId).addClass('d-none');
+            if (logs.includes('✅') && downloadSelector) $(downloadSelector).removeClass('d-none');
+            clearInterval(interval);
+          }
+        }).fail(function () {
+          appendToGlobalConsole(tag, 'Failed to reach ' + endpoint);
+          $(spinnerId).addClass('d-none');
+          clearInterval(interval);
+        });
+      }, 1500);
+      return interval;
+    }
+
+    let extractInterval, sqlInterval, trainInterval;
+
+    // Code Extraction
+    $('#extract-form').submit(function (e) {
+      e.preventDefault();
+      $('#extract-spinner').removeClass('d-none');
+      $('#extract-alert').addClass('d-none');
+      $('#download-link').addClass('d-none');
+      appendToGlobalConsole('EXTRACT', 'Started extraction...');
+      if (extractInterval) clearInterval(extractInterval);
+      extractInterval = pollLogs('/extract/logs', 'EXTRACT', '#extract-spinner', '#download-link');
+      $.post('/extract', $(this).serialize(), function (res) {
+        $('#extract-spinner').addClass('d-none');
+        $('#extract-alert').removeClass('d-none alert-danger').addClass('alert-success').text(res.message);
+        appendToGlobalConsole('EXTRACT', res.message);
+      }).fail(function (xhr) {
+        $('#extract-spinner').addClass('d-none');
+        $('#extract-alert').removeClass('d-none alert-success').addClass('alert-danger').text(xhr.responseJSON?.message || "Extraction failed ❌");
+        appendToGlobalConsole('EXTRACT', xhr.responseJSON?.message || "Extraction failed ❌");
+      });
+    });
+
+    // SQL Extraction
+    $('#sql-form').submit(function (e) {
+      e.preventDefault();
+      $('#sql-spinner').removeClass('d-none');
+      $('#sql-alert').addClass('d-none');
+      $('#sql-download-link').addClass('d-none');
+      appendToGlobalConsole('SQL', 'Started SQL extraction...');
+      if (sqlInterval) clearInterval(sqlInterval);
+      sqlInterval = pollLogs('/extract/logs', 'SQL', '#sql-spinner', '#sql-download-link');
+      $.post('/extract', $(this).serialize(), function (res) {
+        $('#sql-spinner').addClass('d-none');
+        $('#sql-alert').removeClass('d-none alert-danger').addClass('alert-success').text(res.message);
+        appendToGlobalConsole('SQL', res.message);
+      }).fail(function (xhr) {
+        $('#sql-spinner').addClass('d-none');
+        $('#sql-alert').removeClass('d-none alert-success').addClass('alert-danger').text(xhr.responseJSON?.message || "SQL extraction failed ❌");
+        appendToGlobalConsole('SQL', xhr.responseJSON?.message || "SQL extraction failed ❌");
+      });
+    });
+
+    // Training
+    $('#train-form').submit(function (e) {
+      e.preventDefault();
+      $('#train-spinner').removeClass('d-none');
+      $('#train-alert').addClass('d-none');
+      appendToGlobalConsole('TRAIN', 'Started training...');
+      if (trainInterval) clearInterval(trainInterval);
+      trainInterval = setInterval(function () {
+        $.get('/train/logs', function (res) {
+          let logs = Array.isArray(res.logs) ? res.logs.join('\n') : (res.logs || '');
+          appendToGlobalConsole('TRAIN', logs);
+          if (logs.includes("✅") || logs.includes("❌")) {
+            $('#train-spinner').addClass('d-none');
+            clearInterval(trainInterval);
+          }
+        }).fail(function () {
+          appendToGlobalConsole('TRAIN', 'Failed to reach /train/logs');
+          $('#train-spinner').addClass('d-none');
+          clearInterval(trainInterval);
+        });
+      }, 2000);
+
+      // Prepare JSON payload
+      let data = {};
+      $('#train-form').serializeArray().forEach(function (item) {
+        // map preset-style booleans from checkboxes; unchecked checkboxes are omitted by serializeArray
+        data[item.name] = item.value;
+      });
+      // ensure checkboxes get boolean values
+      data.fp16 = !!$('#fp16').is(':checked');
+      data.bf16 = !!$('#bf16').is(':checked');
+      data.greater_is_better = !!$('#greater_is_better').is(':checked');
+      data.is_sql = !!$('#is_sql').is(':checked');
+      // handle report_to splitting (if present)
+      if (data.report_to) data.report_to = data.report_to.split(',').map(s => s.trim()).filter(Boolean);
+
+      $.ajax({
+        url: '/train',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        success: function (res) {
+          $('#train-alert').removeClass('d-none alert-danger').addClass('alert-success').text(res.message);
+          $('#train-spinner').addClass('d-none');
+          appendToGlobalConsole('TRAIN', res.message);
+        },
+        error: function (xhr) {
+          $('#train-alert').removeClass('d-none alert-success').addClass('alert-danger').text(xhr.responseJSON?.message || "Training failed ❌");
+          $('#train-spinner').addClass('d-none');
+          appendToGlobalConsole('TRAIN', xhr.responseJSON?.message || "Training failed ❌");
+        }
+      });
+    });
+
+    // Preset values for each training level
+    const presets = {
+      low: {
+        max_steps: 10,
+        per_device_train_batch_size: 1,
+        gradient_accumulation_steps: 1,
+        learning_rate: "5e-4",
+        num_train_epochs: 2,
+        logging_steps: 2,
+        eval_steps: 5,
+        warmup_steps: 2,
+        save_steps: 10,
+        save_strategy: "steps",
+        save_total_limit: 1,
+        metric_for_best_model: "eval_loss",
+        fp16: true,
+        bf16: false,
+        greater_is_better: false,
+        optim: "adamw_torch",
+        report_to: "",
+        logging_dir: "/logs"
+      },
+      mid: {
+        max_steps: 50,
+        per_device_train_batch_size: 2,
+        gradient_accumulation_steps: 2,
+        learning_rate: "2e-4",
+        num_train_epochs: 5,
+        logging_steps: 2,
+        eval_steps: 10,
+        warmup_steps: 5,
+        save_steps: 20,
+        save_strategy: "steps",
+        save_total_limit: 2,
+        metric_for_best_model: "eval_loss",
+        fp16: true,
+        bf16: false,
+        greater_is_better: false,
+        optim: "adamw_torch",
+        report_to: "tensorboard",
+        logging_dir: "/logs"
+      },
+      high: {
+        max_steps: 200,
+        per_device_train_batch_size: 4,
+        gradient_accumulation_steps: 4,
+        learning_rate: "1e-4",
+        num_train_epochs: 10,
+        logging_steps: 1,
+        eval_steps: 20,
+        warmup_steps: 10,
+        save_steps: 40,
+        save_strategy: "steps",
+        save_total_limit: 3,
+        metric_for_best_model: "eval_loss",
+        fp16: true,
+        bf16: false,
+        greater_is_better: false,
+        optim: "adamw_torch",
+        report_to: "tensorboard,wandb",
+        logging_dir: "/logs"
+      }
+    };
+
+    // Card click handler for presets
+    $('.preset-card').on('click', function () {
+      $('.preset-card input[type=radio]').prop('checked', false);
+      $(this).find('input[type=radio]').prop('checked', true);
+      let preset = $(this).data('preset');
+      let values = presets[preset];
+      for (let key in values) {
+        let $field = $('[name="' + key + '"]');
+        if ($field.length) {
+          if ($field.is(':checkbox')) {
+            $field.prop('checked', !!values[key]);
+          } else {
+            $field.val(values[key]);
+          }
+        }
+      }
+      appendToGlobalConsole('UI', `Preset "${preset}" applied`);
+    });
+
+  });
+</script>
+
+{% endblock %}

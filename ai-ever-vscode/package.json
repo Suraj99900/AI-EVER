@@ -1,0 +1,54 @@
+{
+  "name": "ai-ever-vscode",
+  "displayName": "ai-ever-vscode",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.103.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "ai-ever-vscode.completeCode",
+        "title": "AI-EVER: Complete Code"
+      },
+      {
+        "command": "ai-ever-vscode.fixCode",
+        "title": "AI-EVER: Fix Selected Code"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "ai-ever-vscode.completeCode",
+        "key": "ctrl+alt+c"
+      },
+      {
+        "command": "ai-ever-vscode.fixCode",
+        "key": "ctrl+alt+f"
+      }
+    ]
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "@types/vscode": "^1.103.0",
+    "@vscode/test-cli": "^0.0.11",
+    "@vscode/test-electron": "^2.5.2",
+    "eslint": "^9.32.0"
+  },
+  "dependencies": {
+    "eventsource-parser": "^3.0.5",
+    "node-fetch": "^2.7.0",
+    "undici": "^7.15.0"
+  }
+}

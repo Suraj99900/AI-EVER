@@ -14,7 +14,7 @@ from logging.handlers import RotatingFileHandler
 # ---------------- Configuration ----------------
 DEFAULT_RAW_DIR = Path("data/raw_code")
 OUT_PATH = Path("../data/processed/train_data.jsonl")
-LOG_PATH = Path("../data/logs/extract_code.log")
+LOG_PATH = Path("../data/logs/ever_log.log")
 
 SKIP_DIRS = {"vendor", ".git", ".svn", ".hg", "__pycache__"}
 SKIP_EXTS = {
