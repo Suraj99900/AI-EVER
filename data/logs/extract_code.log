@@ -1,0 +1,379 @@
+2025-07-16 12:23:34 INFO: Using source directory: /media/xon/New Volume1/Code Base/Projeoct/AIDS-eLibrary
+2025-07-16 12:23:35 INFO: START extracting from: /media/xon/New Volume1/Code Base/Projeoct/AIDS-eLibrary
+2025-07-16 12:23:35 DEBUG: EXTRACT: config.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: index.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: session.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: controller/classRoomController.js
+2025-07-16 12:23:35 DEBUG: EXTRACT: controller/folderManagementController.js
+2025-07-16 12:23:35 DEBUG: EXTRACT: controller/LoginController.js
+2025-07-16 12:23:35 DEBUG: EXTRACT: controller/manageAvailableBookController.js
+2025-07-16 12:23:35 DEBUG: EXTRACT: controller/manageIssueBookController.js
+2025-07-16 12:23:35 DEBUG: EXTRACT: controller/manageStaffController.js
+2025-07-16 12:23:35 DEBUG: EXTRACT: controller/RegisterController.js
+2025-07-16 12:23:35 DEBUG: EXTRACT: controller/SearchController.js
+2025-07-16 12:23:35 DEBUG: EXTRACT: controller/StudentBulkUploadController.js
+2025-07-16 12:23:35 DEBUG: EXTRACT: controller/studentInfoController.js
+2025-07-16 12:23:35 DEBUG: EXTRACT: controller/subFolderController.js
+2025-07-16 12:23:35 DEBUG: EXTRACT: controller/text.txt
+2025-07-16 12:23:35 DEBUG: EXTRACT: controller/UploadAssignmentController.js
+2025-07-16 12:23:35 DEBUG: EXTRACT: controller/UploadBooKController.js
+2025-07-16 12:23:35 DEBUG: EXTRACT: controller/UploadClassRoomController.js
+2025-07-16 12:23:35 DEBUG: EXTRACT: controller/UploadNoteController.js
+2025-07-16 12:23:35 DEBUG: EXTRACT: modal/text.txt
+2025-07-16 12:23:35 DEBUG: EXTRACT: res/cdn.jsdelivr.net_npm_bootstrap@5.3.2_dist_css_bootstrap.min.css
+2025-07-16 12:23:35 DEBUG: EXTRACT: res/css/style-switcher.css
+2025-07-16 12:23:35 DEBUG: EXTRACT: res/css/style.css
+2025-07-16 12:23:35 DEBUG: EXTRACT: res/css/variables1.css
+2025-07-16 12:23:35 DEBUG: EXTRACT: res/css/variables2.css
+2025-07-16 12:23:35 DEBUG: EXTRACT: res/css/variables3.css
+2025-07-16 12:23:35 DEBUG: EXTRACT: res/css/variables4.css
+2025-07-16 12:23:35 DEBUG: EXTRACT: res/css/variables5.css
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/gallery_4.jpg
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/paper-note.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/1_.jpg
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/2_.jpg
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/3_.jpg
+2025-07-16 12:23:35 DEBUG: EXTRACT: res/img/4.webm
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/ajax_1.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/ajax_2.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/ajax_3.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/ajax_4.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/ajax_5.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/authentication.svg
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/blog-writer.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/cloud-download.gif
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/digital-library.jpg
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/faq_1.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/faq_2.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/gallery_1.jpg
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/gallery_2.jpg
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/gallery_3.jpg
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/gallery_5.jpg
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/gallery_6.jpg
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/gallery_7.jpg
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/gallery_8.jpg
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/gallery_9.jpg
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/HOW TO USE HTTP GET AND POST METHODS IN PHP.docx
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/HOW TO USE HTTP GET AND POST METHODS IN PHP.pdf
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/notes.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/online-class.svg
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/overloading_overriding_php_1.jpg
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/overloading_overriding_php_2.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/overloading_overriding_php_3.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/overloading_overriding_php_4.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/overloading_overriding_php_5.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/php_blog.jpg
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/php_blog_ajax_3.jpg
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/php_img_1.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/php_img_2.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/php_img_3.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/php_img_4.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/php_img_5.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/php_img_6.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/project_1.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/project_2.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/project_3.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/project_4.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/project_5.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/project_6.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/project_7.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/study-literature.svg
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/testing.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/upload1.png
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/upload2.svg
+2025-07-16 12:23:35 DEBUG: SKIP file: res/img/upload3.svg
+2025-07-16 12:23:35 DEBUG: EXTRACT: res/js/jquery-3.7.1.min.js
+2025-07-16 12:23:35 DEBUG: EXTRACT: res/js/main.js
+2025-07-16 12:23:35 DEBUG: EXTRACT: res/js/style-switcher-js.js
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/AddAvailableBook.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/addStudentInfo.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/CDN_Footer.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/CDN_Header.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/classRoom.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/classRoomData.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/folderManagement.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/home.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/leftBar.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/LMS-Dashboard.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/loginScreen.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/logOut.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/manageAvailableBook.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/manageIssueBook.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/manageLog.php
+2025-07-16 12:23:35 INFO: Processed 100 files; extracted 47 prompts so far
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/manageReturnBook.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/manageStaff.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/registrationForm.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/StudentBulkUpload.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/studentInfo.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/subFolder.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/test.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/text.txt
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/updateStudentInfo.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/uploadAssignment.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/uploadBook.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/uploadClassRoom.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/uploadNotes.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/uploadScreen.php
+2025-07-16 12:23:35 DEBUG: EXTRACT: view/viewStudentInfo.php
+2025-07-16 12:23:35 INFO: Writing 62 prompts to data/processed/train_data.jsonl
+2025-07-16 12:23:35 INFO: ✅ Extraction complete
+2025-07-21 09:15:12 INFO: Using source directory: /mnt/New Volume/Code Base/Projeoct/AIDS-eLibrary
+2025-07-21 09:15:12 INFO: START extracting from: /mnt/New Volume/Code Base/Projeoct/AIDS-eLibrary
+2025-07-21 09:15:12 DEBUG: EXTRACT: config.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: index.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: session.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: controller/classRoomController.js
+2025-07-21 09:15:12 DEBUG: EXTRACT: controller/folderManagementController.js
+2025-07-21 09:15:12 DEBUG: EXTRACT: controller/LoginController.js
+2025-07-21 09:15:12 DEBUG: EXTRACT: controller/manageAvailableBookController.js
+2025-07-21 09:15:12 DEBUG: EXTRACT: controller/manageIssueBookController.js
+2025-07-21 09:15:12 DEBUG: EXTRACT: controller/manageStaffController.js
+2025-07-21 09:15:12 DEBUG: EXTRACT: controller/RegisterController.js
+2025-07-21 09:15:12 DEBUG: EXTRACT: controller/SearchController.js
+2025-07-21 09:15:12 DEBUG: EXTRACT: controller/StudentBulkUploadController.js
+2025-07-21 09:15:12 DEBUG: EXTRACT: controller/studentInfoController.js
+2025-07-21 09:15:12 DEBUG: EXTRACT: controller/subFolderController.js
+2025-07-21 09:15:12 DEBUG: EXTRACT: controller/text.txt
+2025-07-21 09:15:12 DEBUG: EXTRACT: controller/UploadAssignmentController.js
+2025-07-21 09:15:12 DEBUG: EXTRACT: controller/UploadBooKController.js
+2025-07-21 09:15:12 DEBUG: EXTRACT: controller/UploadClassRoomController.js
+2025-07-21 09:15:12 DEBUG: EXTRACT: controller/UploadNoteController.js
+2025-07-21 09:15:12 DEBUG: EXTRACT: modal/text.txt
+2025-07-21 09:15:12 DEBUG: EXTRACT: res/cdn.jsdelivr.net_npm_bootstrap@5.3.2_dist_css_bootstrap.min.css
+2025-07-21 09:15:12 DEBUG: EXTRACT: res/css/style-switcher.css
+2025-07-21 09:15:12 DEBUG: EXTRACT: res/css/style.css
+2025-07-21 09:15:12 DEBUG: EXTRACT: res/css/variables1.css
+2025-07-21 09:15:12 DEBUG: EXTRACT: res/css/variables2.css
+2025-07-21 09:15:12 DEBUG: EXTRACT: res/css/variables3.css
+2025-07-21 09:15:12 DEBUG: EXTRACT: res/css/variables4.css
+2025-07-21 09:15:12 DEBUG: EXTRACT: res/css/variables5.css
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/gallery_4.jpg
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/paper-note.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/1_.jpg
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/2_.jpg
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/3_.jpg
+2025-07-21 09:15:12 DEBUG: EXTRACT: res/img/4.webm
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/ajax_1.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/ajax_2.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/ajax_3.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/ajax_4.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/ajax_5.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/authentication.svg
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/blog-writer.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/cloud-download.gif
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/digital-library.jpg
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/faq_1.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/faq_2.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/gallery_1.jpg
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/gallery_2.jpg
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/gallery_3.jpg
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/gallery_5.jpg
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/gallery_6.jpg
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/gallery_7.jpg
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/gallery_8.jpg
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/gallery_9.jpg
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/HOW TO USE HTTP GET AND POST METHODS IN PHP.docx
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/HOW TO USE HTTP GET AND POST METHODS IN PHP.pdf
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/notes.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/online-class.svg
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/overloading_overriding_php_1.jpg
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/overloading_overriding_php_2.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/overloading_overriding_php_3.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/overloading_overriding_php_4.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/overloading_overriding_php_5.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/php_blog.jpg
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/php_blog_ajax_3.jpg
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/php_img_1.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/php_img_2.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/php_img_3.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/php_img_4.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/php_img_5.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/php_img_6.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/project_1.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/project_2.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/project_3.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/project_4.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/project_5.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/project_6.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/project_7.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/study-literature.svg
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/testing.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/upload1.png
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/upload2.svg
+2025-07-21 09:15:12 DEBUG: SKIP file: res/img/upload3.svg
+2025-07-21 09:15:12 DEBUG: EXTRACT: res/js/jquery-3.7.1.min.js
+2025-07-21 09:15:12 DEBUG: EXTRACT: res/js/main.js
+2025-07-21 09:15:12 DEBUG: EXTRACT: res/js/style-switcher-js.js
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/AddAvailableBook.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/addStudentInfo.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/CDN_Footer.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/CDN_Header.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/classRoom.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/classRoomData.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/folderManagement.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/home.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/leftBar.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/LMS-Dashboard.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/loginScreen.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/logOut.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/manageAvailableBook.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/manageIssueBook.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/manageLog.php
+2025-07-21 09:15:12 INFO: Processed 100 files; extracted 47 prompts so far
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/manageReturnBook.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/manageStaff.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/registrationForm.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/StudentBulkUpload.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/studentInfo.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/subFolder.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/test.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/text.txt
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/updateStudentInfo.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/uploadAssignment.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/uploadBook.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/uploadClassRoom.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/uploadNotes.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/uploadScreen.php
+2025-07-21 09:15:12 DEBUG: EXTRACT: view/viewStudentInfo.php
+2025-07-21 09:15:12 INFO: Writing 62 prompts to ../data/processed/train_data.jsonl
+2025-07-21 09:15:12 INFO: ✅ Extraction complete
+2025-07-21 09:15:23 INFO: Using source directory: /mnt/New Volume/Code Base/Projeoct/AIDS-eLibrary
+2025-07-21 09:15:23 INFO: START extracting from: /mnt/New Volume/Code Base/Projeoct/AIDS-eLibrary
+2025-07-21 09:15:23 DEBUG: EXTRACT: config.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: index.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: session.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: controller/classRoomController.js
+2025-07-21 09:15:23 DEBUG: EXTRACT: controller/folderManagementController.js
+2025-07-21 09:15:23 DEBUG: EXTRACT: controller/LoginController.js
+2025-07-21 09:15:23 DEBUG: EXTRACT: controller/manageAvailableBookController.js
+2025-07-21 09:15:23 DEBUG: EXTRACT: controller/manageIssueBookController.js
+2025-07-21 09:15:23 DEBUG: EXTRACT: controller/manageStaffController.js
+2025-07-21 09:15:23 DEBUG: EXTRACT: controller/RegisterController.js
+2025-07-21 09:15:23 DEBUG: EXTRACT: controller/SearchController.js
+2025-07-21 09:15:23 DEBUG: EXTRACT: controller/StudentBulkUploadController.js
+2025-07-21 09:15:23 DEBUG: EXTRACT: controller/studentInfoController.js
+2025-07-21 09:15:23 DEBUG: EXTRACT: controller/subFolderController.js
+2025-07-21 09:15:23 DEBUG: EXTRACT: controller/text.txt
+2025-07-21 09:15:23 DEBUG: EXTRACT: controller/UploadAssignmentController.js
+2025-07-21 09:15:23 DEBUG: EXTRACT: controller/UploadBooKController.js
+2025-07-21 09:15:23 DEBUG: EXTRACT: controller/UploadClassRoomController.js
+2025-07-21 09:15:23 DEBUG: EXTRACT: controller/UploadNoteController.js
+2025-07-21 09:15:23 DEBUG: EXTRACT: modal/text.txt
+2025-07-21 09:15:23 DEBUG: EXTRACT: res/cdn.jsdelivr.net_npm_bootstrap@5.3.2_dist_css_bootstrap.min.css
+2025-07-21 09:15:23 DEBUG: EXTRACT: res/css/style-switcher.css
+2025-07-21 09:15:23 DEBUG: EXTRACT: res/css/style.css
+2025-07-21 09:15:23 DEBUG: EXTRACT: res/css/variables1.css
+2025-07-21 09:15:23 DEBUG: EXTRACT: res/css/variables2.css
+2025-07-21 09:15:23 DEBUG: EXTRACT: res/css/variables3.css
+2025-07-21 09:15:23 DEBUG: EXTRACT: res/css/variables4.css
+2025-07-21 09:15:23 DEBUG: EXTRACT: res/css/variables5.css
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/gallery_4.jpg
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/paper-note.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/1_.jpg
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/2_.jpg
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/3_.jpg
+2025-07-21 09:15:23 DEBUG: EXTRACT: res/img/4.webm
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/ajax_1.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/ajax_2.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/ajax_3.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/ajax_4.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/ajax_5.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/authentication.svg
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/blog-writer.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/cloud-download.gif
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/digital-library.jpg
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/faq_1.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/faq_2.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/gallery_1.jpg
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/gallery_2.jpg
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/gallery_3.jpg
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/gallery_5.jpg
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/gallery_6.jpg
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/gallery_7.jpg
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/gallery_8.jpg
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/gallery_9.jpg
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/HOW TO USE HTTP GET AND POST METHODS IN PHP.docx
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/HOW TO USE HTTP GET AND POST METHODS IN PHP.pdf
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/notes.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/online-class.svg
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/overloading_overriding_php_1.jpg
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/overloading_overriding_php_2.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/overloading_overriding_php_3.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/overloading_overriding_php_4.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/overloading_overriding_php_5.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/php_blog.jpg
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/php_blog_ajax_3.jpg
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/php_img_1.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/php_img_2.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/php_img_3.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/php_img_4.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/php_img_5.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/php_img_6.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/project_1.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/project_2.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/project_3.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/project_4.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/project_5.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/project_6.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/project_7.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/study-literature.svg
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/testing.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/upload1.png
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/upload2.svg
+2025-07-21 09:15:23 DEBUG: SKIP file: res/img/upload3.svg
+2025-07-21 09:15:23 DEBUG: EXTRACT: res/js/jquery-3.7.1.min.js
+2025-07-21 09:15:23 DEBUG: EXTRACT: res/js/main.js
+2025-07-21 09:15:23 DEBUG: EXTRACT: res/js/style-switcher-js.js
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/AddAvailableBook.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/addStudentInfo.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/CDN_Footer.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/CDN_Header.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/classRoom.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/classRoomData.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/folderManagement.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/home.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/leftBar.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/LMS-Dashboard.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/loginScreen.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/logOut.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/manageAvailableBook.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/manageIssueBook.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/manageLog.php
+2025-07-21 09:15:23 INFO: Processed 100 files; extracted 47 prompts so far
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/manageReturnBook.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/manageStaff.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/registrationForm.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/StudentBulkUpload.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/studentInfo.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/subFolder.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/test.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/text.txt
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/updateStudentInfo.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/uploadAssignment.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/uploadBook.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/uploadClassRoom.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/uploadNotes.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/uploadScreen.php
+2025-07-21 09:15:23 DEBUG: EXTRACT: view/viewStudentInfo.php
+2025-07-21 09:15:23 INFO: Writing 62 prompts to ../data/processed/train_data.jsonl
+2025-07-21 09:15:23 INFO: ✅ Extraction complete
+2025-07-27 08:59:50 INFO: Using source directory: /mnt/New Volume/Code Base/Projeoct/PUBMD-Research-Papers
+2025-07-27 08:59:51 INFO: START extracting from: /mnt/New Volume/Code Base/Projeoct/PUBMD-Research-Papers
+2025-07-27 08:59:51 DEBUG: EXTRACT: poetry.lock
+2025-07-27 08:59:51 DEBUG: EXTRACT: pyproject.toml
+2025-07-27 08:59:51 DEBUG: EXTRACT: README.md
+2025-07-27 08:59:51 DEBUG: EXTRACT: results.csv
+2025-07-27 08:59:51 DEBUG: EXTRACT: get_papers/cli.py
+2025-07-27 08:59:51 DEBUG: EXTRACT: get_papers/csv_writer.py
+2025-07-27 08:59:51 DEBUG: EXTRACT: get_papers/data_parser.py
+2025-07-27 08:59:51 DEBUG: EXTRACT: get_papers/pubmed_api.py
+2025-07-27 08:59:51 DEBUG: EXTRACT: get_papers/web_app.py
+2025-07-27 08:59:51 DEBUG: SKIP empty: get_papers/__init__.py
+2025-07-27 08:59:51 DEBUG: EXTRACT: get_papers/templates/footer.html
+2025-07-27 08:59:51 DEBUG: EXTRACT: get_papers/templates/header.html
+2025-07-27 08:59:51 DEBUG: EXTRACT: get_papers/templates/index.html
+2025-07-27 08:59:51 DEBUG: EXTRACT: tests/test_pubmed_api.py
+2025-07-27 08:59:51 DEBUG: SKIP empty: tests/__init__.py
+2025-07-27 08:59:51 INFO: Writing 13 prompts to ../data/processed/train_data.jsonl
+2025-07-27 08:59:51 INFO: ✅ Extraction complete
