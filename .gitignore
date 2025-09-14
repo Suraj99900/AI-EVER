@@ -64,4 +64,4 @@ uploads/
 
 # Local DB/processed data (skip pushing DB & generated JSONs)
 sql/DB/
-data/processed/
+data/processed/LLMModels/
