@@ -1,0 +1,490 @@
+{% extends "base.html" %}
+{% block content %}
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center overflow-hidden pt-20 shadow-lg rounded-2xl">
+        <div class="hero-gradient absolute inset-0"></div>
+        <div class="floating-elements absolute inset-0"></div>
+        
+        <div class="relative z-10 max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 items-center gap-12">
+                <!-- Left Content -->
+                <div class="lg:col-span-6 animate-slide-up">
+                    <!-- Feature Badges -->
+                    <div class="flex flex-wrap gap-3 mb-6">
+                        <span class="glass-effect px-4 py-2 rounded-full text-sm font-medium">
+                            <i class="fas fa-shield-alt mr-2"></i>Private & Secure
+                        </span>
+                        <span class="glass-effect px-4 py-2 rounded-full text-sm font-medium">
+                            <i class="fas fa-microchip mr-2"></i>Local Processing
+                        </span>
+                        <span class="glass-effect px-4 py-2 rounded-full text-sm font-medium">
+                            <i class="fas fa-rocket mr-2"></i>High Performance
+                        </span>
+                    </div>
+
+                    <!-- Main Heading -->
+                    <h1 class="text-5xl lg:text-7xl font-black leading-tight mb-6">
+                        <span class="bg-gradient-to-r from-white via-purple-200 to-purple-400 bg-clip-text text-transparent">
+                            Your Local
+                        </span>
+                        <br>
+                        <span class="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                            AI Copilot
+                        </span>
+                    </h1>
+
+                    <!-- Description -->
+                    <p class="text-xl text-gray-300 max-w-2xl mb-8 leading-relaxed">
+                        A unified, developer-first AI platform to extract and understand code, train on your custom datasets, fine-tune powerful models, and run private, lightning-fast inference — all without sending data to the cloud.
+                    </p>
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-wrap gap-4 mb-12">
+                        <button class="btn-primary px-8 py-4 rounded-xl font-semibold flex items-center space-x-3">
+                            <i class="fas fa-play"></i>
+                            <span>Get Started</span>
+                        </button>
+                        <button class="btn-secondary px-8 py-4 rounded-xl font-semibold flex items-center space-x-3">
+                            <i class="fas fa-download"></i>
+                            <span>Download</span>
+                        </button>
+                        <a href="https://github.com/Suraj99900/AI-EVER" target="_blank" 
+                           class="btn-secondary px-6 py-4 rounded-xl font-semibold flex items-center space-x-3">
+                            <i class="fab fa-github"></i>
+                            <span>View on GitHub</span>
+                        </a>
+                    </div>
+
+                    <!-- Tech Stack -->
+                    <div class="tech-grid">
+                        <div class="tech-item p-4 rounded-lg">
+                            <div class="font-semibold text-purple-300 mb-1">Models</div>
+                            <div class="text-sm text-gray-400">StarCoder, CodeLLaMA</div>
+                        </div>
+                        <div class="tech-item p-4 rounded-lg">
+                            <div class="font-semibold text-pink-300 mb-1">Training</div>
+                            <div class="text-sm text-gray-400">LoRA, QLoRA, PEFT</div>
+                        </div>
+                        <div class="tech-item p-4 rounded-lg">
+                            <div class="font-semibold text-cyan-300 mb-1">Framework</div>
+                            <div class="text-sm text-gray-400">Flask + Tailwind</div>
+                        </div>
+                        <div class="tech-item p-4 rounded-lg">
+                            <div class="font-semibold text-green-300 mb-1">Hardware</div>
+                            <div class="text-sm text-gray-400">Local GPU (RTX 3050+)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Visual -->
+                <div class="lg:col-span-6 animate-fade-in">
+                    <div class="relative">
+                        <div class="image-container animate-float">
+                            <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=800&h=600&fit=crop" 
+                                 alt="AI Platform Interface" 
+                                 class="w-full h-auto rounded-2xl">
+                        </div>
+                        
+                        <!-- Floating Stats Cards -->
+                        <div class="absolute -top-6 -right-6 glass-effect p-4 rounded-xl animate-float" style="animation-delay: 0.5s">
+                            <div class="text-2xl font-bold text-green-400">99.9%</div>
+                            <div class="text-sm text-gray-300">Uptime</div>
+                        </div>
+                        
+                        <div class="absolute -bottom-6 -left-6 glass-effect p-4 rounded-xl animate-float" style="animation-delay: 1s">
+                            <div class="text-2xl font-bold text-purple-400">10x</div>
+                            <div class="text-sm text-gray-300">Faster Training</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 relative">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl lg:text-5xl font-bold mb-6">
+                    <span class="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                        Powerful Features
+                    </span>
+                </h2>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+                    Everything you need to build, train, and deploy AI models locally with enterprise-grade security and performance.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Overview Card -->
+                <div class="glass-effect rounded-2xl p-8 card-hover animate-scale-up">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mr-4">
+                            <i class="fas fa-eye text-white"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold">Platform Overview</h3>
+                    </div>
+                    
+                    <p class="text-gray-300 mb-8 leading-relaxed">
+                        Scan repositories, extract files and database schemas as training examples, prepare datasets, 
+                        then run QLoRA/LoRA training with checkpoints and low-VRAM optimizations.
+                    </p>
+
+                    <!-- Process Steps -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="glass-effect rounded-lg p-4 feature-card">
+                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center mb-3">
+                                <i class="fas fa-search text-white"></i>
+                            </div>
+                            <div class="font-semibold text-indigo-300 mb-2">1. Extract</div>
+                            <div class="text-sm text-gray-400">Create instruction/response pairs from code</div>
+                        </div>
+                        
+                        <div class="glass-effect rounded-lg p-4 feature-card">
+                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center mb-3">
+                                <i class="fas fa-cog text-white"></i>
+                            </div>
+                            <div class="font-semibold text-purple-300 mb-2">2. Prepare</div>
+                            <div class="text-sm text-gray-400">Format dataset & metadata</div>
+                        </div>
+                        
+                        <div class="glass-effect rounded-lg p-4 feature-card">
+                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center mb-3">
+                                <i class="fas fa-rocket text-white"></i>
+                            </div>
+                            <div class="font-semibold text-emerald-300 mb-2">3. Train</div>
+                            <div class="text-sm text-gray-400">Run QLoRA/LoRA & save checkpoints</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Feature Panel -->
+                <div class="glass-effect rounded-2xl p-8 card-hover animate-scale-up" style="animation-delay: 0.2s">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-2xl font-bold">Core Capabilities</h3>
+                        <div class="text-sm text-gray-400 glass-effect px-3 py-1 rounded-full">Interactive Demo</div>
+                    </div>
+
+                    <!-- Feature Tabs -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <button class="feature-card active p-4 rounded-xl text-left transition-all" data-feature="extract">
+                            <div class="flex items-center mb-3">
+                                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center mr-3">
+                                    <i class="fas fa-file-code text-white"></i>
+                                </div>
+                                <div class="font-semibold">Extract</div>
+                            </div>
+                            <div class="text-sm text-gray-400">Code & Schema Analysis</div>
+                        </button>
+
+                        <button class="feature-card p-4 rounded-xl text-left transition-all" data-feature="training">
+                            <div class="flex items-center mb-3">
+                                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center mr-3">
+                                    <i class="fas fa-brain text-white"></i>
+                                </div>
+                                <div class="font-semibold">Training</div>
+                            </div>
+                            <div class="text-sm text-gray-400">One-Click QLoRA/LoRA</div>
+                        </button>
+
+                        <button class="feature-card p-4 rounded-xl text-left transition-all" data-feature="inference">
+                            <div class="flex items-center mb-3">
+                                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center mr-3">
+                                    <i class="fas fa-bolt text-white"></i>
+                                </div>
+                                <div class="font-semibold">Inference</div>
+                            </div>
+                            <div class="text-sm text-gray-400">Smart UI Interface</div>
+                        </button>
+                    </div>
+
+                    <!-- Feature Content -->
+                    <div id="feature-content" class="min-h-48">
+                        <!-- Extract Feature -->
+                        <div id="extract-content" class="feature-content">
+                            <div class="image-container mb-4">
+                                <img src="https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=600&h=300&fit=crop" 
+                                     alt="Code Extraction" class="w-full h-48 object-cover rounded-lg">
+                            </div>
+                            <h4 class="text-lg font-semibold mb-3">Extract Code & Schema — Advanced Analysis</h4>
+                            <ul class="space-y-2 text-sm text-gray-300">
+                                <li class="flex items-center">
+                                    <i class="fas fa-check-circle text-green-400 mr-2"></i>
+                                    Upload or point to project directory (local path or archive)
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check-circle text-green-400 mr-2"></i>
+                                    Intelligent scanning of code files (.py, .php, .js, .sql)
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check-circle text-green-400 mr-2"></i>
+                                    Export as optimized newline-delimited JSON (.jsonl)
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Training Feature -->
+                        <div id="training-content" class="feature-content hidden">
+                            <div class="image-container mb-4">
+                                <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=600&h=300&fit=crop" 
+                                     alt="AI Training" class="w-full h-48 object-cover rounded-lg">
+                            </div>
+                            <h4 class="text-lg font-semibold mb-3">One-Click Training (QLoRA / LoRA)</h4>
+                            <p class="text-sm text-gray-300 mb-4">
+                                Advanced training pipeline with automatic hyperparameter optimization, 
+                                checkpoint management, and real-time monitoring dashboard.
+                            </p>
+                            <div class="grid grid-cols-2 gap-3 text-xs">
+                                <div class="glass-effect p-3 rounded">
+                                    <div class="font-semibold text-purple-300">Memory Efficient</div>
+                                    <div class="text-gray-400">4GB VRAM minimum</div>
+                                </div>
+                                <div class="glass-effect p-3 rounded">
+                                    <div class="font-semibold text-purple-300">Auto Checkpoints</div>
+                                    <div class="text-gray-400">Resume training anytime</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Inference Feature -->
+                        <div id="inference-content" class="feature-content hidden">
+                            <div class="image-container mb-4">
+                                <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=600&h=300&fit=crop" 
+                                     alt="AI Interface" class="w-full h-48 object-cover rounded-lg">
+                            </div>
+                            <h4 class="text-lg font-semibold mb-3">Smart Inference UI</h4>
+                            <p class="text-sm text-gray-300 mb-4">
+                                Intuitive chat interface with context-aware responses, code completion, 
+                                and advanced prompt engineering tools.
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="glass-effect px-3 py-1 rounded-full text-xs">Real-time responses</span>
+                                <span class="glass-effect px-3 py-1 rounded-full text-xs">Context injection</span>
+                                <span class="glass-effect px-3 py-1 rounded-full text-xs">Export capabilities</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="py-20 relative">
+        <div class="hero-gradient absolute inset-0 opacity-20"></div>
+        <div class="relative z-10 max-w-4xl mx-auto text-center px-6">
+            <h2 class="text-4xl lg:text-5xl font-bold mb-6">
+                Ready to Transform Your AI Workflow?
+            </h2>
+            <p class="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+                Join thousands of developers who have already revolutionized their AI development with our local-first platform.
+            </p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <button class="btn-primary px-10 py-4 rounded-xl font-semibold text-lg flex items-center space-x-3">
+                    <i class="fas fa-rocket"></i>
+                    <span>Start Building Today</span>
+                </button>
+                <button class="btn-secondary px-10 py-4 rounded-xl font-semibold text-lg flex items-center space-x-3">
+                    <i class="fas fa-book"></i>
+                    <span>View Documentation</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Feature switching functionality
+        function initFeatureSwitching() {
+            const buttons = document.querySelectorAll('[data-feature]');
+            const contents = document.querySelectorAll('.feature-content');
+            
+            function showFeature(feature) {
+                // Update buttons
+                buttons.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.feature === feature);
+                });
+                
+                // Update content
+                contents.forEach(content => {
+                    const isTarget = content.id === `${feature}-content`;
+                    content.classList.toggle('hidden', !isTarget);
+                });
+            }
+            
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    showFeature(btn.dataset.feature);
+                });
+            });
+            
+            // Initialize with first feature
+            showFeature('extract');
+        }
+
+        // Intersection Observer for animations
+        function initScrollAnimations() {
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('animate-slide-up');
+                        }
+                    });
+                },
+                { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+            );
+
+            document.querySelectorAll('.card-hover, .tech-item').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        // Smooth scrolling for navigation
+        function initSmoothScroll() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        }
+
+        // Parallax effect for hero section
+        function initParallax() {
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                const parallaxElements = document.querySelectorAll('.animate-float');
+                
+                parallaxElements.forEach((element, index) => {
+                    const speed = 0.1 * (index + 1);
+                    element.style.transform = `translateY(${scrolled * speed}px)`;
+                });
+            });
+        }
+
+        // Initialize all functionality when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initFeatureSwitching();
+            initScrollAnimations();
+            initSmoothScroll();
+            initParallax();
+            
+            // Add a subtle loading animation
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 0.5s ease-in-out';
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+
+        // Add some interactive hover effects
+        document.addEventListener('mousemove', (e) => {
+            const cards = document.querySelectorAll('.glass-effect');
+            cards.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = (y - centerY) / 10;
+                    const rotateY = (centerX - x) / 10;
+                    
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                } else {
+                    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+                }
+            });
+        });
+
+        // Add dynamic background particles
+        function createParticles() {
+            const particlesContainer = document.createElement('div');
+            particlesContainer.className = 'fixed inset-0 pointer-events-none z-0';
+            document.body.appendChild(particlesContainer);
+
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'absolute rounded-full opacity-20';
+                particle.style.width = Math.random() * 4 + 1 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.background = `linear-gradient(135deg, ${
+                    ['#7c3aed', '#d946ef', '#06b6d4'][Math.floor(Math.random() * 3)]
+                }, transparent)`;
+                particle.style.animation = `float ${5 + Math.random() * 10}s ease-in-out infinite`;
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Add typing effect to hero title
+        function typeWriter(element, text, speed = 100) {
+            let i = 0;
+            element.innerHTML = '';
+            
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        // Enhanced initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            initFeatureSwitching();
+            initScrollAnimations();
+            initSmoothScroll();
+            initParallax();
+            createParticles();
+            
+            // Add loading animation
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 0.5s ease-in-out';
+                document.body.style.opacity = '1';
+            }, 100);
+
+            // Add scroll progress indicator
+            const progressBar = document.createElement('div');
+            progressBar.className = 'fixed top-0 left-0 h-1 bg-gradient-to-r from-purple-500 to-pink-500 z-50 transition-all duration-300';
+            document.body.appendChild(progressBar);
+
+            window.addEventListener('scroll', () => {
+                const scrollProgress = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+                progressBar.style.width = scrollProgress + '%';
+            });
+
+            // Add enhanced button interactions
+            const buttons = document.querySelectorAll('.btn-primary, .btn-secondary');
+            buttons.forEach(button => {
+                button.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-3px) scale(1.02)';
+                });
+                
+                button.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+                
+                button.addEventListener('mousedown', function() {
+                    this.style.transform = 'translateY(0) scale(0.98)';
+                });
+                
+                button.addEventListener('mouseup', function() {
+                    this.style.transform = 'translateY(-3px) scale(1.02)';
+                });
+            });
+        });
+    </script>
+ {% endblock %}

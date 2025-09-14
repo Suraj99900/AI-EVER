@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AI Ever</title>
+
+  <!-- Tailwind + Icons + Font -->
+  <script src="static/js/tailwindcss.js"></script>
+  <link rel="stylesheet" href="static/css/font-awesome.css">
+  <script src="static/js/jquery-3.7.1.slim.js"></script>
+  <link rel="stylesheet" href="static/css/prism.min.css">
+  <script src="static/js/prism.min.js"></script>
+  <script src="static/js/prism-php.min.js"></script>
+  <script src="static/js/prism-python.min.js"></script>
+  <script src="static/js/prism-sql.min.js"></script>
+  <script src="static/js/prism-javascript.min.js"></script>
+  <script src="static/js/prism-markup.min.js"></script>
+
+
+  <style>
+    :root {
+      --deepseek-primary: #5e35b1;
+      --deepseek-secondary: #7c4dff;
+      --deepseek-light: #f5f5ff;
+      --deepseek-dark: #1a1a2e;
+      --deepseek-text: #333333;
+      --deepseek-gray: #e0e0e0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .chat-bg {
+      background-color: #ffffff;
+    }
+
+    .user-bubble {
+      background-color: var(--deepseek-primary);
+      border-radius: 18px 18px 4px 18px;
+      color: white;
+      white-space: pre-wrap;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .ai-bubble {
+      background-color: var(--deepseek-light);
+      border-radius: 18px 18px 18px 4px;
+      color: var(--deepseek-text);
+      white-space: pre-wrap;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      border: 1px solid var(--deepseek-gray);
+    }
+
+    pre {
+      background: var(--deepseek-dark);
+      color: #fff;
+      border-radius: 8px;
+      padding: 12px;
+      overflow-x: auto;
+      font-size: 14px;
+      margin: 8px 0;
+    }
+
+    .send-button {
+      background-color: var(--deepseek-primary);
+      transition: all 0.2s ease;
+    }
+
+    .send-button:hover {
+      background-color: var(--deepseek-secondary);
+      transform: scale(1.05);
+    }
+
+    .sidebar-item:hover {
+      background-color: rgba(94, 53, 177, 0.1);
+    }
+
+    .sidebar-item.active {
+      background-color: rgba(94, 53, 177, 0.2);
+      color: var(--deepseek-primary);
+      font-weight: 500;
+    }
+
+    .model-selector {
+      background-color: var(--deepseek-light);
+      border: 1px solid var(--deepseek-gray);
+      color: var(--deepseek-primary);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+  <div class="flex h-screen bg-white">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white border-r border-gray-200 flex flex-col">
+      <button
+        class="mx-3 mt-4 flex items-center justify-center gap-2 px-4 py-3 text-sm rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-all shadow-sm">
+        <span class="text-lg">+</span><span>New Chat</span>
+      </button>
+
+      <!-- Model Selector -->
+      <div class="mx-3 mt-4 px-3 py-2 text-xs font-medium text-gray-500">MODEL</div>
+      <div class="mx-3 mb-2 px-3 py-2 rounded-lg model-selector text-sm font-medium">
+        AI Ever
+      </div>
+
+      <nav class="flex-1 mt-2 overflow-y-auto no-scrollbar px-2">
+        <div class="text-xs font-medium text-gray-500 px-3 py-2">RECENT CHATS</div>
+        <ul>
+          {% for cp in checkpoints %}
+          <div
+            class="flex justify-between items-center px-3 py-2.5 rounded-lg sidebar-item {% if cp[0] == current_session %}active{% endif %}">
+            <a href="?session={{ cp[0] }}" class="text-sm text-gray-700 hover:underline truncate flex-1">
+              {{ cp[1] }}
+            </a>
+            <button onclick="renameCheckpoint('{{ cp[0] }}', '{{ cp[1] }}')"
+              class="text-xs text-purple-600 hover:text-purple-800">Edit</button>
+          </div>
+          {% endfor %}
+        </ul>
+      </nav>
+      <div class="p-3 border-t border-gray-200">
+        <a href="#" class="flex items-center gap-2 px-2 py-1.5 text-sm rounded-lg hover:bg-gray-50">
+          <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          Settings
+        </a>
+      </div>
+    </aside>
+
+    <!-- Chat Panel -->
+    <div class="flex-1 flex flex-col h-full">
+      <header class="h-14 flex items-center px-6 bg-white border-b border-gray-200">
+        <h1 class="text-base font-medium text-gray-800">{{ current_chat_title or "New Chat" }}</h1>
+      </header>
+
+      <!-- Messages -->
+      <main id="chat-window" class="flex-1 px-4 py-6 chat-bg space-y-6 overflow-y-auto no-scrollbar">
+        <div class="text-center text-gray-400 mt-8 italic">Start the conversation below…</div>
+      </main>
+
+      <!-- Input -->
+      <div class="bg-white border-t border-gray-200 px-4 py-4">
+        <form id="chat-form" class="max-w-4xl mx-auto">
+          <div class="relative flex items-center">
+            <textarea id="chat-input" rows="1"
+              class="flex-1 bg-gray-100 rounded-xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none"
+              placeholder="Message DeepSeek..." style="min-height: 44px; max-height: 200px;"></textarea>
+            <button type="submit"
+              class="absolute right-2 w-8 h-8 flex items-center justify-center send-button text-white rounded-lg">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+              </svg>
+            </button>
+          </div>
+          <div class="text-xs text-gray-500 mt-2 text-center">
+            DeepSeek can make mistakes. Consider checking important information.
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    function renameCheckpoint(id, oldName) {
+      const newName = prompt("Enter new name for chat:", oldName);
+      if (newName && newName.trim() !== "" && newName !== oldName) {
+        fetch(`/rename_checkpoint/${id}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ new_name: newName })
+        }).then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              location.reload();
+            } else {
+              alert("Rename failed: " + data.error);
+            }
+          });
+      }
+    }
+
+    function scrollBottom() {
+      $('#chat-window').scrollTop($('#chat-window')[0].scrollHeight);
+    }
+
+    function escapeHTML(html) {
+      return $('<div>').text(html).html();
+    }
+
+    // Add normal text bubble
+    function addMsg(text, me) {
+      $('#chat-window').find('div.italic').remove();
+      const bubbleClass = me ? 'user-bubble' : 'ai-bubble';
+      const msg = $(`<div class="flex ${me ? 'justify-end' : 'justify-start'} px-4">
+      <div class="${bubbleClass} px-4 py-3 max-w-[80%] break-words">${escapeHTML(text).replace(/\n/g, '<br>')}</div>
+    </div>`);
+      $('#chat-window').append(msg);
+      scrollBottom();
+    }
+
+    // Add code bubble
+    function addCode(code, lang) {
+      $('#chat-window').find('div.italic').remove();
+      const safeCode = escapeHTML(code);
+      const msg = $(`<div class="flex justify-start px-4 w-full">
+      <pre><code class="language-${lang}">${safeCode}</code></pre>
+    </div>`);
+      $('#chat-window').append(msg);
+      Prism.highlightAll();
+      scrollBottom();
+    }
+
+    $(document).ready(function () {
+      $('#chat-form').on('submit', function (e) {
+        e.preventDefault();
+        const prompt = $('#chat-input').val().trim();
+        if (!prompt) return;
+
+        addMsg(prompt, true);
+        $('#chat-input').val('').css('height', 'auto');
+
+        // Show Thinking... with an empty bubble to update progressively
+        const thinkingBubble = $(`<div class="flex justify-start px-4">
+      <div class="ai-bubble px-4 py-3 max-w-[80%] break-words">Thinking...</div>
+    </div>`);
+        $('#chat-window').append(thinkingBubble);
+        scrollBottom();
+
+        // Use fetch to stream tokens from your streaming endpoint
+        fetch('/stream_inference', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt })
+        }).then(response => {
+          if (!response.ok) throw new Error('Network response was not ok');
+
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
+          let resultText = '';
+
+          function read() {
+            return reader.read().then(({ done, value }) => {
+              if (done) {
+                // Stream finished - replace "Thinking..." if nothing was generated
+                if (!resultText.trim()) {
+                  thinkingBubble.find('div').text('No response from model.');
+                }
+                return;
+              }
+
+              const chunk = decoder.decode(value, { stream: true });
+              resultText += chunk;
+
+              // Update bubble text progressively (remove "Thinking..." initially)
+              thinkingBubble.find('div').text(resultText);
+              scrollBottom();
+
+              return read();
+            });
+          }
+
+          return read();
+        }).catch(err => {
+          // On error, replace "Thinking..." with error message
+          thinkingBubble.find('div').text('❗ Network error or server error');
+          console.error(err);
+        });
+      });
+
+      // Auto-grow textarea
+      $('#chat-input').on('input', function () {
+        $(this).css('height', 'auto').css('height', Math.min(this.scrollHeight, 200) + 'px');
+      });
+
+      // Submit on Enter, new line on Shift+Enter
+      $('#chat-input').on('keydown', function (e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          $('#chat-form').trigger('submit');
+        }
+      });
+    });
+
+  </script>
+
+</body>
+
+</html>

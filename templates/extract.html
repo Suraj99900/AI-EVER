@@ -1,0 +1,532 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container py-5">
+
+  <!-- Stepper Navigation -->
+  <ul class="nav nav-pills mb-3 justify-content-center stepper-animated" id="stepper-tabs">
+    <li class="nav-item">
+      <a class="nav-link active px-4 py-2 rounded-pill" data-step="1"><span class="step-circle">1</span> Code
+        Extraction</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link px-4 py-2 rounded-pill" data-step="2"><span class="step-circle">2</span> SQL Extraction</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link px-4 py-2 rounded-pill" data-step="3"><span class="step-circle">3</span> Train Model</a>
+    </li>
+  </ul>
+
+  <!-- Step 1 -->
+  <div id="step-1" class="step-section card shadow-lg p-4 mb-4">
+    <h4 class="fw-bold text-primary mb-3"><i class="fas fa-code"></i> Codebase Extraction</h4>
+    <form id="extract-form" autocomplete="off">
+      <div class="mb-3">
+        <label for="repo_path" class="form-label">Local Project Path</label>
+        <input type="text" id="repo_path" name="repo_path" class="form-control" placeholder="/home/user/myrepo"
+          required>
+        <input type="hidden" name="type" value="code">
+      </div>
+      <button type="submit" class="btn btn-gradient w-100">
+        <span class="spinner-border spinner-border-sm d-none" id="extract-spinner"></span>
+        🚀 Start Extraction
+      </button>
+    </form>
+    <div id="extract-alert" class="alert d-none mt-3"></div>
+    <!-- per-step small log kept for quick view (optional) -->
+    <div id="download-link" class="mt-3 d-none text-center">
+      <a href="{{ url_for('extract.extract_downloads', type='code') }}" class="btn btn-success">📥 Download JSONL</a>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div id="step-2" class="step-section card shadow-lg p-4 mb-4 d-none">
+    <h4 class="fw-bold text-success mb-3"><i class="fas fa-database"></i> SQL Schema Extraction</h4>
+    <form id="sql-form" autocomplete="off">
+      <div class="row g-3">
+        <div class="col-md-6"><input type="text" name="host" placeholder="Host" class="form-control" required></div>
+        <div class="col-md-6"><input type="text" name="port" placeholder="Port" class="form-control" required></div>
+        <div class="col-md-6"><input type="text" name="username" placeholder="Username" class="form-control" required>
+        </div>
+        <div class="col-md-6"><input type="password" name="password" placeholder="Password" class="form-control"
+            required></div>
+        <div class="col-12"><input type="text" name="database" placeholder="Database Name" class="form-control"
+            required></div>
+      </div>
+      <input type="hidden" name="type" value="sql">
+      <button type="submit" class="btn btn-gradient w-100 mt-3">
+        <span class="spinner-border spinner-border-sm d-none" id="sql-spinner"></span>
+        📊 Extract Schema
+      </button>
+    </form>
+    <div id="sql-alert" class="alert d-none mt-3"></div>
+    <div id="sql-download-link" class="mt-3 d-none text-center">
+      <a href="{{ url_for('extract.extract_downloads', type='sql') }}" class="btn btn-success">📥 Download SQL JSONL</a>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div id="step-3" class="step-section card shadow-lg p-4 mb-4 d-none">
+    <h4 class="fw-bold text-indigo-600 mb-4"><i class="fas fa-brain"></i> Train Model</h4>
+
+    <!-- Training Preset Cards -->
+    <div class="row mb-4">
+      <div class="col-md-4 mb-2">
+        <div class="card card-hover text-center preset-card" data-preset="low" style="cursor:pointer;">
+          <div class="card-body py-3">
+            <input type="radio" name="preset" id="preset-low" class="form-check-input me-2" checked>
+            <label for="preset-low" class="fw-bold">Low</label>
+            <div class="small text-muted mt-2">Fast, minimal resources</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-2">
+        <div class="card card-hover text-center preset-card" data-preset="mid" style="cursor:pointer;">
+          <div class="card-body py-3">
+            <input type="radio" name="preset" id="preset-mid" class="form-check-input me-2">
+            <label for="preset-mid" class="fw-bold">Mid</label>
+            <div class="small text-muted mt-2">Balanced, moderate resources</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-2">
+        <div class="card card-hover text-center preset-card" data-preset="high" style="cursor:pointer;">
+          <div class="card-body py-3">
+            <input type="radio" name="preset" id="preset-high" class="form-check-input me-2">
+            <label for="preset-high" class="fw-bold">High</label>
+            <div class="small text-muted mt-2">Best quality, slowest</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <form id="train-form" autocomplete="off">
+      <div class="row g-3">
+        <div class="col-md-3">
+          <label class="form-label small">Max Steps</label>
+          <input type="number" name="max_steps" class="form-control form-control-sm" value="20" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Batch Size</label>
+          <input type="number" name="per_device_train_batch_size" class="form-control form-control-sm" value="1" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Grad Accum Steps</label>
+          <input type="number" name="gradient_accumulation_steps" class="form-control form-control-sm" value="1" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Learning Rate</label>
+          <input type="text" name="learning_rate" class="form-control form-control-sm" value="1e-4" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Num Epochs</label>
+          <input type="number" name="num_train_epochs" class="form-control form-control-sm" value="10" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Logging Steps</label>
+          <input type="number" name="logging_steps" class="form-control form-control-sm" value="2" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Eval Steps</label>
+          <input type="number" name="eval_steps" class="form-control form-control-sm" value="5" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Warmup Steps</label>
+          <input type="number" name="warmup_steps" class="form-control form-control-sm" value="5" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Save Steps</label>
+          <input type="number" name="save_steps" class="form-control form-control-sm" value="20" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Save Strategy</label>
+          <input type="text" name="save_strategy" class="form-control form-control-sm" value="steps" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Save Total Limit</label>
+          <input type="number" name="save_total_limit" class="form-control form-control-sm" value="1" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Metric for Best Model</label>
+          <input type="text" name="metric_for_best_model" class="form-control form-control-sm" value="eval_loss" />
+        </div>
+        <div class="col-md-3 d-flex align-items-center">
+          <input type="checkbox" name="fp16" id="fp16" class="form-check-input me-2" checked />
+          <label for="fp16" class="form-check-label small">Use FP16</label>
+        </div>
+        <div class="col-md-3 d-flex align-items-center">
+          <input type="checkbox" name="bf16" id="bf16" class="form-check-input me-2" />
+          <label for="bf16" class="form-check-label small">Use BF16</label>
+        </div>
+        <div class="col-md-3 d-flex align-items-center">
+          <input type="checkbox" name="greater_is_better" id="greater_is_better" class="form-check-input me-2" />
+          <label for="greater_is_better" class="form-check-label small">Greater Metric is Better</label>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Optimizer</label>
+          <input type="text" name="optim" class="form-control form-control-sm" value="adamw_torch" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Report To</label>
+          <input type="text" name="report_to" class="form-control form-control-sm"
+            placeholder="e.g. tensorboard,wandb" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Logging Dir</label>
+          <input type="text" name="logging_dir" class="form-control form-control-sm" placeholder="/logs" />
+        </div>
+        <div class="col-md-3 d-flex align-items-center">
+          <input type="checkbox" name="is_sql" id="is_sql" class="form-check-input me-2" />
+          <label for="is_sql" class="form-check-label small">Train on SQL Schema</label>
+        </div>
+        <div class="col-md-12 text-end mt-3">
+          <button type="submit" class="btn btn-gradient px-5 py-2">
+            <span class="spinner-border spinner-border-sm d-none" id="train-spinner"></span>
+            🚀 Start Training
+          </button>
+        </div>
+      </div>
+    </form>
+    <div id="train-alert" class="alert d-none mt-3"></div>
+  </div>
+
+  <!-- GLOBAL CONSOLE (single, read-only) -->
+  <div class="card shadow-lg mb-4 global-console-card">
+    <div class="card-header d-flex justify-content-between align-items-center bg-dark text-white">
+      <div class="d-flex align-items-center gap-3">
+        <strong>Global Console</strong>
+        <span id="console-status" class="badge bg-secondary">idle</span>
+      </div>
+      <div class="btn-group">
+        <button id="btn-clear-console" class="btn btn-sm btn-outline-light" title="Clear console">Clear</button>
+        <button id="btn-copy-console" class="btn btn-sm btn-outline-light" title="Copy console">Copy</button>
+        <button id="btn-toggle-autoscroll" class="btn btn-sm btn-outline-light" title="Toggle autoscroll">Autoscroll:
+          On</button>
+      </div>
+    </div>
+    <div class="card-body p-0">
+      <pre id="global-console" class="m-0 p-3 bg-black text-success small"
+        style="min-height:160px; max-height:360px; overflow:auto; font-family: 'Fira Mono', monospace;"
+        contenteditable="false" aria-readonly="true">$ Global console ready...</pre>
+    </div>
+  </div>
+
+</div>
+
+<style>
+  .btn-gradient {
+    background: linear-gradient(90deg, #6f42c1, #d63384);
+    color: white;
+    font-weight: 600;
+    border: none;
+  }
+
+  .btn-gradient:hover {
+    opacity: 0.9;
+  }
+
+  .stepper-animated .nav-link.active {
+    background: linear-gradient(90deg, #6f42c1, #d63384);
+    color: #fff;
+  }
+
+  .step-circle {
+    display: inline-block;
+    width: 2em;
+    height: 2em;
+    background: #fff;
+    color: #6f42c1;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 2em;
+    font-weight: bold;
+    margin-right: 0.5em;
+    border: 2px solid #d63384;
+    box-shadow: 0 2px 8px rgba(111, 66, 193, 0.08);
+  }
+
+  .log-area {
+    min-height: 80px;
+    max-height: 220px;
+    overflow-y: auto;
+    font-family: 'Fira Mono', monospace;
+  }
+
+  .global-console-card {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  /* toolbar buttons smaller look */
+  .global-console-card .btn {
+    font-size: 12px;
+    padding: .25rem .5rem;
+  }
+
+  .preset-card {
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+
+  .preset-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(function () {
+    // autoscroll toggle
+    let autoscroll = true;
+    function appendToGlobalConsole(prefix, text) {
+      const $g = $('#global-console');
+      const time = new Date().toLocaleTimeString();
+      const entry = `[${time}] [${prefix}] ${text}\n`;
+      $g.append(entry);
+      if (autoscroll) {
+        $g.scrollTop($g[0].scrollHeight);
+      }
+      // update status badge
+      $('#console-status').text('running').removeClass('bg-secondary').addClass('bg-warning');
+      // if message signals success or error, update status
+      if (text.includes('✅')) {
+        $('#console-status').text('ok').removeClass('bg-warning').addClass('bg-success');
+      } else if (text.includes('❌')) {
+        $('#console-status').text('error').removeClass('bg-warning').addClass('bg-danger');
+      }
+    }
+
+    // toolbar handlers
+    $('#btn-clear-console').on('click', function () {
+      $('#global-console').text('$ Global console cleared...\n');
+      $('#console-status').text('idle').removeClass('bg-success bg-warning bg-danger').addClass('bg-secondary');
+    });
+    $('#btn-copy-console').on('click', function () {
+      const text = $('#global-console').text();
+      navigator.clipboard?.writeText(text).then(() => {
+        $(this).text('Copied');
+        setTimeout(() => $(this).text('Copy'), 1200);
+      }).catch(() => {
+        alert('Copy failed — use manual copy.');
+      });
+    });
+    $('#btn-toggle-autoscroll').on('click', function () {
+      autoscroll = !autoscroll;
+      $(this).text('Autoscroll: ' + (autoscroll ? 'On' : 'Off'));
+    });
+
+    // Stepper switching (independent)
+    $('#stepper-tabs .nav-link').on('click', function () {
+      let step = $(this).data('step');
+      $('.nav-link').removeClass('active');
+      $(this).addClass('active');
+      $('.step-section').addClass('d-none');
+      $('#step-' + step).removeClass('d-none');
+    });
+
+    // Poll helper: read the last line endpoint and append to global console with source tag
+    function pollLogs(endpoint, tag, spinnerId, downloadSelector) {
+      let interval = setInterval(function () {
+        $.get(endpoint, function (res) {
+          // support both array and string payloads
+          let logs = Array.isArray(res.logs) ? res.logs.join('\n') : (res.logs || '');
+          if (!logs) logs = '$ (no logs)';
+          appendToGlobalConsole(tag, logs);
+          // if final marker found, stop spinner and show download if provided
+          if (logs.includes('✅') || logs.includes('❌')) {
+            $(spinnerId).addClass('d-none');
+            if (logs.includes('✅') && downloadSelector) $(downloadSelector).removeClass('d-none');
+            clearInterval(interval);
+          }
+        }).fail(function () {
+          appendToGlobalConsole(tag, 'Failed to reach ' + endpoint);
+          $(spinnerId).addClass('d-none');
+          clearInterval(interval);
+        });
+      }, 1500);
+      return interval;
+    }
+
+    let extractInterval, sqlInterval, trainInterval;
+
+    // Code Extraction
+    $('#extract-form').submit(function (e) {
+      e.preventDefault();
+      $('#extract-spinner').removeClass('d-none');
+      $('#extract-alert').addClass('d-none');
+      $('#download-link').addClass('d-none');
+      appendToGlobalConsole('EXTRACT', 'Started extraction...');
+      if (extractInterval) clearInterval(extractInterval);
+      extractInterval = pollLogs('/extract/logs', 'EXTRACT', '#extract-spinner', '#download-link');
+      $.post('/extract', $(this).serialize(), function (res) {
+        $('#extract-spinner').addClass('d-none');
+        $('#extract-alert').removeClass('d-none alert-danger').addClass('alert-success').text(res.message);
+        appendToGlobalConsole('EXTRACT', res.message);
+      }).fail(function (xhr) {
+        $('#extract-spinner').addClass('d-none');
+        $('#extract-alert').removeClass('d-none alert-success').addClass('alert-danger').text(xhr.responseJSON?.message || "Extraction failed ❌");
+        appendToGlobalConsole('EXTRACT', xhr.responseJSON?.message || "Extraction failed ❌");
+      });
+    });
+
+    // SQL Extraction
+    $('#sql-form').submit(function (e) {
+      e.preventDefault();
+      $('#sql-spinner').removeClass('d-none');
+      $('#sql-alert').addClass('d-none');
+      $('#sql-download-link').addClass('d-none');
+      appendToGlobalConsole('SQL', 'Started SQL extraction...');
+      if (sqlInterval) clearInterval(sqlInterval);
+      sqlInterval = pollLogs('/extract/logs', 'SQL', '#sql-spinner', '#sql-download-link');
+      $.post('/extract', $(this).serialize(), function (res) {
+        $('#sql-spinner').addClass('d-none');
+        $('#sql-alert').removeClass('d-none alert-danger').addClass('alert-success').text(res.message);
+        appendToGlobalConsole('SQL', res.message);
+      }).fail(function (xhr) {
+        $('#sql-spinner').addClass('d-none');
+        $('#sql-alert').removeClass('d-none alert-success').addClass('alert-danger').text(xhr.responseJSON?.message || "SQL extraction failed ❌");
+        appendToGlobalConsole('SQL', xhr.responseJSON?.message || "SQL extraction failed ❌");
+      });
+    });
+
+    // Training
+    $('#train-form').submit(function (e) {
+      e.preventDefault();
+      $('#train-spinner').removeClass('d-none');
+      $('#train-alert').addClass('d-none');
+      appendToGlobalConsole('TRAIN', 'Started training...');
+      if (trainInterval) clearInterval(trainInterval);
+      trainInterval = setInterval(function () {
+        $.get('/train/logs', function (res) {
+          let logs = Array.isArray(res.logs) ? res.logs.join('\n') : (res.logs || '');
+          appendToGlobalConsole('TRAIN', logs);
+          if (logs.includes("✅") || logs.includes("❌")) {
+            $('#train-spinner').addClass('d-none');
+            clearInterval(trainInterval);
+          }
+        }).fail(function () {
+          appendToGlobalConsole('TRAIN', 'Failed to reach /train/logs');
+          $('#train-spinner').addClass('d-none');
+          clearInterval(trainInterval);
+        });
+      }, 2000);
+
+      // Prepare JSON payload
+      let data = {};
+      $('#train-form').serializeArray().forEach(function (item) {
+        // map preset-style booleans from checkboxes; unchecked checkboxes are omitted by serializeArray
+        data[item.name] = item.value;
+      });
+      // ensure checkboxes get boolean values
+      data.fp16 = !!$('#fp16').is(':checked');
+      data.bf16 = !!$('#bf16').is(':checked');
+      data.greater_is_better = !!$('#greater_is_better').is(':checked');
+      data.is_sql = !!$('#is_sql').is(':checked');
+      // handle report_to splitting (if present)
+      if (data.report_to) data.report_to = data.report_to.split(',').map(s => s.trim()).filter(Boolean);
+
+      $.ajax({
+        url: '/train',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        success: function (res) {
+          $('#train-alert').removeClass('d-none alert-danger').addClass('alert-success').text(res.message);
+          $('#train-spinner').addClass('d-none');
+          appendToGlobalConsole('TRAIN', res.message);
+        },
+        error: function (xhr) {
+          $('#train-alert').removeClass('d-none alert-success').addClass('alert-danger').text(xhr.responseJSON?.message || "Training failed ❌");
+          $('#train-spinner').addClass('d-none');
+          appendToGlobalConsole('TRAIN', xhr.responseJSON?.message || "Training failed ❌");
+        }
+      });
+    });
+
+    // Preset values for each training level
+    const presets = {
+      low: {
+        max_steps: 10,
+        per_device_train_batch_size: 1,
+        gradient_accumulation_steps: 1,
+        learning_rate: "5e-4",
+        num_train_epochs: 2,
+        logging_steps: 2,
+        eval_steps: 5,
+        warmup_steps: 2,
+        save_steps: 10,
+        save_strategy: "steps",
+        save_total_limit: 1,
+        metric_for_best_model: "eval_loss",
+        fp16: true,
+        bf16: false,
+        greater_is_better: false,
+        optim: "adamw_torch",
+        report_to: "",
+        logging_dir: "/logs"
+      },
+      mid: {
+        max_steps: 50,
+        per_device_train_batch_size: 2,
+        gradient_accumulation_steps: 2,
+        learning_rate: "2e-4",
+        num_train_epochs: 5,
+        logging_steps: 2,
+        eval_steps: 10,
+        warmup_steps: 5,
+        save_steps: 20,
+        save_strategy: "steps",
+        save_total_limit: 2,
+        metric_for_best_model: "eval_loss",
+        fp16: true,
+        bf16: false,
+        greater_is_better: false,
+        optim: "adamw_torch",
+        report_to: "tensorboard",
+        logging_dir: "/logs"
+      },
+      high: {
+        max_steps: 200,
+        per_device_train_batch_size: 4,
+        gradient_accumulation_steps: 4,
+        learning_rate: "1e-4",
+        num_train_epochs: 10,
+        logging_steps: 1,
+        eval_steps: 20,
+        warmup_steps: 10,
+        save_steps: 40,
+        save_strategy: "steps",
+        save_total_limit: 3,
+        metric_for_best_model: "eval_loss",
+        fp16: true,
+        bf16: false,
+        greater_is_better: false,
+        optim: "adamw_torch",
+        report_to: "tensorboard,wandb",
+        logging_dir: "/logs"
+      }
+    };
+
+    // Card click handler for presets
+    $('.preset-card').on('click', function () {
+      $('.preset-card input[type=radio]').prop('checked', false);
+      $(this).find('input[type=radio]').prop('checked', true);
+      let preset = $(this).data('preset');
+      let values = presets[preset];
+      for (let key in values) {
+        let $field = $('[name="' + key + '"]');
+        if ($field.length) {
+          if ($field.is(':checkbox')) {
+            $field.prop('checked', !!values[key]);
+          } else {
+            $field.val(values[key]);
+          }
+        }
+      }
+      appendToGlobalConsole('UI', `Preset "${preset}" applied`);
+    });
+
+  });
+</script>
+
+{% endblock %}
