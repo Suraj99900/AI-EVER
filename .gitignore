@@ -1,0 +1,67 @@
+# Create a .gitignore file if it doesn't exist
+echo ".vscode/" >> .gitignore
+echo "*.log" >> .gitignore
+echo "__pycache__/" >> .gitignore
+echo "*.pyc" >> .gitignore
+
+# Remove already staged .vscode (if any)
+git rm -r --cached .vscode
+LLMModels/
+ai-ever-vscode/node_modules/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pkl
+*.egg-info/
+.env
+.venv
+venv/
+
+# Logs
+*.log
+log/
+*.out
+*.err
+
+# Jupyter
+.ipynb_checkpoints/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build/Dist
+dist/
+build/
+*.egg
+*.egg-info
+.eggs/
+*.manifest
+*.spec
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Model directories (large files, avoid pushing to GitHub)
+LLMModels/
+uploads/
+
+# Cache
+.cache/
+*.tmp
+*.swp
+
+# Local DB/processed data (skip pushing DB & generated JSONs)
+sql/DB/
+data/processed/
