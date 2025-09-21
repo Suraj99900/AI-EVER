@@ -1,230 +1,149 @@
-To **properly add** the documentation you shared into your AI Ever project **using code** (not just copy-pasting text), you should:
+# AI-EVER
+
+AI-EVER is a developer-focused platform that lets you **train and run large language models on your own codebase and database schema**.  
+It extracts source code and MySQL table structures, creates instruction-response prompts, and fine-tunes an open-source model (e.g. CodeLlama, StarCoder, DeepSeek-Coder) using LoRA/QLoRA—all from a web UI built with Flask and Tailwind CSS.
 
 ---
 
-## ✅ Step-by-Step Instructions to Add It as `README.md`
-
-> You’ll be adding a **Markdown file** to your project root so it's properly displayed on GitHub and easy to track via Git.
+## ✨ Key Features
+* **Code & Schema Extraction** – Scan any project directory and optional MySQL database to build a JSONL training set.
+* **Low-Resource Fine-Tuning** – LoRA / QLoRA adapters for GPUs with as little as 4 GB VRAM.
+* **Checkpoint Management** – Resume or rename checkpoints directly from the browser.
+* **Interactive Inference** – Ask questions about your codebase and get context-aware answers.
 
 ---
 
-### ✅ 1. Create `README.md` via Python
+## 🛠️ Prerequisites
+* **Python** 3.10+  
+* **pip** and **virtualenv**  
+* Optional: **CUDA-capable GPU** (recommended for training)  
+* MySQL server if you plan to extract database schema
 
-You can run this simple Python script to generate the file automatically:
+---
 
-````python
-readme_content = """
-# AI Ever
+## 🚀 Setup Instructions
 
-A developer‑focused platform to train and infer on your own codebase and MySQL schema using LLMs (e.g. StarCoder, CodeLLaMA) with efficient fine‑tuning (QLoRA/LoRA) — all via a clean, Tailwind‑powered web UI.
-
-## 🚀 Features
-
-- **Automatic Code & SQL Extraction**  
-  Scan your project directory to generate instruction‑response prompts from every source file.
-
-- **Schema Introspection**  
-  Extract table definitions, column details & row counts from any MySQL database.
-
-- **Efficient Fine‑Tuning**  
-  QLoRA / LoRA adapters minimize GPU/CPU usage and support checkpoint resume.
-
-- **One‑Click Training**  
-  Kick off fine‑tuning from the browser; monitor live logs & download progress.
-
-- **Interactive Inference**  
-  Submit structured prompts (code questions, SQL queries, etc.) and get context‑aware responses.
-
-## 📦 Installation
-
-### Clone repository
-
+### 1️⃣ Clone the Repository
 ```bash
 git clone https://github.com/YOUR_USERNAME/ai-ever.git
 cd ai-ever
-````
 
-### Create & activate Python venv
 
-```bash
+2️⃣ Create & Activate a Virtual Environment
+
 python3 -m venv .venv
-source .venv/bin/activate
-```
+source .venv/bin/activate        # Linux / macOS
+# or on Windows:
+# .venv\Scripts\activate
 
-### Install dependencies
 
-```bash
+
+3️⃣ Install Python Dependencies
+
+pip install --upgrade pip
 pip install -r requirements.txt
-```
 
-### Download base model
+4️⃣ Prepare Model Files
 
-Place your pretrained StarCoder‑1B (or other) under:
+Download a base model (e.g. deepseek-coder-1.3b-base, CodeLlama, or StarCoder) and place it under:
 
-```
-model/starcoderbase-1b/
-```
+LLMModels/<model-name>/
 
-It should contain:
-`config.json`, `pytorch_model.bin` / `model.safetensors`, `tokenizer.*`, etc.
 
-### Configure paths
+Required files: config.json, tokenizer.*, and model weights (pytorch_model.bin or model.safetensors).
 
-Ensure the following folders exist (or adjust in `app/config.py`):
+5️⃣ Create Data & Checkpoint Folders
 
-```
-data/raw_code/         ← where your repo will be cloned  
-data/processed/        ← where JSONL extraction lives  
-model/checkpoints/     ← adapter checkpoints & tokenizer  
-model/model_cache/     ← HF cache for quantized weights  
-```
+If they don’t already exist:
 
----
+data/raw_code/        # your source projects
+data/processed/       # generated JSONL datasets
+LLMModels/checkpoints # training checkpoints
+LLMModels/model_cache # HF cache for quantized weights
 
-## ⚙️ Usage
 
-### 1. Launch the Web UI
+▶️ Running the Web App
 
-```bash
+Set environment variables (optional)
+You can override defaults in .env or your shell:
+
 export FLASK_APP=run.py
 export FLASK_ENV=development
+
+Start the server
 flask run
-```
 
-Visit: [http://127.0.0.1:5000](http://127.0.0.1:5000)
+Open http://127.0.0.1:5000    in your browser.
 
----
 
-### 2. Extract Code & Schema
+🧩 Typical Workflow
 
-#### Code Extraction:
+Extract Code / Schema
 
-* Go to Extract Code
-* Enter your local project path (e.g. `/home/user/WebApp-Loan`)
-* Click Start Extraction
+Go to Extract Code in the UI.
 
-#### DB Extraction:
+Enter the local project path (and optional MySQL credentials).
 
-* Enter DB credentials to introspect schema (optional)
+Click Start Extraction to generate train_data.jsonl.
 
----
+Train a Model
 
-### 3. Start Training
+Navigate to Train.
 
-* Navigate to **Train**
-* Fill in hyperparameters (epochs, batch size, learning rate)
-* Click **Launch Training**
-* Checkpoints saved in `model/checkpoints/`
+Fill in hyperparameters (epochs, learning rate, etc.).
 
-**Resume training:**
-If `trainer_state.json` exists in `model/checkpoints/`, it resumes automatically.
+Click Launch Training.
 
----
+Checkpoints appear in LLMModels/checkpoints/ and can be resumed later.
 
-### 4. Run Inference
+Inference
 
-* Go to **Inference**
-* Input prompt:
+Open Inference.
 
-```
-### Instruction:
-Write an SQL query to list active users.
+Choose a checkpoint or the base model.
 
-### Response:
-```
+Enter a prompt (e.g. “Write a SQL query to list active users”) and click Generate.
 
-* Click **Generate**
+⚙️ Tips & Troubleshooting
 
----
+Low GPU Memory – Use 4-bit or 8-bit quantization and increase gradient_accumulation_steps.
 
-## 🛠️ Project Structure
+MySQL Issues – Ensure mysql-connector-python is installed and credentials are correct.
 
-```
+Template Errors – Run flask run from the project root so Flask finds the app/templates/ directory.
+
+
+
 ai-ever/
 ├── app/
 │   ├── __init__.py
-│   ├── routes.py
+│   ├── routes/        # Flask blueprints
 │   ├── training.py
 │   ├── inference.py
 │   └── templates/
-│       ├── base.html
-│       ├── index.html
-│       ├── extract.html
-│       ├── train.html
-│       └── inference.html
+├── data/
+│   ├── raw_code/
+│   └── processed/
+├── LLMModels/
+│   ├── deepseek-coder-1.3b-base/
+│   ├── checkpoints/
+│   └── model_cache/
 ├── scripts/
 │   ├── extract_code.py
 │   ├── extract_db_info.py
 │   └── train.py
-├── data/
-│   ├── raw_code/
-│   └── processed/
-├── model/
-│   ├── starcoderbase-1b/
-│   ├── model_cache/
-│   └── checkpoints/
 ├── requirements.txt
 ├── run.py
 └── README.md
-```
+
+
 
 ---
 
-## 🙋‍♂️ Troubleshooting
-
-### OutOfMemoryError
-
-* Use 4‑bit / 8‑bit quantization
-* Increase `gradient_accumulation_steps`
-* Reduce `max_length`
-* Enable expandable CUDA memory:
-
-```bash
-export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
-```
-
-### Permission Denied / Missing Templates
-
-* Run `flask run` from project root
-* Ensure `app/templates/` exists with all HTML files
-
-### MySQL Connection Fails
-
-* Check credentials in `scripts/extract_db_info.py`
-* Install MySQL client: `pip install mysql-connector-python`
-
-"""
-
-# Write to README.md
-
-with open("README.md", "w", encoding="utf-8") as f:
-f.write(readme\_content)
-
-print("✅ README.md created successfully.")
-
-````
-
----
-
-### ✅ 2. Run the Python Script
-
-Save it as `create_readme.py` in your root folder and run:
-
-```bash
-python create_readme.py
-````
-
-This will generate a properly formatted `README.md` file.
-
----
-
-### ✅ 3. Add & Push to GitHub
+### How to Add This File
+Save the above as `README.md` in your project root, then commit:
 
 ```bash
 git add README.md
-git commit -m "Add full project README with installation and usage instructions"
-git push origin main  # or master
-```
-
----
-
+git commit -m "Add comprehensive README with setup & usage instructions"
+git push origin main
