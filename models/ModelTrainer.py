@@ -14,6 +14,7 @@ from peft import LoraConfig, get_peft_model, TaskType, prepare_model_for_kbit_tr
 from models.log_manager import LogManager
 from sql.CheckpointTrackMaster import CheckpointTrackMaster
 from sql.AIEverLog import AIEverLog
+import gc
 
 logmgr = LogManager()
 logger = logmgr.setup_logger("model_trainer")
@@ -175,13 +176,14 @@ class ModelTrainer:
         greater_is_better=False,
         optim="adamw_torch",
         report_to=None,
-        logging_dir=None
+        logging_dir="log/model_trainer.log"
     ):
         report_to = report_to or []
         checkpoint_id = None
         try:
             self.log_step("train", "Initializing training configuration...")
-            last_checkpoint = self.find_latest_checkpoint(self.output_dir.parent)
+            # last_checkpoint = self.find_latest_checkpoint(self.output_dir.parent)
+            last_checkpoint = ""
             if last_checkpoint:
                 self.log_step("train", f"Resuming from checkpoint: {last_checkpoint}")
             else:
@@ -218,7 +220,7 @@ class ModelTrainer:
                 dataloader_num_workers=2,
                 group_by_length=True,
                 weight_decay=0.01,
-                logging_dir=str(logging_dir or self.output_dir / "logs")
+                logging_dir=str(logging_dir)
             )
 
             self.log_step("train", f"TrainingArguments: {training_args}", checkpoint_id)
@@ -270,4 +272,12 @@ class ModelTrainer:
 
         except Exception as e:
             self.log_step("train_failed", f"❌ Training failed: {e}", checkpoint_id)
+            self._free_memory()
             raise
+
+    def _free_memory(self):
+        """Free GPU & CPU memory."""
+        logger.info("[Memory] Freeing memory...")
+        torch.cuda.empty_cache()
+        gc.collect()
+        logger.info("[Memory] Memory freed.")

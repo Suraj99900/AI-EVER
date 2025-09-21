@@ -17,6 +17,8 @@
   <script src="static/js/prism-sql.min.js"></script>
   <script src="static/js/prism-javascript.min.js"></script>
   <script src="static/js/prism-markup.min.js"></script>
+  <link href="{{ url_for('static', filename='js/bootstrap.min.css') }}" rel="stylesheet">
+  <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
 
 
   <style>
@@ -102,32 +104,38 @@
 </head>
 
 <body class="min-h-screen flex flex-col">
+  <div id="loading-overlay" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50 hidden">
+    <div class="flex flex-col items-center">
+      <div class="spinner-border text-white w-12 h-12 mb-4" role="status"></div>
+      <span class="text-white text-lg font-medium">Switching model…</span>
+    </div>
+  </div>
 
   <div class="flex h-screen bg-white">
     <!-- Sidebar -->
     <aside class="w-64 bg-white border-r border-gray-200 flex flex-col">
-      <button
-        class="mx-3 mt-4 flex items-center justify-center gap-2 px-4 py-3 text-sm rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-all shadow-sm">
-        <span class="text-lg">+</span><span>New Chat</span>
-      </button>
 
       <!-- Model Selector -->
-      <div class="mx-3 mt-4 px-3 py-2 text-xs font-medium text-gray-500">MODEL</div>
-      <div class="mx-3 mb-2 px-3 py-2 rounded-lg model-selector text-sm font-medium">
+      <div class="mx-3 mb-2 px-3 py-2 rounded-lg model-selector text-sm font-medium mt-3">
         AI Ever
       </div>
 
       <nav class="flex-1 mt-2 overflow-y-auto no-scrollbar px-2">
-        <div class="text-xs font-medium text-gray-500 px-3 py-2">RECENT CHATS</div>
+        <div class="text-xs font-medium text-gray-500 px-3 py-2">TRAIN PROJECT</div>
         <ul>
           {% for cp in checkpoints %}
           <div
-            class="flex justify-between items-center px-3 py-2.5 rounded-lg sidebar-item {% if cp[0] == current_session %}active{% endif %}">
-            <a href="?session={{ cp[0] }}" class="text-sm text-gray-700 hover:underline truncate flex-1">
-              {{ cp[1] }}
-            </a>
+            class="flex justify-between items-center px-3 py-2.5 rounded-lg sidebar-item  {% if cp[0] == current_session %} active {% endif %}">
+            <button class="text-xs text-gray-700 hover:underline truncate flex-1 SwitchModel" value="{{ cp[0] }}">
+              {{ "BASE MODEL" if cp[0] == 9999 else cp[1] }}
+              <input type="hidden" id="idSessionProject" value="{{current_session}}">
+            </button>
+            {% if cp[0] != 9999 %}
             <button onclick="renameCheckpoint('{{ cp[0] }}', '{{ cp[1] }}')"
-              class="text-xs text-purple-600 hover:text-purple-800">Edit</button>
+              class="text-xs text-purple-600 hover:text-purple-800">
+              Edit
+            </button>
+            {% endif %}
           </div>
           {% endfor %}
         </ul>
@@ -171,15 +179,21 @@
               </svg>
             </button>
           </div>
-          <div class="text-xs text-gray-500 mt-2 text-center">
-            DeepSeek can make mistakes. Consider checking important information.
-          </div>
         </form>
       </div>
     </div>
   </div>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
   <script>
+    $(document).ajaxStart(function () {
+      // Show the overlay when any AJAX call starts
+      $("#loading-overlay").removeClass("hidden");
+    });
+
+    $(document).ajaxStop(function () {
+      // Hide the overlay when all AJAX calls have finished
+      $("#loading-overlay").addClass("hidden");
+    });
     function renameCheckpoint(id, oldName) {
       const newName = prompt("Enter new name for chat:", oldName);
       if (newName && newName.trim() !== "" && newName !== oldName) {
@@ -211,8 +225,8 @@
       $('#chat-window').find('div.italic').remove();
       const bubbleClass = me ? 'user-bubble' : 'ai-bubble';
       const msg = $(`<div class="flex ${me ? 'justify-end' : 'justify-start'} px-4">
-      <div class="${bubbleClass} px-4 py-3 max-w-[80%] break-words">${escapeHTML(text).replace(/\n/g, '<br>')}</div>
-    </div>`);
+          <div class="${bubbleClass} px-4 py-3 max-w-[80%] break-words">${escapeHTML(text).replace(/\n/g, '<br>')}</div>
+      </div>`);
       $('#chat-window').append(msg);
       scrollBottom();
     }
@@ -222,8 +236,8 @@
       $('#chat-window').find('div.italic').remove();
       const safeCode = escapeHTML(code);
       const msg = $(`<div class="flex justify-start px-4 w-full">
-      <pre><code class="language-${lang}">${safeCode}</code></pre>
-    </div>`);
+          <pre><code class="language-${lang}">${safeCode}</code></pre>
+      </div>`);
       $('#chat-window').append(msg);
       Prism.highlightAll();
       scrollBottom();
@@ -233,6 +247,7 @@
       $('#chat-form').on('submit', function (e) {
         e.preventDefault();
         const prompt = $('#chat-input').val().trim();
+        var iProjectSessionId = $("#idSessionProject").val()
         if (!prompt) return;
 
         addMsg(prompt, true);
@@ -246,7 +261,7 @@
         scrollBottom();
 
         // Use fetch to stream tokens from your streaming endpoint
-        fetch('/stream_inference', {
+        fetch('/stream_inference?current_session=' + iProjectSessionId, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ prompt })
@@ -296,6 +311,35 @@
         if (e.key === 'Enter' && !e.shiftKey) {
           e.preventDefault();
           $('#chat-form').trigger('submit');
+        }
+      });
+
+
+      $('.SwitchModel').on('click', function () {
+
+        const newModelId = $(this).val();
+        const currentSessionId = $("#idSessionProject").val();
+
+        console.log("Switching from", currentSessionId, "to", newModelId);
+        if (newModelId != currentSessionId) {
+          $.ajax({
+            url: `/switch_model?id=${newModelId}`,
+            method: 'GET',
+            success: function (data) {
+
+              if (data.status === 'success') {
+                console.log("Switched to model", data);
+                setTimeout(() => {
+                  location.href = "{{BASE_URL}}?session=" + newModelId;
+                }, 500);
+              } else {
+                alert("Failed to switch model.");
+              }
+            },
+            error: function () {
+              alert("Failed to switch model due to network error.");
+            }
+          });
         }
       });
     });

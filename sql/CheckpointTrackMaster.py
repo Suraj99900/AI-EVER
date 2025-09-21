@@ -35,13 +35,15 @@ class CheckpointTrackMaster(BaseDB):
             return None
 
     def update_checkpoint(self, checkpoint_id, **kwargs):
+        if not kwargs:
+            return False
         try:
             updates = ", ".join(f"{k} = ?" for k in kwargs)
-            values = list(kwargs.values())
-            values.append(checkpoint_id)
-            self.cursor.execute(f"""
-                UPDATE checkpoint_track_master SET {updates} WHERE id = ?
-            """, values)
+            values = list(kwargs.values()) + [checkpoint_id]
+            self.cursor.execute(
+                f"UPDATE checkpoint_track_master SET {updates} WHERE id = ?",
+                values,
+            )
             self.conn.commit()
             return True
         except sqlite3.Error as e:

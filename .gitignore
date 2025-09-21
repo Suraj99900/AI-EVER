@@ -1,0 +1,45 @@
+
+# Remove already staged .vscode (if any)
+git rm -r --cached .vscode
+# Python caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Logs
+log/
+logs/
+*.log
+
+# VSCode settings
+.vscode/
+
+# Node modules
+node_modules/
+
+# Model checkpoints (optional: ignore LLMModels if you want to store them elsewhere)
+LLMModels/*
+LLMModels/checkpoints/
+LLMModels/CodeLlama-7b-hf/
+LLMModels/deepseek-coder-1.3b-base/
+LLMModels/Llama-2-7b/
+LLMModels/starcoderbase-1b/
+
+# Data processed (if generated from scripts)
+data/processed/
+
+# Database files
+sql/DB/*.db
+
+# Ignore local config if any
+config.py
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+models/__pycache__/
+routes/__pycache__/
+sql/__pycache__/
+log/
+data/processed/*.jsonl
+data/content/datasets/*.jsonl

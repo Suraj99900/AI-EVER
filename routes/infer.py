@@ -32,18 +32,39 @@ logging.getLogger().addHandler(console)
 
 
 model_instance = None
+current_model_id = None
 
-def load_model():
-    global model_instance
+def load_model(iModelId=999):
+    global model_instance, current_model_id
+
     if model_instance is None:
         try:
-            logging.info("[Model Loader] Initializing ModelInference...")
-            model_instance = ModelInference()
+            print(f"Loading model with ID: {iModelId}- {model_instance}")
+            logging.info(f"[Model Loader] Initializing ModelInference for {iModelId} ...")
+            model_instance = ModelInference(iModelId=iModelId)
+            current_model_id = iModelId
+            print(f"Loading model with ID: {current_model_id}- {model_instance}")
             logging.info("[Model Loader] Model loaded successfully")
         except Exception as e:
-            logging.error(f"[Model Loader] Failed: {str(e)}")
+            logging.error(f"[Model Loader] Failed: {e}")
             raise
+
     return model_instance
+
+def unload_model():
+    global model_instance, current_model_id
+    if model_instance is not None:
+        logging.info("[Model Loader] Unloading previous model...")
+        try:
+            if hasattr(model_instance, "close"):
+                model_instance.close()
+            # Explicitly delete
+            del model_instance
+            model_instance = None
+            current_model_id = None
+            logging.info("[Model Loader] Previous model unloaded successfully")
+        except Exception as e:
+            logging.error(f"[Model Loader] Failed to unload model: {e}")
 
 def fetch_checkpoints():
     """Fetch available checkpoints from the model DB."""
@@ -66,12 +87,13 @@ def fetch_checkpoints():
 
 @bp_infer.route("/inference", methods=["GET", "POST"])
 def infer():
-    load_model()
     log = AIEverLog()
     CHECKPOINTS = fetch_checkpoints()
 
     if request.method == "POST":
         data = request.get_json() or {}
+        iModelId = data.get("iModelId",999)
+        load_model(iModelId)
         prompt = data.get("prompt", "").strip()
         if not prompt:
             return jsonify(status="error", message="Prompt is required"), 400
@@ -80,16 +102,6 @@ def infer():
         prompt = '### Instruction:\n' + prompt + '\n### Response:'
         logging.info(f"Received prompt: {prompt}")
         try:
-            # result = model.generate_response(
-            #     prompt=prompt,
-            #     max_new_tokens=int(data.get("max_new_tokens", 1000)),
-            #     temperature=float(data.get("temperature", 0.1)),
-            #     top_p=float(data.get("top_p", 0.95)),
-            #     repetition_penalty=float(data.get("repetition_penalty", 1.2)),
-            #     no_repeat_ngram_size=int(data.get("no_repeat_ngram_size", 3)),
-            #     num_beams=int(data.get("num_beams", 4)),
-            #     do_sample=False
-            # )
             result = model.generate_response_stream(
                 prompt=prompt,
                 max_new_tokens=int(data.get("max_new_tokens", 1000)),
@@ -104,22 +116,38 @@ def infer():
         except Exception as e:
             logging.error("inference", str(e))
             return jsonify(status="error", message=str(e)), 500
-    formatted_checkpoints = []
-    seen = set()
-    for cp in CHECKPOINTS:
-        folder_name = os.path.basename(cp[2])
-        if folder_name not in seen:
-            seen.add(folder_name)
-            formatted_checkpoints.append((cp[0], folder_name, cp[2]))
+    else:
+        iModelId = request.args.get("session", default=9999, type=int)
+        base = os.getenv("BASE_URL", "http://localhost:5000").rstrip("/")
+        BASE_URL = f"{base}/inference"
+        load_model(iModelId)
+
+        formatted_checkpoints = []
+        seen = set()
+
+        sBaseModel = Path(__file__).parent.parent / "LLMModels" / "deepseek-coder-1.3b-base"
+        formatted_checkpoints.append((9999, "deepseek-coder-1.3b-base", str(sBaseModel)))
+
+        for cp in CHECKPOINTS:
+            if not os.path.exists(cp[2]):
+                continue
+            folder_name = os.path.basename(cp[2])
+            if folder_name not in seen:
+                seen.add(folder_name)
+                formatted_checkpoints.append((cp[0], folder_name, cp[2]))
 
     # on GET, render the chat page and pass your saved checkpoints
-    return render_template("inference.html", checkpoints=formatted_checkpoints)
+    global current_model_id
+    current_model_id = iModelId
+    return render_template("inference.html", checkpoints=formatted_checkpoints,current_session=iModelId,BASE_URL=BASE_URL)
 
 @bp_infer.route("/stream_inference", methods=["POST"])
 def stream_inference():
-    load_model()
+    iModelId = request.args.get('current_session', default=9999, type=int)
+    load_model(iModelId)
     data = request.get_json() or {}
     prompt = data.get("prompt", "").strip()
+    modelPath = ""
 
     if not prompt:
         return jsonify(status="error", message="Prompt is required"), 400
@@ -152,24 +180,33 @@ def stream_inference():
 
 @bp_infer.route("/rename_checkpoint/<int:cp_id>", methods=["POST"])
 def rename_checkpoint(cp_id):
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     new_name = data.get("new_name", "").strip()
     if not new_name:
-        return jsonify({"success": False, "error": "Invalid name"})
+        return jsonify({"success": False, "error": "Invalid name"}), 400
 
     try:
-        cp = CheckpointTrackMaster().get_checkpoint_by_id(cp_id)  # your DB fetch
+        db = CheckpointTrackMaster()
+        cp = db.get_checkpoint_by_id(cp_id)
         if not cp:
-            return jsonify({"success": False, "error": "Checkpoint not found"})
+            return jsonify({"success": False, "error": "Checkpoint not found"}), 404
+        
+        old_path = cp[2]        # assuming column 2 = file path
+        base_dir = os.path.dirname(old_path)
+        
+        new_path = os.path.join(base_dir, new_name)
+        print(f"new_path {new_path}")
 
-        old_path = cp[2]
-        new_path = os.path.join(os.path.dirname(old_path), new_name)
+        # # rename file on disk
         os.rename(old_path, new_path)
 
-        CheckpointTrackMaster().update_checkpoint(cp_id, new_path)  # update DB
+        # # update database
+        db.update_checkpoint(cp_id, checkpoint_dir=new_path)
+
         return jsonify({"success": True})
     except Exception as e:
-        return jsonify({"success": False, "error": str(e)})
+        # Log full traceback if you have logging configured
+        return jsonify({"success": False, "error": str(e)}), 500
 
 
 @bp_infer.route("/complete", methods=["POST"])
@@ -239,3 +276,15 @@ def complete():
     except Exception as e:
         logging.error(f"[Error in /complete] {str(e)}", exc_info=True)
         return jsonify(status="error", message=str(e)), 500
+    
+
+@bp_infer.route("/switch_model")
+def switch_model():
+    global model_instance, current_model_id
+    new_id = request.args.get("id", type=int)
+    # If we already have a model but a different ID is requested, unload first
+    if model_instance is not None and new_id != current_model_id:
+        logging.info(f"[Model Loader] Switching model: {current_model_id} -> {new_id}")
+        unload_model()
+        load_model(new_id)
+    return jsonify(status="success", current_model=new_id)

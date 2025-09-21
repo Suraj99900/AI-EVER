@@ -2,6 +2,7 @@
 import os
 from flask import Flask
 from models.log_manager import LogManager
+from dotenv import load_dotenv
 
 # Initialize LogManager and create named loggers + handlers
 LOG_DIR = os.path.join(os.path.dirname(__file__), "log")
@@ -35,5 +36,6 @@ def create_app():
     return app
 
 if __name__ == "__main__":
+    load_dotenv()  # Load environment variables from .env file
     app = create_app()
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=True)
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)), debug=True)

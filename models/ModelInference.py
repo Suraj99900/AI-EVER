@@ -5,6 +5,7 @@ import torch
 from pathlib import Path
 from datasets import load_dataset
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig ,TextIteratorStreamer
+from sql.CheckpointTrackMaster import CheckpointTrackMaster
 from peft import PeftModel
 import logging
 import threading
@@ -16,7 +17,7 @@ class ModelInference:
     log_dir.mkdir(exist_ok=True)
     log_file = log_dir / "model_inference.log"
 
-    def __init__(self, model_dir=None):
+    def __init__(self, model_dir=None,iModelId=999):
         # Setting the log
         logging.basicConfig(
             filename=self.log_file,
@@ -30,7 +31,8 @@ class ModelInference:
         console.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
         logging.getLogger().addHandler(console)
 
-        self.model_dir = model_dir or self._locate_latest_model()
+        # self.model_dir = model_dir or self._locate_latest_model()
+        self.model_dir = self.getModelById(iModelId)
         logging.info(f"Loading model from: {self.model_dir}")
 
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -61,7 +63,7 @@ class ModelInference:
         return 0
 
     # ---------------- Dynamic Token Handling ---------------- #
-    def dynamic_max_new_tokens(self, prompt, model_max=2048, min_output=128, max_output=1500):
+    def dynamic_max_new_tokens(self, prompt, model_max=2048, min_output=128, max_output=2500):
         """
         Adjust max_new_tokens dynamically based on prompt size, VRAM, and content type.
         Gives extra tokens for code-heavy tasks.
@@ -74,7 +76,7 @@ class ModelInference:
         is_code_task = any(kw in prompt.lower() for kw in code_keywords)
 
         # Base available tokens
-        available_tokens = model_max - prompt_tokens
+        available_tokens = model_max + prompt_tokens
 
         # Increase allowance for code tasks
         if is_code_task:
@@ -111,6 +113,20 @@ class ModelInference:
         latest = max(subs, key=lambda d: d.stat().st_mtime)
         logging.info(f"Latest model directory: {latest}")
         return str(latest)
+    
+    def getModelById(self,model_id):
+        print(f"Fetching model for ID: {model_id}")
+        if(model_id == 9999):
+            MODEL_DIR  = Path(__file__).parent.parent / "LLMModels"/"deepseek-coder-1.3b-base"
+            return MODEL_DIR
+        else:
+            # Locate the latest model directory if not then pass base directory
+            base = Path(__file__).parent.parent / 'LLMModels' / 'checkpoints'
+            logging.info(f"Path Of the Base Model :- {base}")
+
+            oCheckpoint = CheckpointTrackMaster().get_checkpoint_by_id(model_id)
+            logging.info(f"checkpoint selected: {oCheckpoint[2]}")
+            return str(oCheckpoint[2])
 
     def _load_tokenizer(self, model_dir):
         tokenizer = AutoTokenizer.from_pretrained(model_dir, use_fast=True)
@@ -133,7 +149,7 @@ class ModelInference:
         if adapter_config_path.exists():
             logging.info("[Model Loader] Detected LoRA adapter. Loading base + adapter...")
             # You must define where your base model is stored
-            base_model_path = "/mnt/New Volume/AI-EVER/LLMModels/deepseek-coder-1.3b-base"
+            base_model_path = "/home/xon/Desktop/AI-EVER/LLMModels/deepseek-coder-1.3b-base"
             base_model = AutoModelForCausalLM.from_pretrained(
                 base_model_path, 
                 quantization_config=bnb, 
@@ -219,10 +235,6 @@ class ModelInference:
                 prompt, return_tensors="pt", padding=True, truncation=True,
                 max_length=max_new_tokens
             ).to(self.device)
-            inputs = self.tokenizer(
-                prompt, return_tensors="pt", padding=True, truncation=True
-                
-            ).to(self.device)
 
             # Generation settings
             gen_kwargs = dict(
@@ -270,3 +282,16 @@ class ModelInference:
         finally:
             # Always free memory after inference
             self._free_memory()
+
+    def close(self):
+        logging.info("[ModelInference] Closing and freeing resources...")
+        try:
+            if hasattr(self, "model"):
+                del self.model
+            if hasattr(self, "tokenizer"):
+                del self.tokenizer
+
+            torch.cuda.empty_cache()
+            gc.collect()
+        except Exception as e:
+            logging.error(f"[ModelInference] Error during close: {e}")
