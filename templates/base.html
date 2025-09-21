@@ -2,79 +2,451 @@
 <html lang="en" class="scroll-smooth">
 
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>AI Ever</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
-        rel="stylesheet"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AI Ever - Advanced Local AI Platform</title>
+
+  <!-- Tailwind + Icons + Font -->
+  <script src="/static/js/tailwindcss.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/css2.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <script src="{{ url_for('static', filename='js/jquery-3.7.1.slim.js') }}"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+    crossorigin="anonymous"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          animation: {
+            'float': 'float 6s ease-in-out infinite',
+            'glow': 'glow 2s ease-in-out infinite alternate',
+            'slide-up': 'slideUp 0.6s ease-out forwards',
+            'fade-in': 'fadeIn 0.8s ease-out forwards',
+            'scale-up': 'scaleUp 0.5s ease-out forwards',
+            'gradient-x': 'gradient-x 15s ease infinite',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-20px)' }
+            },
+            glow: {
+              '0%': { boxShadow: '0 0 20px rgba(124, 58, 237, 0.3)' },
+              '100%': { boxShadow: '0 0 40px rgba(124, 58, 237, 0.6)' }
+            },
+            slideUp: {
+              '0%': { transform: 'translateY(50px)', opacity: '0' },
+              '100%': { transform: 'translateY(0)', opacity: '1' }
+            },
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' }
+            },
+            scaleUp: {
+              '0%': { transform: 'scale(0.95)', opacity: '0' },
+              '100%': { transform: 'scale(1)', opacity: '1' }
+            },
+            'gradient-x': {
+              '0%, 100%': {
+                'background-size': '200% 200%',
+                'background-position': 'left center'
+              },
+              '50%': {
+                'background-size': '200% 200%',
+                'background-position': 'right center'
+              }
+            }
+          },
+          backgroundImage: {
+            'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+            'hero-pattern': 'linear-gradient(135deg, rgba(124,58,237,0.1) 0%, rgba(217,70,239,0.1) 100%)',
+            'glass': 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
+          },
+          backdropBlur: {
+            xs: '2px',
+          }
+        }
+      }
+    }
+  </script>
+
   <style>
-    body { font-family:'Inter',sans-serif; }
-    .glass { background: rgba(255,255,255,0.6); backdrop-filter: blur(12px); }
+    /* Navigation specific styles - Fixed hover issues */
+    .nav-glass {
+      background: rgba(255, 255, 255, 0);
+      box-shadow: 5px 3px 10px 3px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .nav-glass:hover {
+      background: rgba(251, 251, 251, 0.9);
+    }
+
+    .nav-link {
+      position: relative;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
+      color: rgba(0, 0, 0, 0.8);
+    }
+
+    .nav-link::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(124, 58, 237, 0.1);
+      border-radius: 0.5rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: -1;
+    }
+
+    .nav-link:hover::before {
+      opacity: 1;
+    }
+
+    .nav-link:hover {
+      color: rgba(217, 70, 239, 1);
+      transform: translateY(-1px);
+    }
+
+    .nav-logo {
+      transition: all 0.3s ease;
+    }
+
+    .nav-logo:hover {
+      transform: scale(1.05);
+    }
+
+    /* Glass effects for content */
+    .glass-effect {
+      background: rgba(252, 252, 252, 0.1);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .hero-gradient {
+      background-size: 400% 400%;
+      animation: gradient-x 15s ease infinite;
+    }
+
+    .card-hover {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card-hover:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    .feature-card {
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .feature-card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 20px 40px rgba(124, 58, 237, 0.15);
+      border-color: rgba(124, 58, 237, 0.3);
+    }
+
+    .feature-card.active {
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(217, 70, 239, 0.1));
+      border-color: rgba(124, 58, 237, 0.4);
+      transform: scale(1.02);
+    }
+
+    .floating-elements::before {
+      content: '';
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      top: -100px;
+      right: -100px;
+      animation: float 8s ease-in-out infinite;
+    }
+
+    .floating-elements::after {
+      content: '';
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      background: radial-gradient(circle, rgba(217, 70, 239, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      bottom: -75px;
+      left: -75px;
+      animation: float 6s ease-in-out infinite reverse;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #7c3aed, #d946ef);
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #6d28d9, #c026d3);
+      transform: translateY(-2px);
+      box-shadow: 0 20px 40px rgba(124, 58, 237, 0.4);
+    }
+
+    .btn-secondary {
+      backdrop-filter: blur(20px);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .tech-grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    .tech-item {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .tech-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(124, 58, 237, 0.3);
+    }
+
+    .image-container {
+      position: relative;
+      overflow: hidden;
+      border-radius: 1rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    .image-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(217, 70, 239, 0.1) 100%);
+      z-index: 1;
+    }
+
+    .image-container img {
+      transition: transform 0.5s ease;
+    }
+
+    .image-container:hover img {
+      transform: scale(1.05);
+    }
+
+    /* Mobile menu animations */
+    .mobile-menu {
+      transform: translateY(-100%);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .mobile-menu.show {
+      transform: translateY(0);
+    }
+
+    /* Prevent unwanted animations on page load */
+    .preload * {
+      animation-duration: 0s !important;
+      animation-delay: 0s !important;
+      transition-duration: 0s !important;
+      transition-delay: 0s !important;
+    }
   </style>
 </head>
 
-<body class="bg-gradient-to-br from-gray-100 to-gray-50 text-gray-800">
+<body class="bg-white-900 text-black min-h-screen preload">
+  <!-- Navigation -->
+  <nav class="fixed top-0 left-0 right-0 z-50 nav-glass">
+    <div class="max-w-7xl mx-auto px-6 py-4">
+      <div class="flex items-center justify-between">
+        <!-- Logo -->
+        <div class="flex items-center space-x-3 nav-logo">
+          <div
+            class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+            <i class="fas fa-brain text-white text-lg"></i>
+          </div>
+          <span class="text-xl font-bold">AI Ever</span>
+        </div>
 
-  <!-- Page Container -->
-  <div class="min-h-screen flex flex-col">
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex items-center space-x-2">
+          <a href="/" class="nav-link">
+            <i class="fas fa-star mr-2"></i>Features
+          </a>
+          <a href="extract" class="nav-link">
+            <i class="fas fa-code mr-2"></i>Extract
+          </a>
+          <a href="inference" class="nav-link">
+            <i class="fas fa-brain mr-2"></i>Inference
+          </a>
+          <a href="https://github.com/Suraj99900/AI-EVER" target="_blank" class="nav-link">
+            <i class="fab fa-github mr-2"></i>GitHub
+          </a>
+        </div>
 
-    <!-- Navbar -->
-    <header class="glass sticky top-0 z-50 border-b border-gray-200">
-      <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <a href="/" class="flex items-center space-x-2">
-          <span class="text-2xl">🧠</span>
-          <span class="text-2xl font-bold text-indigo-600">AI Ever</span>
-        </a>
-        <nav class="hidden md:flex space-x-8 text-gray-600 font-medium">
-          <a href="/" class="hover:text-indigo-600 transition">Home</a>
-          <a href="/extract#code" class="hover:text-indigo-600 transition">Extract</a>
-          <a href="/extract#train" class="hover:text-indigo-600 transition">Train</a>
-          <a href="/inference" class="hover:text-indigo-600 transition">Inference</a>
-        </nav>
-        <button id="nav-toggle" class="md:hidden focus:outline-none">
-          <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M4 6h16M4 12h16M4 18h16"/>
-          </svg>
+        <!-- Mobile menu button -->
+        <button id="mobile-menu-toggle" class="md:hidden p-2 rounded-lg hover:bg-white/10 transition-colors">
+          <i class="fas fa-bars text-lg"></i>
         </button>
       </div>
-      <div id="nav-menu" class="md:hidden hidden bg-white border-t border-gray-200">
-        <nav class="flex flex-col px-6 py-4 space-y-1">
-          <a href="/" class="py-2 hover:text-indigo-600 transition">Home</a>
-          <a href="/extract#code" class="py-2 hover:text-indigo-600 transition">Extract</a>
-          <a href="/extract#train" class="py-2 hover:text-indigo-600 transition">Train</a>
-          <a href="/inference" class="py-2 hover:text-indigo-600 transition">Inference</a>
-          <div class="mt-4 flex space-x-2">
-            <a href="/login"
-               class="flex-1 text-center py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-500 transition">
-              Login
-            </a>
-            <a href="/signup"
-               class="flex-1 text-center py-2 border border-indigo-600 text-indigo-600 rounded-full hover:bg-indigo-50 transition">
-              Sign Up
-            </a>
-          </div>
-        </nav>
+
+      <!-- Mobile Navigation -->
+      <div id="mobile-menu"
+        class="md:hidden mobile-menu absolute top-full left-0 right-0 bg-gray-800/95 backdrop-blur-lg border-t border-white/10">
+        <div class="px-6 py-4 space-y-2">
+          <a href="/" class="block nav-link">
+            <i class="fas fa-star mr-2"></i>Features
+          </a>
+          <a href="extract" class="block nav-link">
+            <i class="fas fa-code mr-2"></i>Extract
+          </a>
+          <a href="inference" class="block nav-link">
+            <i class="fas fa-brain mr-2"></i>Inference
+          </a>
+          <a href="https://github.com/Suraj99900/AI-EVER" target="_blank" class="block nav-link">
+            <i class="fab fa-github mr-2"></i>GitHub
+          </a>
+        </div>
       </div>
-    </header>
+    </div>
+  </nav>
 
-    <!-- Main Content -->
-    <main class="flex-1 bg-white">
-      <div class=" mx-auto px-6">
-        {% block content %}{% endblock %}
-      </div>
-    </main>
+  <!-- MAIN CONTENT -->
+  <main class="flex-1 pt-20">
+    <div class="px-6 py-8">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
 
-  </div>
+  <!-- FOOTER -->
+  <footer class="border-t border-white/10 mt-8 py-8">
+    <div class="container px-6 text-sm text-slate-400 text-center">
+      <p>© 2024 AI Ever · Built with ❤️ ·
+        <a href="https://github.com/Suraj99900/AI-EVER"
+          class="text-purple-400 hover:text-purple-300 transition-colors hover:underline">
+          View Repository
+        </a>
+      </p>
+    </div>
+  </footer>
 
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
-    // mobile nav toggle
-    document.getElementById('nav-toggle')
-      .addEventListener('click', ()=> document.getElementById('nav-menu').classList.toggle('hidden'));
+    $(document).ready(function () {
+      // Remove preload class to enable animations after page load
+      setTimeout(function () {
+        $('body').removeClass('preload');
+      }, 100);
+
+      // Mobile menu toggle
+      $('#mobile-menu-toggle').on('click', function () {
+        const menu = $('#mobile-menu');
+        const icon = $(this).find('i');
+
+        menu.toggleClass('show');
+
+        // Toggle hamburger/close icon
+        if (menu.hasClass('show')) {
+          icon.removeClass('fa-bars').addClass('fa-times');
+        } else {
+          icon.removeClass('fa-times').addClass('fa-bars');
+        }
+      });
+
+      // Close mobile menu when clicking outside
+      $(document).on('click', function (e) {
+        if (!$(e.target).closest('nav').length) {
+          $('#mobile-menu').removeClass('show');
+          $('#mobile-menu-toggle i').removeClass('fa-times').addClass('fa-bars');
+        }
+      });
+
+      // Close mobile menu when clicking on a link
+      $('#mobile-menu a').on('click', function () {
+        $('#mobile-menu').removeClass('show');
+        $('#mobile-menu-toggle i').removeClass('fa-times').addClass('fa-bars');
+      });
+
+      // Smooth scrolling for anchor links
+      $('a[href^="#"]').on('click', function (e) {
+        e.preventDefault();
+        const target = $(this.getAttribute('href'));
+        if (target.length) {
+          $('html, body').animate({
+            scrollTop: target.offset().top - 100
+          }, 600);
+        }
+      });
+
+      // Add scroll effect to navigation
+      let lastScrollTop = 0;
+      $(window).on('scroll', function () {
+        const scrollTop = $(this).scrollTop();
+        const nav = $('nav');
+
+        if (scrollTop > lastScrollTop && scrollTop > 100) {
+          // Scrolling down
+          nav.css('transform', 'translateY(-100%)');
+        } else {
+          // Scrolling up
+          nav.css('transform', 'translateY(0)');
+        }
+
+        lastScrollTop = scrollTop;
+      });
+    });
+
+    // Additional smooth animations on scroll
+    function initScrollAnimations() {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('animate-slide-up');
+            }
+          });
+        },
+        { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+      );
+
+      // Observe elements for animation
+      document.querySelectorAll('.card-hover, .tech-item, .feature-card').forEach(el => {
+        observer.observe(el);
+      });
+    }
+
+    // Initialize animations when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function () {
+      initScrollAnimations();
+    });
   </script>
+
+  {% block scripts %}{% endblock %}
 </body>
+
 </html>

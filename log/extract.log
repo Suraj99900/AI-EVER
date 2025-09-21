@@ -1,0 +1,273 @@
+2025-08-27 21:50:42,648 - INFO - extract - Output file will be: /mnt/New Volume/AI-EVER/data/processed/train_data.jsonl
+2025-08-27 21:50:42,648 - INFO - extract - Starting code extraction from: /mnt/New Volume/Code Base/Projeoct/PUBMD-Research-Papers
+2025-08-27 21:50:42,649 - INFO - extract - Output will be saved to: /mnt/New Volume/AI-EVER/data/processed/train_data.jsonl
+2025-08-27 21:50:42,650 - INFO - extract - ❌ Code extraction failed: 'Logger' object has no attribute 'append'
+2025-08-27 21:52:30,945 - INFO - extract - Output file will be: /mnt/New Volume/AI-EVER/data/processed/train_data.jsonl
+2025-08-27 21:52:30,946 - INFO - extract - Starting code extraction from: /mnt/New Volume/Code Base/Projeoct/PUBMD-Research-Papers
+2025-08-27 21:52:30,948 - INFO - extract - Output will be saved to: /mnt/New Volume/AI-EVER/data/processed/train_data.jsonl
+2025-08-27 21:52:30,950 - INFO - extract - ❌ Code extraction failed: 'Logger' object has no attribute 'append'
+2025-08-27 21:59:09,336 - INFO - extract - Output file will be: /mnt/New Volume/AI-EVER/data/processed/train_data.jsonl
+2025-08-27 21:59:09,336 - INFO - extract - Starting code extraction from: /mnt/New Volume/Code Base/Projeoct/PUBMD-Research-Papers
+2025-08-27 21:59:09,337 - INFO - extract - Output will be saved to: /mnt/New Volume/AI-EVER/data/processed/train_data.jsonl
+2025-08-27 21:59:09,337 - INFO - extract - ❌ Code extraction failed: 'Logger' object has no attribute 'append'
+2025-08-27 22:00:49,192 - INFO - extract - Output file will be: /mnt/New Volume/AI-EVER/data/processed/train_data.jsonl
+2025-08-27 22:00:49,196 - INFO - extract - Starting code extraction from: /mnt/New Volume/Code Base/Projeoct/PUBMD-Research-Papers
+2025-08-27 22:00:49,197 - INFO - extract - Output will be saved to: /mnt/New Volume/AI-EVER/data/processed/train_data.jsonl
+2025-08-27 22:00:49,199 - INFO - extract - ❌ Code extraction failed: 'Logger' object has no attribute 'append'
+2025-08-27 22:02:26,973 - INFO - extract - Output file will be: /mnt/New Volume/AI-EVER/data/processed/train_data.jsonl
+2025-08-27 22:02:26,974 - INFO - extract - Starting code extraction from: /mnt/New Volume/Code Base/Projeoct/PUBMD-Research-Papers
+2025-08-27 22:02:26,975 - INFO - extract - Output will be saved to: /mnt/New Volume/AI-EVER/data/processed/train_data.jsonl
+2025-08-27 22:02:26,976 - INFO - extract - ❌ Code extraction failed: 'Logger' object has no attribute 'append'
+2025-08-27 22:03:16,911 - INFO - extract - Output file will be: /mnt/New Volume/AI-EVER/data/processed/train_data.jsonl
+2025-08-27 22:03:16,912 - INFO - extract - Starting code extraction from: /mnt/New Volume/Code Base/Projeoct/PUBMD-Research-Papers
+2025-08-27 22:03:16,914 - INFO - extract - Output will be saved to: /mnt/New Volume/AI-EVER/data/processed/train_data.jsonl
+2025-08-27 22:03:16,917 - INFO - extract - ❌ Code extraction failed: 'Logger' object has no attribute 'append'
+2025-08-27 22:07:21,440 - INFO - extract - Output file will be: /mnt/New Volume/AI-EVER/data/processed/train_data.jsonl
+2025-08-27 22:07:21,441 - INFO - extract - Starting code extraction from: /mnt/New Volume/Code Base/Projeoct/PUBMD-Research-Papers
+2025-08-27 22:07:21,441 - INFO - extract - Output will be saved to: /mnt/New Volume/AI-EVER/data/processed/train_data.jsonl
+2025-08-27 22:07:21,442 - INFO - extract - Received raw_dir: /mnt/New Volume/Code Base/Projeoct/PUBMD-Research-Papers
+2025-08-27 22:07:21,442 - INFO - extract - Received raw_dir: /mnt/New Volume/Code Base/Projeoct/PUBMD-Research-Papers
+2025-08-27 22:07:21,442 - INFO - extract - Using source directory: /mnt/New Volume/Code Base/Projeoct/PUBMD-Research-Papers
+2025-08-27 22:07:21,443 - INFO - extract - Using source directory: /mnt/New Volume/Code Base/Projeoct/PUBMD-Research-Papers
+2025-08-27 22:07:21,457 - INFO - extract - EXTRACT: poetry.lock
+2025-08-27 22:07:21,458 - INFO - extract - EXTRACT: poetry.lock
+2025-08-27 22:07:21,458 - INFO - extract - EXTRACT: poetry.lock
+2025-08-27 22:07:21,458 - INFO - extract - EXTRACT: pyproject.toml
+2025-08-27 22:07:21,458 - INFO - extract - EXTRACT: pyproject.toml
+2025-08-27 22:07:21,458 - INFO - extract - EXTRACT: pyproject.toml
+2025-08-27 22:07:21,459 - INFO - extract - EXTRACT: README.md
+2025-08-27 22:07:21,459 - INFO - extract - EXTRACT: README.md
+2025-08-27 22:07:21,459 - INFO - extract - EXTRACT: README.md
+2025-08-27 22:07:21,493 - INFO - extract - EXTRACT: results.csv
+2025-08-27 22:07:21,494 - INFO - extract - EXTRACT: results.csv
+2025-08-27 22:07:21,494 - INFO - extract - EXTRACT: results.csv
+2025-08-27 22:07:21,496 - INFO - extract - EXTRACT: get_papers/cli.py
+2025-08-27 22:07:21,496 - INFO - extract - EXTRACT: get_papers/cli.py
+2025-08-27 22:07:21,496 - INFO - extract - EXTRACT: get_papers/cli.py
+2025-08-27 22:07:21,497 - INFO - extract - EXTRACT: get_papers/csv_writer.py
+2025-08-27 22:07:21,497 - INFO - extract - EXTRACT: get_papers/csv_writer.py
+2025-08-27 22:07:21,497 - INFO - extract - EXTRACT: get_papers/csv_writer.py
+2025-08-27 22:07:21,498 - INFO - extract - EXTRACT: get_papers/data_parser.py
+2025-08-27 22:07:21,498 - INFO - extract - EXTRACT: get_papers/data_parser.py
+2025-08-27 22:07:21,499 - INFO - extract - EXTRACT: get_papers/data_parser.py
+2025-08-27 22:07:21,521 - INFO - extract - EXTRACT: get_papers/pubmed_api.py
+2025-08-27 22:07:21,521 - INFO - extract - EXTRACT: get_papers/pubmed_api.py
+2025-08-27 22:07:21,521 - INFO - extract - EXTRACT: get_papers/pubmed_api.py
+2025-08-27 22:07:21,541 - INFO - extract - EXTRACT: get_papers/web_app.py
+2025-08-27 22:07:21,541 - INFO - extract - EXTRACT: get_papers/web_app.py
+2025-08-27 22:07:21,541 - INFO - extract - EXTRACT: get_papers/web_app.py
+2025-08-27 22:07:21,542 - INFO - extract - SKIP empty: get_papers/__init__.py
+2025-08-27 22:07:21,542 - INFO - extract - SKIP empty: get_papers/__init__.py
+2025-08-27 22:07:21,542 - INFO - extract - EXTRACT: get_papers/templates/footer.html
+2025-08-27 22:07:21,542 - INFO - extract - EXTRACT: get_papers/templates/footer.html
+2025-08-27 22:07:21,543 - INFO - extract - EXTRACT: get_papers/templates/footer.html
+2025-08-27 22:07:21,543 - INFO - extract - EXTRACT: get_papers/templates/header.html
+2025-08-27 22:07:21,543 - INFO - extract - EXTRACT: get_papers/templates/header.html
+2025-08-27 22:07:21,543 - INFO - extract - EXTRACT: get_papers/templates/header.html
+2025-08-27 22:07:21,571 - INFO - extract - EXTRACT: get_papers/templates/index.html
+2025-08-27 22:07:21,571 - INFO - extract - EXTRACT: get_papers/templates/index.html
+2025-08-27 22:07:21,572 - INFO - extract - EXTRACT: get_papers/templates/index.html
+2025-08-27 22:07:21,572 - INFO - extract - EXTRACT: tests/test_pubmed_api.py
+2025-08-27 22:07:21,573 - INFO - extract - EXTRACT: tests/test_pubmed_api.py
+2025-08-27 22:07:21,573 - INFO - extract - EXTRACT: tests/test_pubmed_api.py
+2025-08-27 22:07:21,573 - INFO - extract - SKIP empty: tests/__init__.py
+2025-08-27 22:07:21,573 - INFO - extract - SKIP empty: tests/__init__.py
+2025-08-27 22:07:21,574 - INFO - extract - Writing 13 prompts to /mnt/New Volume/AI-EVER/data/processed/train_data.jsonl
+2025-08-27 22:07:21,574 - INFO - extract - Writing 13 prompts to /mnt/New Volume/AI-EVER/data/processed/train_data.jsonl
+2025-08-27 22:07:21,575 - INFO - extract - Writing 13 prompts to /mnt/New Volume/AI-EVER/data/processed/train_data.jsonl
+2025-08-27 22:07:21,580 - INFO - extract - ✅ Extraction complete
+2025-08-27 22:07:21,580 - INFO - extract - ✅ Extraction complete
+2025-08-27 22:07:21,580 - INFO - extract - ✅ Extraction complete
+2025-08-27 22:07:21,580 - INFO - extract - ✅ Code extraction finished. Download at /extract/download?type=code
+2025-08-27 22:09:45,958 - INFO - extract - Output file will be: /mnt/New Volume/AI-EVER/data/processed/train_sql.jsonl
+2025-08-27 22:09:45,959 - INFO - extract - Starting SQL schema extraction
+2025-08-27 22:09:45,959 - INFO - extract - Connecting to MySQL: 206.189.132.202:3306, user: lifehealer, db: lifehealer_db
+2025-08-27 22:09:45,960 - INFO - extract - ❌ SQL extraction failed: DBSchemaExtractor.run() got an unexpected keyword argument 'callback'
+2025-08-27 22:12:59,537 - INFO - extract - Output file will be: /mnt/New Volume/AI-EVER/data/processed/train_sql.jsonl
+2025-08-27 22:12:59,539 - INFO - extract - Starting SQL schema extraction
+2025-08-27 22:12:59,542 - INFO - extract - Connecting to MySQL: 206.189.132.202:3306, user: lifehealer, db: lifehealer_db
+2025-08-27 22:12:59,546 - INFO - extract - ❌ SQL extraction failed: DBSchemaExtractor.run() got an unexpected keyword argument 'callback'
+2025-08-27 22:20:49,652 - INFO - extract - Output file will be: /mnt/New Volume/AI-EVER/data/processed/train_sql.jsonl
+2025-08-27 22:20:49,654 - INFO - extract - Starting SQL schema extraction
+2025-08-27 22:20:49,661 - INFO - extract - Connecting to MySQL: 206.189.132.202:3306, user: lifehealer, db: lifehealer_db
+2025-08-27 22:20:49,664 - INFO - extract - Connecting to DB: lifehealer_db at 206.189.132.202:3306
+2025-08-27 22:20:49,664 - INFO - extract - Connecting to DB: lifehealer_db at 206.189.132.202:3306
+2025-08-27 22:20:49,664 - INFO - extract - Connecting to DB: lifehealer_db at 206.189.132.202:3306
+2025-08-27 22:20:50,354 - INFO - extract - Connection established.
+2025-08-27 22:20:50,355 - INFO - extract - Connection established.
+2025-08-27 22:20:50,356 - INFO - extract - Connection established.
+2025-08-27 22:20:50,407 - INFO - extract - Extracting table: api_logs
+2025-08-27 22:20:50,408 - INFO - extract - Extracting table: api_logs
+2025-08-27 22:20:50,410 - INFO - extract - Extracting table: api_logs
+2025-08-27 22:20:51,196 - INFO - extract - Fetched 10 sample rows for api_logs
+2025-08-27 22:20:51,197 - INFO - extract - Fetched 10 sample rows for api_logs
+2025-08-27 22:20:51,197 - INFO - extract - Fetched 10 sample rows for api_logs
+2025-08-27 22:20:51,197 - INFO - extract - Extracting table: app_attachment
+2025-08-27 22:20:51,197 - INFO - extract - Extracting table: app_attachment
+2025-08-27 22:20:51,198 - INFO - extract - Extracting table: app_attachment
+2025-08-27 22:20:51,523 - INFO - extract - Fetched 6 sample rows for app_attachment
+2025-08-27 22:20:51,525 - INFO - extract - Fetched 6 sample rows for app_attachment
+2025-08-27 22:20:51,527 - INFO - extract - Fetched 6 sample rows for app_attachment
+2025-08-27 22:20:51,528 - INFO - extract - Extracting table: app_post
+2025-08-27 22:20:51,529 - INFO - extract - Extracting table: app_post
+2025-08-27 22:20:51,531 - INFO - extract - Extracting table: app_post
+2025-08-27 22:20:51,859 - INFO - extract - Fetched 0 sample rows for app_post
+2025-08-27 22:20:51,862 - INFO - extract - Fetched 0 sample rows for app_post
+2025-08-27 22:20:51,864 - INFO - extract - Fetched 0 sample rows for app_post
+2025-08-27 22:20:51,865 - INFO - extract - Extracting table: clients
+2025-08-27 22:20:51,866 - INFO - extract - Extracting table: clients
+2025-08-27 22:20:51,867 - INFO - extract - Extracting table: clients
+2025-08-27 22:20:52,224 - INFO - extract - Fetched 1 sample rows for clients
+2025-08-27 22:20:52,225 - INFO - extract - Fetched 1 sample rows for clients
+2025-08-27 22:20:52,225 - INFO - extract - Fetched 1 sample rows for clients
+2025-08-27 22:20:52,226 - INFO - extract - Extracting table: failed_jobs
+2025-08-27 22:20:52,226 - INFO - extract - Extracting table: failed_jobs
+2025-08-27 22:20:52,227 - INFO - extract - Extracting table: failed_jobs
+2025-08-27 22:20:52,538 - INFO - extract - Fetched 0 sample rows for failed_jobs
+2025-08-27 22:20:52,541 - INFO - extract - Fetched 0 sample rows for failed_jobs
+2025-08-27 22:20:52,542 - INFO - extract - Fetched 0 sample rows for failed_jobs
+2025-08-27 22:20:52,544 - INFO - extract - Extracting table: jobs
+2025-08-27 22:20:52,545 - INFO - extract - Extracting table: jobs
+2025-08-27 22:20:52,545 - INFO - extract - Extracting table: jobs
+2025-08-27 22:20:52,844 - INFO - extract - Fetched 0 sample rows for jobs
+2025-08-27 22:20:52,845 - INFO - extract - Fetched 0 sample rows for jobs
+2025-08-27 22:20:52,848 - INFO - extract - Fetched 0 sample rows for jobs
+2025-08-27 22:20:52,849 - INFO - extract - Extracting table: migrations
+2025-08-27 22:20:52,851 - INFO - extract - Extracting table: migrations
+2025-08-27 22:20:52,852 - INFO - extract - Extracting table: migrations
+2025-08-27 22:20:53,155 - INFO - extract - Fetched 10 sample rows for migrations
+2025-08-27 22:20:53,156 - INFO - extract - Fetched 10 sample rows for migrations
+2025-08-27 22:20:53,157 - INFO - extract - Fetched 10 sample rows for migrations
+2025-08-27 22:20:53,158 - INFO - extract - Extracting table: personal_access_tokens
+2025-08-27 22:20:53,161 - INFO - extract - Extracting table: personal_access_tokens
+2025-08-27 22:20:53,162 - INFO - extract - Extracting table: personal_access_tokens
+2025-08-27 22:20:53,521 - INFO - extract - Fetched 0 sample rows for personal_access_tokens
+2025-08-27 22:20:53,522 - INFO - extract - Fetched 0 sample rows for personal_access_tokens
+2025-08-27 22:20:53,522 - INFO - extract - Fetched 0 sample rows for personal_access_tokens
+2025-08-27 22:20:53,522 - INFO - extract - Extracting table: sessions
+2025-08-27 22:20:53,523 - INFO - extract - Extracting table: sessions
+2025-08-27 22:20:53,523 - INFO - extract - Extracting table: sessions
+2025-08-27 22:20:53,839 - INFO - extract - Fetched 0 sample rows for sessions
+2025-08-27 22:20:53,842 - INFO - extract - Fetched 0 sample rows for sessions
+2025-08-27 22:20:53,844 - INFO - extract - Fetched 0 sample rows for sessions
+2025-08-27 22:20:53,845 - INFO - extract - Extracting table: user_category_access
+2025-08-27 22:20:53,846 - INFO - extract - Extracting table: user_category_access
+2025-08-27 22:20:53,846 - INFO - extract - Extracting table: user_category_access
+2025-08-27 22:20:54,244 - INFO - extract - Fetched 10 sample rows for user_category_access
+2025-08-27 22:20:54,245 - INFO - extract - Fetched 10 sample rows for user_category_access
+2025-08-27 22:20:54,245 - INFO - extract - Fetched 10 sample rows for user_category_access
+2025-08-27 22:20:54,245 - INFO - extract - Extracting table: user_comment
+2025-08-27 22:20:54,245 - INFO - extract - Extracting table: user_comment
+2025-08-27 22:20:54,246 - INFO - extract - Extracting table: user_comment
+2025-08-27 22:20:54,602 - INFO - extract - Fetched 10 sample rows for user_comment
+2025-08-27 22:20:54,605 - INFO - extract - Fetched 10 sample rows for user_comment
+2025-08-27 22:20:54,607 - INFO - extract - Fetched 10 sample rows for user_comment
+2025-08-27 22:20:54,609 - INFO - extract - Extracting table: user_enrollments
+2025-08-27 22:20:54,611 - INFO - extract - Extracting table: user_enrollments
+2025-08-27 22:20:54,613 - INFO - extract - Extracting table: user_enrollments
+2025-08-27 22:20:54,963 - INFO - extract - Fetched 10 sample rows for user_enrollments
+2025-08-27 22:20:54,965 - INFO - extract - Fetched 10 sample rows for user_enrollments
+2025-08-27 22:20:54,967 - INFO - extract - Fetched 10 sample rows for user_enrollments
+2025-08-27 22:20:54,969 - INFO - extract - Extracting table: video_category
+2025-08-27 22:20:54,971 - INFO - extract - Extracting table: video_category
+2025-08-27 22:20:54,972 - INFO - extract - Extracting table: video_category
+2025-08-27 22:20:55,323 - INFO - extract - Fetched 10 sample rows for video_category
+2025-08-27 22:20:55,326 - INFO - extract - Fetched 10 sample rows for video_category
+2025-08-27 22:20:55,328 - INFO - extract - Fetched 10 sample rows for video_category
+2025-08-27 22:20:55,330 - INFO - extract - Extracting table: videos
+2025-08-27 22:20:55,332 - INFO - extract - Extracting table: videos
+2025-08-27 22:20:55,334 - INFO - extract - Extracting table: videos
+2025-08-27 22:20:55,800 - INFO - extract - Fetched 10 sample rows for videos
+2025-08-27 22:20:55,802 - INFO - extract - Fetched 10 sample rows for videos
+2025-08-27 22:20:55,804 - INFO - extract - Fetched 10 sample rows for videos
+2025-08-27 22:20:55,805 - INFO - extract - Extracting table: websockets_statistics_entries
+2025-08-27 22:20:55,805 - INFO - extract - Extracting table: websockets_statistics_entries
+2025-08-27 22:20:55,805 - INFO - extract - Extracting table: websockets_statistics_entries
+2025-08-27 22:20:56,130 - INFO - extract - Fetched 0 sample rows for websockets_statistics_entries
+2025-08-27 22:20:56,131 - INFO - extract - Fetched 0 sample rows for websockets_statistics_entries
+2025-08-27 22:20:56,131 - INFO - extract - Fetched 0 sample rows for websockets_statistics_entries
+2025-08-27 22:20:56,131 - INFO - extract - Extracting table: wellness_otp
+2025-08-27 22:20:56,131 - INFO - extract - Extracting table: wellness_otp
+2025-08-27 22:20:56,132 - INFO - extract - Extracting table: wellness_otp
+2025-08-27 22:20:56,476 - INFO - extract - Fetched 0 sample rows for wellness_otp
+2025-08-27 22:20:56,476 - INFO - extract - Fetched 0 sample rows for wellness_otp
+2025-08-27 22:20:56,476 - INFO - extract - Fetched 0 sample rows for wellness_otp
+2025-08-27 22:20:56,477 - INFO - extract - Extracting table: wellness_users
+2025-08-27 22:20:56,477 - INFO - extract - Extracting table: wellness_users
+2025-08-27 22:20:56,477 - INFO - extract - Extracting table: wellness_users
+2025-08-27 22:20:56,796 - INFO - extract - Fetched 10 sample rows for wellness_users
+2025-08-27 22:20:56,797 - INFO - extract - Fetched 10 sample rows for wellness_users
+2025-08-27 22:20:56,799 - INFO - extract - Fetched 10 sample rows for wellness_users
+2025-08-27 22:20:56,802 - INFO - extract - Schema extracted, saving outputs...
+2025-08-27 22:20:56,804 - INFO - extract - Schema extracted, saving outputs...
+2025-08-27 22:20:56,806 - INFO - extract - Schema extracted, saving outputs...
+2025-08-27 22:20:56,848 - INFO - extract - Saved summary JSON: /mnt/New Volume/AI-EVER/data/processed/db_summary.json
+2025-08-27 22:20:56,849 - INFO - extract - Saved summary JSON: /mnt/New Volume/AI-EVER/data/processed/db_summary.json
+2025-08-27 22:20:56,849 - INFO - extract - Saved summary JSON: /mnt/New Volume/AI-EVER/data/processed/db_summary.json
+2025-08-27 22:20:56,849 - INFO - extract - Saved summary TXT: /mnt/New Volume/AI-EVER/data/processed/db_summary.txt
+2025-08-27 22:20:56,849 - INFO - extract - Saved summary TXT: /mnt/New Volume/AI-EVER/data/processed/db_summary.txt
+2025-08-27 22:20:56,849 - INFO - extract - Saved summary TXT: /mnt/New Volume/AI-EVER/data/processed/db_summary.txt
+2025-08-27 22:20:56,849 - INFO - extract - Saved train JSONL (prompts): /mnt/New Volume/AI-EVER/data/processed/train_sql.jsonl
+2025-08-27 22:20:56,849 - INFO - extract - Saved train JSONL (prompts): /mnt/New Volume/AI-EVER/data/processed/train_sql.jsonl
+2025-08-27 22:20:56,849 - INFO - extract - Saved train JSONL (prompts): /mnt/New Volume/AI-EVER/data/processed/train_sql.jsonl
+2025-08-27 22:20:56,849 - INFO - extract - DB extraction finished.
+2025-08-27 22:20:56,850 - INFO - extract - DB extraction finished.
+2025-08-27 22:20:56,850 - INFO - extract - DB extraction finished.
+2025-08-27 22:20:56,850 - INFO - extract - ✅ SQL schema extraction finished. Download at /extract/download?type=sql
+2025-08-28 06:22:50,508 - INFO - extract - Output file will be: /mnt/New Volume/AI-EVER/data/processed/train_data.jsonl
+2025-08-28 06:22:50,813 - INFO - extract - Starting code extraction from: /mnt/New Volume/Code Base/Projeoct/PUBMD-Research-Papers
+2025-08-28 06:22:50,815 - INFO - extract - Output will be saved to: /mnt/New Volume/AI-EVER/data/processed/train_data.jsonl
+2025-08-28 06:22:50,818 - INFO - extract - Received raw_dir: /mnt/New Volume/Code Base/Projeoct/PUBMD-Research-Papers
+2025-08-28 06:22:50,820 - INFO - extract - Received raw_dir: /mnt/New Volume/Code Base/Projeoct/PUBMD-Research-Papers
+2025-08-28 06:22:50,821 - INFO - extract - Using source directory: /mnt/New Volume/Code Base/Projeoct/PUBMD-Research-Papers
+2025-08-28 06:22:50,822 - INFO - extract - Using source directory: /mnt/New Volume/Code Base/Projeoct/PUBMD-Research-Papers
+2025-08-28 06:22:50,835 - INFO - extract - EXTRACT: poetry.lock
+2025-08-28 06:22:50,835 - INFO - extract - EXTRACT: poetry.lock
+2025-08-28 06:22:50,835 - INFO - extract - EXTRACT: poetry.lock
+2025-08-28 06:22:50,836 - INFO - extract - EXTRACT: pyproject.toml
+2025-08-28 06:22:50,836 - INFO - extract - EXTRACT: pyproject.toml
+2025-08-28 06:22:50,836 - INFO - extract - EXTRACT: pyproject.toml
+2025-08-28 06:22:50,836 - INFO - extract - EXTRACT: README.md
+2025-08-28 06:22:50,836 - INFO - extract - EXTRACT: README.md
+2025-08-28 06:22:50,836 - INFO - extract - EXTRACT: README.md
+2025-08-28 06:22:50,845 - INFO - extract - EXTRACT: results.csv
+2025-08-28 06:22:50,845 - INFO - extract - EXTRACT: results.csv
+2025-08-28 06:22:50,846 - INFO - extract - EXTRACT: results.csv
+2025-08-28 06:22:50,846 - INFO - extract - EXTRACT: get_papers/cli.py
+2025-08-28 06:22:50,846 - INFO - extract - EXTRACT: get_papers/cli.py
+2025-08-28 06:22:50,847 - INFO - extract - EXTRACT: get_papers/cli.py
+2025-08-28 06:22:50,847 - INFO - extract - EXTRACT: get_papers/csv_writer.py
+2025-08-28 06:22:50,847 - INFO - extract - EXTRACT: get_papers/csv_writer.py
+2025-08-28 06:22:50,847 - INFO - extract - EXTRACT: get_papers/csv_writer.py
+2025-08-28 06:22:50,847 - INFO - extract - EXTRACT: get_papers/data_parser.py
+2025-08-28 06:22:50,847 - INFO - extract - EXTRACT: get_papers/data_parser.py
+2025-08-28 06:22:50,848 - INFO - extract - EXTRACT: get_papers/data_parser.py
+2025-08-28 06:22:50,863 - INFO - extract - EXTRACT: get_papers/pubmed_api.py
+2025-08-28 06:22:50,863 - INFO - extract - EXTRACT: get_papers/pubmed_api.py
+2025-08-28 06:22:50,863 - INFO - extract - EXTRACT: get_papers/pubmed_api.py
+2025-08-28 06:22:50,884 - INFO - extract - EXTRACT: get_papers/web_app.py
+2025-08-28 06:22:50,885 - INFO - extract - EXTRACT: get_papers/web_app.py
+2025-08-28 06:22:50,886 - INFO - extract - EXTRACT: get_papers/web_app.py
+2025-08-28 06:22:50,889 - INFO - extract - SKIP empty: get_papers/__init__.py
+2025-08-28 06:22:50,890 - INFO - extract - SKIP empty: get_papers/__init__.py
+2025-08-28 06:22:50,891 - INFO - extract - EXTRACT: get_papers/templates/footer.html
+2025-08-28 06:22:50,892 - INFO - extract - EXTRACT: get_papers/templates/footer.html
+2025-08-28 06:22:50,893 - INFO - extract - EXTRACT: get_papers/templates/footer.html
+2025-08-28 06:22:50,896 - INFO - extract - EXTRACT: get_papers/templates/header.html
+2025-08-28 06:22:50,897 - INFO - extract - EXTRACT: get_papers/templates/header.html
+2025-08-28 06:22:50,897 - INFO - extract - EXTRACT: get_papers/templates/header.html
+2025-08-28 06:22:50,913 - INFO - extract - EXTRACT: get_papers/templates/index.html
+2025-08-28 06:22:50,915 - INFO - extract - EXTRACT: get_papers/templates/index.html
+2025-08-28 06:22:50,917 - INFO - extract - EXTRACT: get_papers/templates/index.html
+2025-08-28 06:22:50,921 - INFO - extract - EXTRACT: tests/test_pubmed_api.py
+2025-08-28 06:22:50,922 - INFO - extract - EXTRACT: tests/test_pubmed_api.py
+2025-08-28 06:22:50,922 - INFO - extract - EXTRACT: tests/test_pubmed_api.py
+2025-08-28 06:22:50,924 - INFO - extract - SKIP empty: tests/__init__.py
+2025-08-28 06:22:50,924 - INFO - extract - SKIP empty: tests/__init__.py
+2025-08-28 06:22:50,925 - INFO - extract - Writing 13 prompts to /mnt/New Volume/AI-EVER/data/processed/train_data.jsonl
+2025-08-28 06:22:50,926 - INFO - extract - Writing 13 prompts to /mnt/New Volume/AI-EVER/data/processed/train_data.jsonl
+2025-08-28 06:22:50,926 - INFO - extract - Writing 13 prompts to /mnt/New Volume/AI-EVER/data/processed/train_data.jsonl
+2025-08-28 06:22:50,949 - INFO - extract - ✅ Extraction complete
+2025-08-28 06:22:50,949 - INFO - extract - ✅ Extraction complete
+2025-08-28 06:22:50,950 - INFO - extract - ✅ Extraction complete
+2025-08-28 06:22:50,950 - INFO - extract - ✅ Code extraction finished. Download at /extract/download?type=code

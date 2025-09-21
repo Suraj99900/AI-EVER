@@ -1,0 +1,281 @@
+2025-08-27 15:23:19,983 - INFO -  * Detected change in '/mnt/New Volume/AI-EVER/routes/extract.py', reloading
+2025-08-27 15:23:30,068 - INFO -  * Restarting with stat
+2025-08-27 15:23:39,473 - WARNING -  * Debugger is active!
+2025-08-27 15:23:39,473 - INFO -  * Debugger PIN: 713-302-197
+2025-08-27 15:23:55,243 - INFO -  * Detected change in '/mnt/New Volume/AI-EVER/routes/extract.py', reloading
+2025-08-27 15:23:56,276 - INFO -  * Restarting with stat
+2025-08-27 21:45:34,255 - WARNING -  * Debugger is active!
+2025-08-27 21:50:24,485 - WARNING -  * Debugger is active!
+2025-08-27 21:52:16,475 - WARNING -  * Debugger is active!
+2025-08-27 21:54:02,600 - WARNING -  * Debugger is active!
+2025-08-27 21:56:03,457 - WARNING -  * Debugger is active!
+2025-08-27 21:56:13,096 - WARNING -  * Debugger is active!
+2025-08-27 21:56:23,799 - WARNING -  * Debugger is active!
+2025-08-27 21:56:30,549 - WARNING -  * Debugger is active!
+2025-08-27 21:56:38,166 - WARNING -  * Debugger is active!
+2025-08-27 21:56:48,984 - WARNING -  * Debugger is active!
+2025-08-27 21:58:48,325 - WARNING -  * Debugger is active!
+2025-08-27 21:58:52,861 - WARNING -  * Debugger is active!
+2025-08-27 21:59:02,617 - WARNING -  * Debugger is active!
+2025-08-27 22:02:38,374 - WARNING -  * Debugger is active!
+2025-08-27 22:07:06,264 - WARNING -  * Debugger is active!
+2025-08-27 22:12:45,602 - WARNING -  * Debugger is active!
+2025-08-27 22:12:51,384 - WARNING -  * Debugger is active!
+2025-08-27 22:12:57,070 - WARNING -  * Debugger is active!
+2025-08-27 22:20:42,033 - WARNING -  * Debugger is active!
+2025-08-27 22:26:57,350 - WARNING -  * Debugger is active!
+2025-08-27 22:28:58,439 - WARNING -  * Debugger is active!
+2025-08-27 22:29:40,098 - WARNING -  * Debugger is active!
+2025-08-27 22:29:53,891 - WARNING -  * Debugger is active!
+2025-08-27 22:30:27,177 - WARNING -  * Debugger is active!
+2025-08-27 22:31:04,341 - WARNING -  * Debugger is active!
+2025-08-27 22:31:14,210 - WARNING -  * Debugger is active!
+2025-08-27 22:31:56,505 - WARNING -  * Debugger is active!
+2025-08-27 22:33:05,288 - WARNING -  * Debugger is active!
+2025-08-27 22:33:17,212 - WARNING -  * Debugger is active!
+2025-08-27 22:33:22,501 - WARNING - The installed version of bitsandbytes was compiled without GPU support. 8-bit optimizers and GPU quantization are unavailable.
+2025-08-27 22:33:22,569 - INFO - Device 0 seems unavailable, Proceeding to check subsequent devices.
+2025-08-27 22:34:00,668 - WARNING - Parameter 'function'=<function ModelTrainer.prepare_data.<locals>.tokenize_fn at 0x78743430d620> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
+2025-08-27 22:34:23,153 - WARNING -  * Debugger is active!
+2025-08-27 22:35:22,514 - WARNING - The installed version of bitsandbytes was compiled without GPU support. 8-bit optimizers and GPU quantization are unavailable.
+2025-08-27 22:35:22,580 - INFO - Device 0 seems unavailable, Proceeding to check subsequent devices.
+2025-08-27 22:36:59,574 - WARNING -  * Debugger is active!
+2025-08-27 22:37:04,779 - WARNING - The installed version of bitsandbytes was compiled without GPU support. 8-bit optimizers and GPU quantization are unavailable.
+2025-08-27 22:37:04,859 - INFO - Device 0 seems unavailable, Proceeding to check subsequent devices.
+2025-08-27 22:37:38,577 - WARNING - Parameter 'function'=<function ModelTrainer.prepare_data.<locals>.tokenize_fn at 0x79596b95d300> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
+2025-08-27 22:38:10,952 - WARNING -  * Debugger is active!
+2025-08-27 22:39:42,087 - WARNING -  * Debugger is active!
+2025-08-27 22:39:51,747 - WARNING -  * Debugger is active!
+2025-08-27 22:39:56,353 - WARNING - The installed version of bitsandbytes was compiled without GPU support. 8-bit optimizers and GPU quantization are unavailable.
+2025-08-27 22:39:56,427 - INFO - Device 0 seems unavailable, Proceeding to check subsequent devices.
+2025-08-27 22:40:26,383 - WARNING -  * Debugger is active!
+2025-08-27 22:40:55,524 - WARNING -  * Debugger is active!
+2025-08-27 22:41:19,770 - WARNING - The installed version of bitsandbytes was compiled without GPU support. 8-bit optimizers and GPU quantization are unavailable.
+2025-08-27 22:41:19,833 - INFO - Device 0 seems unavailable, Proceeding to check subsequent devices.
+2025-08-27 22:41:53,331 - WARNING - Parameter 'function'=<function ModelTrainer.prepare_data.<locals>.tokenize_fn at 0x748cd0314540> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
+2025-08-27 22:42:19,205 - WARNING -  * Debugger is active!
+2025-08-27 22:42:27,910 - WARNING -  * Debugger is active!
+2025-08-27 22:42:36,587 - WARNING -  * Debugger is active!
+2025-08-27 22:42:40,524 - WARNING - The installed version of bitsandbytes was compiled without GPU support. 8-bit optimizers and GPU quantization are unavailable.
+2025-08-27 22:42:40,588 - INFO - Device 0 seems unavailable, Proceeding to check subsequent devices.
+2025-08-27 22:43:13,830 - WARNING - Parameter 'function'=<function ModelTrainer.prepare_data.<locals>.tokenize_fn at 0x79377c26d120> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
+2025-08-27 22:45:33,069 - WARNING -  * Debugger is active!
+2025-08-27 22:55:11,730 - WARNING -  * Debugger is active!
+2025-08-27 22:56:32,762 - INFO - We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-08-27 22:57:00,930 - WARNING - Parameter 'function'=<function ModelTrainer.prepare_data.<locals>.tokenize_fn at 0x7d636c31b380> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
+2025-08-27 22:59:18,757 - WARNING -  * Debugger is active!
+2025-08-27 22:59:41,017 - INFO - We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-08-27 22:59:44,071 - WARNING - Parameter 'function'=<function ModelTrainer.prepare_data.<locals>.tokenize_fn at 0x7598c03e4cc0> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
+2025-08-27 23:03:08,123 - WARNING -  * Debugger is active!
+2025-08-27 23:03:18,479 - INFO - We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-08-27 23:03:21,823 - WARNING - Parameter 'function'=<function ModelTrainer.prepare_data.<locals>.tokenize_fn at 0x7bba3c501d00> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
+2025-08-27 23:05:37,138 - WARNING -  * Debugger is active!
+2025-08-27 23:06:20,546 - WARNING -  * Debugger is active!
+2025-08-27 23:06:37,096 - INFO - We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-08-27 23:06:44,093 - WARNING - Parameter 'function'=<function ModelTrainer.prepare_data.<locals>.tokenize_fn at 0x78475c5c8d60> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
+2025-08-27 23:08:19,107 - INFO - [Model Loader] Initializing ModelInference...
+2025-08-27 23:08:19,108 - INFO - Path Of the Base Model :- /mnt/New Volume/AI-EVER/LLMModels/checkpoints
+2025-08-27 23:08:19,109 - INFO - Subdirectories found: [PosixPath('/mnt/New Volume/AI-EVER/LLMModels/checkpoints/deepseek-coder-1.3b-base-lora-20250827_230317'), PosixPath('/mnt/New Volume/AI-EVER/LLMModels/checkpoints/deepseek-coder-1.3b-base-lora-20250827_230636')]
+2025-08-27 23:08:19,109 - INFO - Latest model directory: /mnt/New Volume/AI-EVER/LLMModels/checkpoints/deepseek-coder-1.3b-base-lora-20250827_230636
+2025-08-27 23:08:19,109 - INFO - Loading model from: /mnt/New Volume/AI-EVER/LLMModels/checkpoints/deepseek-coder-1.3b-base-lora-20250827_230636
+2025-08-27 23:08:19,109 - INFO - Using device: cuda
+2025-08-27 23:08:19,162 - INFO - [Model Loader] Detected LoRA adapter. Loading base + adapter...
+2025-08-27 23:08:19,218 - INFO - We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-08-27 23:08:21,135 - INFO - [Model Loader] Model loaded successfully
+2025-08-27 23:15:38,003 - WARNING -  * Debugger is active!
+2025-08-27 23:15:50,910 - WARNING -  * Debugger is active!
+2025-08-27 23:16:14,396 - WARNING -  * Debugger is active!
+2025-08-27 23:16:19,069 - WARNING -  * Debugger is active!
+2025-08-27 23:16:40,951 - INFO - [Model Loader] Initializing ModelInference...
+2025-08-27 23:16:40,951 - INFO - Path Of the Base Model :- /mnt/New Volume/AI-EVER/LLMModels/checkpoints
+2025-08-27 23:16:40,951 - INFO - Subdirectories found: []
+2025-08-27 23:16:40,951 - INFO - No model directories found. Using base directory.
+2025-08-27 23:16:40,952 - INFO - Loading model from: /mnt/New Volume/AI-EVER/LLMModels/deepseek-coder-1.3b-base
+2025-08-27 23:16:40,952 - INFO - Using device: cuda
+2025-08-27 23:16:41,011 - INFO - [Model Loader] Detected full model. Loading directly...
+2025-08-27 23:16:41,369 - INFO - We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-08-27 23:16:43,162 - INFO - [Model Loader] Model loaded successfully
+2025-08-27 23:16:59,865 - INFO - We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-08-27 23:17:21,863 - WARNING - Parameter 'function'=<function ModelTrainer.prepare_data.<locals>.tokenize_fn at 0x7f614430e200> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
+2025-08-27 23:18:11,295 - INFO - Received streaming prompt: ### Instruction:
+write a sql query for insertion of video record
+### Response:
+2025-08-27 23:18:23,980 - INFO - Received streaming prompt: ### Instruction:
+write a sql query for insertion of video record
+### Response:
+2025-08-27 23:19:31,392 - WARNING -  * Debugger is active!
+2025-08-27 23:19:56,474 - INFO - We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-08-27 23:20:04,718 - WARNING - Parameter 'function'=<function ModelTrainer.prepare_data.<locals>.tokenize_fn at 0x7ba387deccc0> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
+2025-08-27 23:21:14,388 - INFO - [Model Loader] Initializing ModelInference...
+2025-08-27 23:21:14,388 - INFO - Path Of the Base Model :- /mnt/New Volume/AI-EVER/LLMModels/checkpoints
+2025-08-27 23:21:14,389 - INFO - Subdirectories found: [PosixPath('/mnt/New Volume/AI-EVER/LLMModels/checkpoints/deepseek-coder-1.3b-base-lora-20250827_231955')]
+2025-08-27 23:21:14,389 - INFO - Latest model directory: /mnt/New Volume/AI-EVER/LLMModels/checkpoints/deepseek-coder-1.3b-base-lora-20250827_231955
+2025-08-27 23:21:14,390 - INFO - Loading model from: /mnt/New Volume/AI-EVER/LLMModels/checkpoints/deepseek-coder-1.3b-base-lora-20250827_231955
+2025-08-27 23:21:14,390 - INFO - Using device: cuda
+2025-08-27 23:21:14,435 - INFO - [Model Loader] Detected LoRA adapter. Loading base + adapter...
+2025-08-27 23:21:14,488 - INFO - We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-08-27 23:21:16,319 - INFO - [Model Loader] Model loaded successfully
+2025-08-27 23:21:38,161 - INFO - Received streaming prompt: ### Instruction:
+write a sql query for insertion of new record of video
+### Response:
+2025-08-27 23:23:53,570 - WARNING -  * Debugger is active!
+2025-08-27 23:24:10,409 - WARNING -  * Debugger is active!
+2025-08-27 23:24:19,196 - WARNING -  * Debugger is active!
+2025-08-27 23:24:34,016 - WARNING -  * Debugger is active!
+2025-08-27 23:25:11,300 - INFO - [Model Loader] Initializing ModelInference...
+2025-08-27 23:25:11,301 - INFO - Path Of the Base Model :- /mnt/New Volume/AI-EVER/LLMModels/checkpoints
+2025-08-27 23:25:11,301 - INFO - Subdirectories found: [PosixPath('/mnt/New Volume/AI-EVER/LLMModels/checkpoints/deepseek-coder-1.3b-base-lora-20250827_231955')]
+2025-08-27 23:25:11,301 - INFO - Latest model directory: /mnt/New Volume/AI-EVER/LLMModels/checkpoints/deepseek-coder-1.3b-base-lora-20250827_231955
+2025-08-27 23:25:11,301 - INFO - Loading model from: /mnt/New Volume/AI-EVER/LLMModels/checkpoints/deepseek-coder-1.3b-base-lora-20250827_231955
+2025-08-27 23:25:11,302 - INFO - Using device: cuda
+2025-08-27 23:25:11,372 - INFO - [Model Loader] Detected LoRA adapter. Loading base + adapter...
+2025-08-27 23:25:11,760 - INFO - We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-08-27 23:25:13,606 - INFO - [Model Loader] Model loaded successfully
+2025-08-27 23:25:40,097 - WARNING -  * Debugger is active!
+2025-08-27 23:25:55,155 - INFO - We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-08-27 23:25:58,064 - WARNING - Parameter 'function'=<function ModelTrainer.prepare_data.<locals>.tokenize_fn at 0x788f101fdda0> of the transform datasets.arrow_dataset.Dataset._map_single couldn't be hashed properly, a random hash was used instead. Make sure your transforms and parameters are serializable with pickle or dill for the dataset fingerprinting and caching to work. If you reuse this transform, the caching mechanism will consider it to be different from the previous calls and recompute everything. This warning is only showed once. Subsequent hashing failures won't be showed.
+2025-08-27 23:27:02,042 - INFO - [Model Loader] Initializing ModelInference...
+2025-08-27 23:27:02,043 - INFO - Path Of the Base Model :- /mnt/New Volume/AI-EVER/LLMModels/checkpoints
+2025-08-27 23:27:02,043 - INFO - Subdirectories found: [PosixPath('/mnt/New Volume/AI-EVER/LLMModels/checkpoints/deepseek-coder-1.3b-base-lora-20250827_231955'), PosixPath('/mnt/New Volume/AI-EVER/LLMModels/checkpoints/deepseek-coder-1.3b-base-lora-20250827_232554')]
+2025-08-27 23:27:02,043 - INFO - Latest model directory: /mnt/New Volume/AI-EVER/LLMModels/checkpoints/deepseek-coder-1.3b-base-lora-20250827_232554
+2025-08-27 23:27:02,043 - INFO - Loading model from: /mnt/New Volume/AI-EVER/LLMModels/checkpoints/deepseek-coder-1.3b-base-lora-20250827_232554
+2025-08-27 23:27:02,043 - INFO - Using device: cuda
+2025-08-27 23:27:02,086 - INFO - [Model Loader] Detected LoRA adapter. Loading base + adapter...
+2025-08-27 23:27:02,138 - INFO - We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-08-27 23:27:03,970 - INFO - [Model Loader] Model loaded successfully
+2025-08-27 23:28:34,885 - WARNING -  * Debugger is active!
+2025-08-27 23:29:08,209 - WARNING -  * Debugger is active!
+2025-08-27 23:29:15,934 - WARNING -  * Debugger is active!
+2025-08-27 23:29:22,396 - WARNING -  * Debugger is active!
+2025-08-27 23:29:33,510 - INFO - [Model Loader] Initializing ModelInference...
+2025-08-27 23:29:33,510 - INFO - Path Of the Base Model :- /mnt/New Volume/AI-EVER/LLMModels/checkpoints
+2025-08-27 23:29:33,511 - INFO - Subdirectories found: [PosixPath('/mnt/New Volume/AI-EVER/LLMModels/checkpoints/deepseek-coder-1.3b-base-lora-20250827_231955'), PosixPath('/mnt/New Volume/AI-EVER/LLMModels/checkpoints/deepseek-coder-1.3b-base-lora-20250827_232554')]
+2025-08-27 23:29:33,512 - INFO - Latest model directory: /mnt/New Volume/AI-EVER/LLMModels/checkpoints/deepseek-coder-1.3b-base-lora-20250827_232554
+2025-08-27 23:29:33,512 - INFO - Loading model from: /mnt/New Volume/AI-EVER/LLMModels/checkpoints/deepseek-coder-1.3b-base-lora-20250827_232554
+2025-08-27 23:29:33,512 - INFO - Using device: cuda
+2025-08-27 23:29:33,571 - INFO - [Model Loader] Detected LoRA adapter. Loading base + adapter...
+2025-08-27 23:29:33,913 - INFO - We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-08-27 23:29:35,560 - INFO - [Model Loader] Model loaded successfully
+2025-08-27 23:29:35,561 - INFO - Received streaming prompt: ### Instruction:
+write a sql query for insertion of video record
+### Response:
+2025-08-27 23:31:17,286 - WARNING -  * Debugger is active!
+2025-08-27 23:31:34,268 - INFO - [Model Loader] Initializing ModelInference...
+2025-08-27 23:31:34,270 - INFO - Path Of the Base Model :- /mnt/New Volume/AI-EVER/LLMModels/checkpoints
+2025-08-27 23:31:34,270 - INFO - Subdirectories found: [PosixPath('/mnt/New Volume/AI-EVER/LLMModels/checkpoints/deepseek-coder-1.3b-base-lora-20250827_231955'), PosixPath('/mnt/New Volume/AI-EVER/LLMModels/checkpoints/deepseek-coder-1.3b-base-lora-20250827_232554')]
+2025-08-27 23:31:34,270 - INFO - Latest model directory: /mnt/New Volume/AI-EVER/LLMModels/checkpoints/deepseek-coder-1.3b-base-lora-20250827_232554
+2025-08-27 23:31:34,270 - INFO - Loading model from: /mnt/New Volume/AI-EVER/LLMModels/checkpoints/deepseek-coder-1.3b-base-lora-20250827_232554
+2025-08-27 23:31:34,271 - INFO - Using device: cuda
+2025-08-27 23:31:34,341 - INFO - [Model Loader] Detected LoRA adapter. Loading base + adapter...
+2025-08-27 23:31:34,683 - INFO - We will use 90% of the memory on device 0 for storing the model, and 10% for the buffer to avoid OOM. You can set `max_memory` in to a higher value to use more memory (at your own risk).
+2025-08-27 23:31:36,503 - INFO - [Model Loader] Model loaded successfully
+2025-08-27 23:31:36,504 - INFO - Received streaming prompt: ### Instruction:
+write a sql query for insertion of video record
+### Response:
+2025-08-27 23:31:36,504 - INFO - [Memory] Freeing memory...
+2025-08-27 23:31:36,601 - INFO - [Memory] Memory freed.
+2025-08-27 23:31:36,601 - INFO - [Streaming] Prompt received: ### Instruction:
+write a sql query for insertion of video record
+### Response:
+2025-08-27 23:31:36,602 - INFO - [Dynamic Tokens] Prompt length: 20 tokens
+2025-08-27 23:31:36,602 - INFO - [Dynamic Tokens] Task: Code, Prompt Tokens: 20, Output Tokens: 1500
+2025-08-27 23:31:36,605 - INFO - Final Token used : 1500 
+2025-08-27 23:32:02,636 - INFO - Received streaming prompt: ### Instruction:
+write a sql query for select the video record
+### Response:
+2025-08-27 23:32:02,637 - INFO - [Memory] Freeing memory...
+2025-08-27 23:32:02,743 - INFO - [Memory] Memory freed.
+2025-08-27 23:32:02,744 - INFO - [Streaming] Prompt received: ### Instruction:
+write a sql query for select the video record
+### Response:
+2025-08-27 23:32:02,744 - INFO - [Dynamic Tokens] Prompt length: 19 tokens
+2025-08-27 23:32:02,744 - INFO - [Dynamic Tokens] Task: Code, Prompt Tokens: 19, Output Tokens: 1500
+2025-08-27 23:32:02,759 - INFO - Final Token used : 1500 
+2025-08-27 23:32:30,827 - INFO - Received streaming prompt: ### Instruction:
+give me the sql example of left join with 3 table
+### Response:
+2025-08-27 23:32:30,828 - INFO - [Memory] Freeing memory...
+2025-08-27 23:32:30,934 - INFO - [Memory] Memory freed.
+2025-08-27 23:32:30,935 - INFO - [Streaming] Prompt received: ### Instruction:
+give me the sql example of left join with 3 table
+### Response:
+2025-08-27 23:32:30,935 - INFO - [Dynamic Tokens] Prompt length: 22 tokens
+2025-08-27 23:32:30,935 - INFO - [Dynamic Tokens] Task: Code, Prompt Tokens: 22, Output Tokens: 1500
+2025-08-27 23:32:30,953 - INFO - Final Token used : 1500 
+2025-08-27 23:32:56,096 - INFO - Received streaming prompt: ### Instruction:
+give me the example for outer and left join and sub join
+### Response:
+2025-08-27 23:32:56,096 - INFO - [Memory] Freeing memory...
+2025-08-27 23:32:56,204 - INFO - [Memory] Memory freed.
+2025-08-27 23:32:56,205 - INFO - [Streaming] Prompt received: ### Instruction:
+give me the example for outer and left join and sub join
+### Response:
+2025-08-27 23:32:56,206 - INFO - [Dynamic Tokens] Prompt length: 22 tokens
+2025-08-27 23:32:56,206 - INFO - [Dynamic Tokens] Task: General, Prompt Tokens: 22, Output Tokens: 1500
+2025-08-27 23:32:56,223 - INFO - Final Token used : 1500 
+2025-08-27 23:33:08,292 - INFO - Received streaming prompt: ### Instruction:
+give me 10 line of sql query
+### Response:
+2025-08-27 23:33:08,294 - INFO - [Memory] Freeing memory...
+2025-08-27 23:33:08,403 - INFO - [Memory] Memory freed.
+2025-08-27 23:33:08,404 - INFO - [Streaming] Prompt received: ### Instruction:
+give me 10 line of sql query
+### Response:
+2025-08-27 23:33:08,404 - INFO - [Dynamic Tokens] Prompt length: 19 tokens
+2025-08-27 23:33:08,404 - INFO - [Dynamic Tokens] Task: Code, Prompt Tokens: 19, Output Tokens: 1500
+2025-08-27 23:33:08,405 - INFO - Final Token used : 1500 
+2025-08-28 06:17:39,998 - WARNING -  * Debugger is active!
+2025-08-28 06:19:03,080 - WARNING -  * Debugger is active!
+2025-08-28 06:19:12,426 - WARNING -  * Debugger is active!
+2025-08-28 06:19:23,113 - WARNING -  * Debugger is active!
+2025-08-28 06:19:28,663 - WARNING -  * Debugger is active!
+2025-08-28 06:19:48,482 - WARNING -  * Debugger is active!
+2025-08-28 06:19:48,482 - INFO -  * Debugger PIN: 140-410-599
+2025-08-28 06:20:00,157 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.24.217.168:5000
+2025-08-28 06:20:00,157 - INFO - [33mPress CTRL+C to quit[0m
+2025-08-28 06:20:00,158 - INFO -  * Restarting with stat
+2025-08-28 06:20:02,985 - WARNING -  * Debugger is active!
+2025-08-28 06:20:02,985 - INFO -  * Debugger PIN: 140-410-599
+2025-08-28 06:20:09,125 - INFO -  * Detected change in '/mnt/New Volume/AI-EVER/run.py', reloading
+2025-08-28 06:20:09,682 - INFO -  * Restarting with stat
+2025-08-28 06:20:12,471 - WARNING -  * Debugger is active!
+2025-08-28 06:20:12,471 - INFO -  * Debugger PIN: 140-410-599
+2025-08-28 06:20:23,702 - INFO -  * Detected change in '/mnt/New Volume/AI-EVER/run.py', reloading
+2025-08-28 06:20:24,324 - INFO -  * Restarting with stat
+2025-08-28 06:20:27,301 - WARNING -  * Debugger is active!
+2025-08-28 06:20:27,302 - INFO -  * Debugger PIN: 140-410-599
+2025-08-28 06:20:39,475 - INFO -  * Detected change in '/mnt/New Volume/AI-EVER/run.py', reloading
+2025-08-28 06:20:40,095 - INFO -  * Restarting with stat
+2025-08-28 06:20:42,920 - WARNING -  * Debugger is active!
+2025-08-28 06:20:42,921 - INFO -  * Debugger PIN: 140-410-599
+2025-08-28 06:20:43,086 - INFO - 127.0.0.1 - - [28/Aug/2025 06:20:43] "GET / HTTP/1.1" 200 -
+2025-08-28 06:20:43,114 - INFO - 127.0.0.1 - - [28/Aug/2025 06:20:43] "[36mGET /static/css/font-awesome.css HTTP/1.1[0m" 304 -
+2025-08-28 06:20:43,115 - INFO - 127.0.0.1 - - [28/Aug/2025 06:20:43] "[36mGET /static/js/jquery-3.7.1.slim.js HTTP/1.1[0m" 304 -
+2025-08-28 06:20:43,115 - INFO - 127.0.0.1 - - [28/Aug/2025 06:20:43] "[36mGET /static/css/css2.css HTTP/1.1[0m" 304 -
+2025-08-28 06:20:43,115 - INFO - 127.0.0.1 - - [28/Aug/2025 06:20:43] "[36mGET /static/js/tailwindcss.js HTTP/1.1[0m" 304 -
+2025-08-28 06:20:43,436 - INFO - 127.0.0.1 - - [28/Aug/2025 06:20:43] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-08-28 06:20:54,625 - INFO - 127.0.0.1 - - [28/Aug/2025 06:20:54] "GET /extract HTTP/1.1" 200 -
+2025-08-28 06:20:54,634 - INFO - 127.0.0.1 - - [28/Aug/2025 06:20:54] "[36mGET /static/js/tailwindcss.js HTTP/1.1[0m" 304 -
+2025-08-28 06:20:54,636 - INFO - 127.0.0.1 - - [28/Aug/2025 06:20:54] "[36mGET /static/css/css2.css HTTP/1.1[0m" 304 -
+2025-08-28 06:20:54,636 - INFO - 127.0.0.1 - - [28/Aug/2025 06:20:54] "[36mGET /static/css/font-awesome.css HTTP/1.1[0m" 304 -
+2025-08-28 06:20:54,637 - INFO - 127.0.0.1 - - [28/Aug/2025 06:20:54] "[36mGET /static/js/jquery-3.7.1.slim.js HTTP/1.1[0m" 304 -
+2025-08-28 06:21:28,344 - INFO - 127.0.0.1 - - [28/Aug/2025 06:21:28] "GET / HTTP/1.1" 200 -
+2025-08-28 06:21:28,353 - INFO - 127.0.0.1 - - [28/Aug/2025 06:21:28] "[36mGET /static/css/css2.css HTTP/1.1[0m" 304 -
+2025-08-28 06:21:28,354 - INFO - 127.0.0.1 - - [28/Aug/2025 06:21:28] "[36mGET /static/js/tailwindcss.js HTTP/1.1[0m" 304 -
+2025-08-28 06:21:28,355 - INFO - 127.0.0.1 - - [28/Aug/2025 06:21:28] "[36mGET /static/js/jquery-3.7.1.slim.js HTTP/1.1[0m" 304 -
+2025-08-28 06:21:28,355 - INFO - 127.0.0.1 - - [28/Aug/2025 06:21:28] "[36mGET /static/css/font-awesome.css HTTP/1.1[0m" 304 -
+2025-08-28 06:22:08,719 - INFO - 127.0.0.1 - - [28/Aug/2025 06:22:08] "GET /extract HTTP/1.1" 200 -
+2025-08-28 06:22:08,730 - INFO - 127.0.0.1 - - [28/Aug/2025 06:22:08] "[36mGET /static/css/font-awesome.css HTTP/1.1[0m" 304 -
+2025-08-28 06:22:08,730 - INFO - 127.0.0.1 - - [28/Aug/2025 06:22:08] "[36mGET /static/css/css2.css HTTP/1.1[0m" 304 -
+2025-08-28 06:22:08,730 - INFO - 127.0.0.1 - - [28/Aug/2025 06:22:08] "[36mGET /static/js/tailwindcss.js HTTP/1.1[0m" 304 -
+2025-08-28 06:22:08,731 - INFO - 127.0.0.1 - - [28/Aug/2025 06:22:08] "[36mGET /static/js/jquery-3.7.1.slim.js HTTP/1.1[0m" 304 -
+2025-08-28 06:22:50,814 - INFO - 127.0.0.1 - - [28/Aug/2025 06:22:50] "POST /extract HTTP/1.1" 200 -
+2025-08-28 06:22:51,990 - INFO - 127.0.0.1 - - [28/Aug/2025 06:22:51] "GET /extract/logs HTTP/1.1" 200 -
+2025-08-28 06:25:12,429 - INFO - 127.0.0.1 - - [28/Aug/2025 06:25:12] "GET / HTTP/1.1" 200 -
+2025-08-28 06:25:12,441 - INFO - 127.0.0.1 - - [28/Aug/2025 06:25:12] "[36mGET /static/css/css2.css HTTP/1.1[0m" 304 -
+2025-08-28 06:25:12,443 - INFO - 127.0.0.1 - - [28/Aug/2025 06:25:12] "[36mGET /static/css/font-awesome.css HTTP/1.1[0m" 304 -
+2025-08-28 06:25:12,445 - INFO - 127.0.0.1 - - [28/Aug/2025 06:25:12] "[36mGET /static/js/tailwindcss.js HTTP/1.1[0m" 304 -
+2025-08-28 06:25:12,446 - INFO - 127.0.0.1 - - [28/Aug/2025 06:25:12] "[36mGET /static/js/jquery-3.7.1.slim.js HTTP/1.1[0m" 304 -
