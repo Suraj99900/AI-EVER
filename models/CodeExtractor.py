@@ -138,16 +138,23 @@ class CodeExtractor:
             callback(f"EXTRACT: {rel}")
         return {"text": prompt}
 
-    def clone_repo(self, repo_url: str) -> Path:
-        temp_dir = Path(tempfile.mkdtemp(prefix="repo_clone_"))
+    def clone_repo(self, repo_url: str, dest: Path | None = None) -> Path:
+        """
+        Clone the repository into `dest` if given, otherwise a tmp dir.
+        Returns the cloned path.
+        """
+        if dest is None:
+            dest = Path(tempfile.mkdtemp(prefix="repo_clone_"))
         try:
-            subprocess.run(["git", "clone", "--depth", "1", repo_url, str(temp_dir)], check=True,
-                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            self._log(f"Cloned repository to: {temp_dir}")
+            subprocess.run(
+                ["git", "clone", "--depth", "1", repo_url, str(dest)],
+                check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            )
+            self._log(f"Cloned repository to: {dest}")
         except subprocess.CalledProcessError as e:
             self._log(f"Failed to clone repository {repo_url}: {e}", level="error")
             raise
-        return temp_dir
+        return dest
 
     def extract_from_dir(self, raw_dir: Path, out_path: Path, callback=None) -> bool:
         """

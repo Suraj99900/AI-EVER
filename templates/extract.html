@@ -20,24 +20,48 @@
   <!-- Step 1 -->
   <div id="step-1" class="step-section card shadow-lg p-4 mb-4">
     <h4 class="fw-bold text-primary mb-3"><i class="fas fa-code"></i> Codebase Extraction</h4>
+
     <form id="extract-form" autocomplete="off">
+      <!-- ✅ Checkpoint selector -->
       <div class="mb-3">
-        <label for="repo_path" class="form-label">Local Project Path</label>
-        <input type="text" id="repo_path" name="repo_path" class="form-control" placeholder="/home/user/myrepo"
-          required>
-        <input type="hidden" name="type" value="code">
+        <label class="form-label fw-semibold">Choose Source</label>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="source_type" id="source_local" value="local" checked>
+          <label class="form-check-label" for="source_local">📁 Local Path</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="source_type" id="source_github" value="github">
+          <label class="form-check-label" for="source_github">🌐 GitHub Repo (clone + extract)</label>
+        </div>
       </div>
+
+      <!-- Local Path -->
+      <div class="mb-3 source-field" id="local-field">
+        <label for="repo_path" class="form-label">Local Project Path</label>
+        <input type="text" id="repo_path" name="repo_path" class="form-control" placeholder="/home/user/myrepo">
+      </div>
+
+      <!-- GitHub Repo URL -->
+      <div class="mb-3 source-field d-none" id="github-field">
+        <label for="repo_url" class="form-label">GitHub Repository URL</label>
+        <input type="url" id="repo_url" name="repo_url" class="form-control"
+          placeholder="https://github.com/user/repo.git">
+      </div>
+      <input type="hidden" name="type" value="code">
+
       <button type="submit" class="btn btn-gradient w-100">
         <span class="spinner-border spinner-border-sm d-none" id="extract-spinner"></span>
         🚀 Start Extraction
       </button>
     </form>
+
     <div id="extract-alert" class="alert d-none mt-3"></div>
-    <!-- per-step small log kept for quick view (optional) -->
+
     <div id="download-link" class="mt-3 d-none text-center">
       <a href="{{ url_for('extract.extract_downloads', type='code') }}" class="btn btn-success">📥 Download JSONL</a>
     </div>
   </div>
+
 
   <!-- Step 2 -->
   <div id="step-2" class="step-section card shadow-lg p-4 mb-4 d-none">
@@ -350,24 +374,55 @@
     let extractInterval, sqlInterval, trainInterval;
 
     // Code Extraction
-    $('#extract-form').submit(function (e) {
+    $('#extract-form').on('submit', function (e) {
       e.preventDefault();
-      $('#extract-spinner').removeClass('d-none');
-      $('#extract-alert').addClass('d-none');
-      $('#download-link').addClass('d-none');
-      appendToGlobalConsole('EXTRACT', 'Started extraction...');
+
+      const $spinner = $('#extract-spinner');
+      const $alert = $('#extract-alert');
+      const $download = $('#download-link');
+
+      // Reset UI
+      $spinner.removeClass('d-none');
+      $alert.addClass('d-none').removeClass('alert-success alert-danger');
+      $download.addClass('d-none');
+
+      appendToGlobalConsole('EXTRACT', 'Started extraction…');
+
+      // Start polling server logs
       if (extractInterval) clearInterval(extractInterval);
       extractInterval = pollLogs('/extract/logs', 'EXTRACT', '#extract-spinner', '#download-link');
-      $.post('/extract', $(this).serialize(), function (res) {
-        $('#extract-spinner').addClass('d-none');
-        $('#extract-alert').removeClass('d-none alert-danger').addClass('alert-success').text(res.message);
-        appendToGlobalConsole('EXTRACT', res.message);
-      }).fail(function (xhr) {
-        $('#extract-spinner').addClass('d-none');
-        $('#extract-alert').removeClass('d-none alert-success').addClass('alert-danger').text(xhr.responseJSON?.message || "Extraction failed ❌");
-        appendToGlobalConsole('EXTRACT', xhr.responseJSON?.message || "Extraction failed ❌");
+
+      $.ajax({
+        url: '/extract',
+        method: 'POST',
+        data: $(this).serialize(),
+        dataType: 'json',
+        success: function (res) {
+          $alert
+            .removeClass('d-none alert-danger')
+            .addClass('alert-success')
+            .text(res.message || 'Extraction started ✅');
+          appendToGlobalConsole('EXTRACT', res.message || 'Extraction started ✅');
+        },
+        error: function (xhr) {
+          const msg = xhr.responseJSON?.message || 'Extraction failed ❌';
+          $alert
+            .removeClass('d-none alert-success')
+            .addClass('alert-danger')
+            .text(msg);
+          appendToGlobalConsole('EXTRACT', msg);
+
+          // 🔴 Stop the extraction log polling on error
+          if (extractInterval) clearInterval(extractInterval);
+        },
+        complete: function () {
+          $spinner.addClass('d-none');
+        }
       });
     });
+
+
+
 
     // SQL Extraction
     $('#sql-form').submit(function (e) {
