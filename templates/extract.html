@@ -6,8 +6,7 @@
   <!-- Stepper Navigation -->
   <ul class="nav nav-pills mb-3 justify-content-center stepper-animated" id="stepper-tabs">
     <li class="nav-item">
-      <a class="nav-link active px-4 py-2 rounded-pill" data-step="1"><span class="step-circle">1</span> Code
-        Extraction</a>
+      <a class="nav-link active px-4 py-2 rounded-pill" data-step="1"><span class="step-circle">1</span> Code Extraction</a>
     </li>
     <li class="nav-item">
       <a class="nav-link px-4 py-2 rounded-pill" data-step="2"><span class="step-circle">2</span> SQL Extraction</a>
@@ -49,9 +48,9 @@
       </div>
       <input type="hidden" name="type" value="code">
 
-      <button type="submit" class="btn btn-gradient w-100">
+      <button type="submit" class="btn btn-gradient w-30">
         <span class="spinner-border spinner-border-sm d-none" id="extract-spinner"></span>
-        🚀 Start Extraction
+       <i class="fa-solid fa-play text-white"></i>  Start Extraction
       </button>
     </form>
 
@@ -78,9 +77,9 @@
             required></div>
       </div>
       <input type="hidden" name="type" value="sql">
-      <button type="submit" class="btn btn-gradient w-100 mt-3">
+      <button type="submit" class="btn btn-gradient w-30 mt-3">
         <span class="spinner-border spinner-border-sm d-none" id="sql-spinner"></span>
-        📊 Extract Schema
+        <i class="fa-solid fa-play text-white"></i> Extract Schema
       </button>
     </form>
     <div id="sql-alert" class="alert d-none mt-3"></div>
@@ -204,9 +203,9 @@
           <label for="is_sql" class="form-check-label small">Train on SQL Schema</label>
         </div>
         <div class="col-md-12 text-end mt-3">
-          <button type="submit" class="btn btn-gradient px-5 py-2">
+          <button type="submit" class="btn btn-gradient px-3 py-2">
             <span class="spinner-border spinner-border-sm d-none" id="train-spinner"></span>
-            🚀 Start Training
+            <i class="fa-solid fa-play text-white"></i> Start Training
           </button>
         </div>
       </div>
@@ -239,7 +238,7 @@
 
 <style>
   .btn-gradient {
-    background: linear-gradient(90deg, #6f42c1, #d63384);
+    background: blue;
     color: white;
     font-weight: 600;
     border: none;
@@ -250,7 +249,7 @@
   }
 
   .stepper-animated .nav-link.active {
-    background: linear-gradient(90deg, #6f42c1, #d63384);
+    background: blue;
     color: #fff;
   }
 

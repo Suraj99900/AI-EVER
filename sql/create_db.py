@@ -44,6 +44,20 @@ CREATE TABLE IF NOT EXISTS ai_ever_log (
 )
 """)
 
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS ai_ever_inference_log_req_res (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    check_point_id INTEGER NOT NULL,
+    req_msg TEXT,
+    res_msg TEXT,
+    related_checkpoint_id INTEGER,
+    status INTEGER DEFAULT 1,
+    deleted INTEGER DEFAULT 0,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+""")
+
+
 conn.commit()
 conn.close()
 

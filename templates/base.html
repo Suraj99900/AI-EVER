@@ -4,6 +4,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link href="/static/img/logo.png" rel="icon">
+  <link href="/static/img/logo.png" rel="apple-touch-icon">
   <title>AI Ever - Advanced Local AI Platform</title>
 
   <!-- Tailwind + Icons + Font -->
@@ -105,7 +107,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(124, 58, 237, 0.1);
+      background: rgba(17, 63, 215, 0.1);
       border-radius: 0.5rem;
       opacity: 0;
       transition: opacity 0.3s ease;
@@ -117,7 +119,7 @@
     }
 
     .nav-link:hover {
-      color: rgba(217, 70, 239, 1);
+      color: rgb(11, 66, 195);
       transform: translateY(-1px);
     }
 
@@ -155,24 +157,12 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .feature-card:hover {
-      transform: scale(1.02);
-      box-shadow: 0 20px 40px rgba(124, 58, 237, 0.15);
-      border-color: rgba(124, 58, 237, 0.3);
-    }
-
-    .feature-card.active {
-      background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(217, 70, 239, 0.1));
-      border-color: rgba(124, 58, 237, 0.4);
-      transform: scale(1.02);
-    }
 
     .floating-elements::before {
       content: '';
       position: absolute;
       width: 200px;
       height: 200px;
-      background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
       border-radius: 50%;
       top: -100px;
       right: -100px;
@@ -184,7 +174,6 @@
       position: absolute;
       width: 150px;
       height: 150px;
-      background: radial-gradient(circle, rgba(217, 70, 239, 0.1) 0%, transparent 70%);
       border-radius: 50%;
       bottom: -75px;
       left: -75px;
@@ -228,8 +217,8 @@
     }
 
     .tech-item:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(124, 58, 237, 0.3);
+      background: rgba(3, 86, 180, 0);
+      border-color: rgba(1, 57, 176, 0.3);
     }
 
     .image-container {
@@ -286,8 +275,8 @@
         <!-- Logo -->
         <div class="flex items-center space-x-3 nav-logo">
           <div
-            class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-            <i class="fas fa-brain text-white text-lg"></i>
+            class="w-10 h-10 rounded-xl bg-transparent flex items-center justify-center">
+            <img src="/static/img/logo.png" alt="" srcset="">
           </div>
           <span class="text-xl font-bold">AI Ever</span>
         </div>
@@ -345,7 +334,7 @@
   <!-- FOOTER -->
   <footer class="border-t border-white/10 mt-8 py-8">
     <div class="container px-6 text-sm text-slate-400 text-center">
-      <p>© 2024 AI Ever · Built with ❤️ ·
+      <p>
         <a href="https://github.com/Suraj99900/AI-EVER"
           class="text-purple-400 hover:text-purple-300 transition-colors hover:underline">
           View Repository

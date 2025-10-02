@@ -8,6 +8,8 @@ from sql.CheckpointTrackMaster import CheckpointTrackMaster
 from sql.AIEverLog import AIEverLog
 import logging
 from pathlib import Path
+import shutil
+from sql.AIEverInferenceLog import AIEverInferenceLog
 
 bp_infer = Blueprint("infer", __name__)
 
@@ -87,23 +89,25 @@ def fetch_checkpoints():
 
 @bp_infer.route("/inference", methods=["GET", "POST"])
 def infer():
-    log = AIEverLog()
+    log_db = AIEverInferenceLog()
     CHECKPOINTS = fetch_checkpoints()
 
     if request.method == "POST":
+        # --- existing POST logic for new prompts ---
         data = request.get_json() or {}
-        iModelId = data.get("iModelId",999)
+        iModelId = data.get("iModelId", 999)
         load_model(iModelId)
         prompt = data.get("prompt", "").strip()
         if not prompt:
             return jsonify(status="error", message="Prompt is required"), 400
 
-        # Making prompt properly in the template 
-        prompt = '### Instruction:\n' + prompt + '\n### Response:'
-        logging.info(f"Received prompt: {prompt}")
+        # Format the prompt for the model
+        full_prompt = f"### Instruction:\n{prompt}\n### Response:"
+        logging.info(f"Received prompt: {full_prompt}")
+
         try:
-            result = model.generate_response_stream(
-                prompt=prompt,
+            result = model_instance.generate_response_stream(
+                prompt=full_prompt,
                 max_new_tokens=int(data.get("max_new_tokens", 1000)),
                 temperature=float(data.get("temperature", 0.2)),
                 top_p=float(data.get("top_p", 0.9)),
@@ -116,15 +120,18 @@ def infer():
         except Exception as e:
             logging.error("inference", str(e))
             return jsonify(status="error", message=str(e)), 500
+
     else:
+        # --- GET logic: render the chat page ---
         iModelId = request.args.get("session", default=9999, type=int)
-        base = os.getenv("BASE_URL", "http://localhost:5000").rstrip("/")
-        BASE_URL = f"{base}/inference"
         load_model(iModelId)
 
+        base = os.getenv("BASE_URL", "http://localhost:5000").rstrip("/")
+        BASE_URL = f"{base}/inference"
+
+        # Format checkpoints for the template
         formatted_checkpoints = []
         seen = set()
-
         sBaseModel = Path(__file__).parent.parent / "LLMModels" / "deepseek-coder-1.3b-base"
         formatted_checkpoints.append((9999, "deepseek-coder-1.3b-base", str(sBaseModel)))
 
@@ -136,45 +143,73 @@ def infer():
                 seen.add(folder_name)
                 formatted_checkpoints.append((cp[0], folder_name, cp[2]))
 
-    # on GET, render the chat page and pass your saved checkpoints
-    global current_model_id
-    current_model_id = iModelId
-    return render_template("inference.html", checkpoints=formatted_checkpoints,current_session=iModelId,BASE_URL=BASE_URL)
+        # --- Fetch past logs for this model/session ---
+        past_chats = log_db.get_logs_by_checkpoint(iModelId)  # Returns list of dicts: [{req_msg, res_msg}, ...]
+
+        return render_template(
+            "inference.html",
+            checkpoints=formatted_checkpoints,
+            current_session=iModelId,
+            BASE_URL=BASE_URL,
+            past_chats=past_chats
+        )
 
 @bp_infer.route("/stream_inference", methods=["POST"])
 def stream_inference():
     iModelId = request.args.get('current_session', default=9999, type=int)
     load_model(iModelId)
+
     data = request.get_json() or {}
     prompt = data.get("prompt", "").strip()
-    modelPath = ""
 
     if not prompt:
         return jsonify(status="error", message="Prompt is required"), 400
 
-    prompt = '### Instruction:\n' + prompt + '\n### Response:'
-    logging.info(f"Received streaming prompt: {prompt}")
+    # Format the prompt for the model
+    full_prompt = f"### Instruction:\n{prompt}\n### Response:"
+    logging.info(f"Received streaming prompt: {full_prompt}")
+
+    log_db = AIEverInferenceLog()
+    log_id = log_db.add_log(
+        check_point_id=iModelId,
+        req_msg=full_prompt,
+        res_msg="",
+        related_checkpoint_id=iModelId
+    )
 
     try:
-        # Generator that yields tokens from the model streaming method
-        def generate_tokens():
-            for token in model_instance.generate_response_stream(
-                prompt=prompt,
-                max_new_tokens=int(data.get("max_new_tokens", 1000)),
-                temperature=float(data.get("temperature", 0.1)),
-                top_p=float(data.get("top_p", 0.95)),
-                repetition_penalty=float(data.get("repetition_penalty", 1.1)),
-                no_repeat_ngram_size=int(data.get("no_repeat_ngram_size", 4)),
-                do_sample=False,
-                num_beams=int(data.get("num_beams", 1)),
-            ):
-                yield token
+        def generate_tokens_and_log():
+            response_buffer = []
+            try:
+                for token in model_instance.generate_response_stream(
+                    prompt=full_prompt,
+                    max_new_tokens=int(data.get("max_new_tokens", 1000)),
+                    temperature=float(data.get("temperature", 0.1)),
+                    top_p=float(data.get("top_p", 0.95)),
+                    repetition_penalty=float(data.get("repetition_penalty", 1.1)),
+                    no_repeat_ngram_size=int(data.get("no_repeat_ngram_size", 4)),
+                    do_sample=False,
+                    num_beams=int(data.get("num_beams", 1)),
+                ):
+                    response_buffer.append(token)
+                    yield token
+            finally:
+                try:
+                    final_response = "".join(response_buffer)
+                    log_db.update_log(log_id, res_msg=final_response)
+                except Exception as db_err:
+                    logging.error(f"[Logging Error] Could not update inference log {log_id}: {db_err}")
 
-        # Use Flask's streaming response, yielding tokens as text/event-stream or plain text chunks
-        return Response(stream_with_context(generate_tokens()), mimetype="text/plain")
+        # 4️⃣ Stream back to the client
+        return Response(
+            stream_with_context(generate_tokens_and_log()),
+            mimetype="text/plain"
+        )
 
     except Exception as e:
         logging.error("stream_inference", str(e))
+        if log_id:
+            log_db.update_log(log_id, status=0, res_msg=f"[Error] {str(e)}")
         return jsonify(status="error", message=str(e)), 500
 
 
@@ -208,6 +243,32 @@ def rename_checkpoint(cp_id):
         # Log full traceback if you have logging configured
         return jsonify({"success": False, "error": str(e)}), 500
 
+
+@bp_infer.route("/delete_checkpoint/<int:cp_id>", methods=["DELETE"])
+def delete_checkpoint(cp_id):
+    data = request.get_json(silent=True) or {}
+    if not cp_id:
+        return jsonify({"success": False, "error": "Invalid checkpoint ID"}), 400
+
+    try:
+        db = CheckpointTrackMaster()
+        cp = db.get_checkpoint_by_id(cp_id)
+        if not cp:
+            return jsonify({"success": False, "error": "Checkpoint not found"}), 404
+
+        path_to_delete = cp[2]  # assuming column 2 = file path
+
+        # delete folder and its contents
+        if os.path.exists(path_to_delete):
+            shutil.rmtree(path_to_delete)   # <— removes all files & subdirs
+
+        # remove the DB record
+        db.delete_checkpoint(cp_id)
+
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+    
 
 @bp_infer.route("/complete", methods=["POST"])
 def complete():
