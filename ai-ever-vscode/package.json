@@ -1,15 +1,22 @@
 {
   "name": "ai-ever-vscode",
-  "displayName": "ai-ever-vscode",
-  "description": "",
-  "version": "0.0.1",
+  "displayName": "AI-EVER VS Code",
+  "description": "AI-powered code completion, suggestions, and bug fixes directly in VS Code.",
+  "version": "0.0.2",
   "engines": {
-    "vscode": "^1.103.0"
+    "vscode": "^1.75.0"
   },
   "categories": [
+    "Programming Languages",
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onCommand:ai-ever-vscode.completeCode",
+    "onCommand:ai-ever-vscode.fixCode",
+    "onLanguage:javascript",
+    "onLanguage:python",
+    "onLanguage:php"
+  ],
   "main": "./extension.js",
   "contributes": {
     "commands": [
@@ -25,23 +32,25 @@
     "keybindings": [
       {
         "command": "ai-ever-vscode.completeCode",
-        "key": "ctrl+alt+c"
+        "key": "ctrl+alt+c",
+        "when": "editorTextFocus"
       },
       {
         "command": "ai-ever-vscode.fixCode",
-        "key": "ctrl+alt+f"
+        "key": "ctrl+alt+f",
+        "when": "editorTextFocus"
       }
     ]
   },
   "scripts": {
-    "lint": "eslint .",
+    "lint": "eslint . --ext .js,.ts",
     "pretest": "npm run lint",
-    "test": "vscode-test"
+    "test": "node ./test/runTest.js"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
     "@types/node": "22.x",
-    "@types/vscode": "^1.103.0",
+    "@types/vscode": "^1.75.0",
     "@vscode/test-cli": "^0.0.11",
     "@vscode/test-electron": "^2.5.2",
     "eslint": "^9.32.0"
@@ -50,5 +59,18 @@
     "eventsource-parser": "^3.0.5",
     "node-fetch": "^2.7.0",
     "undici": "^7.15.0"
-  }
+  },
+  "publisher": "Suraj Jaiswal",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Suraj99900/AI-EVER/tree/NEW-UI-And-Model-Chnages"
+  },
+  "keywords": [
+    "AI",
+    "code-completion",
+    "VSCode",
+    "AI-EVER",
+    "bug-fix",
+    "developer-tools"
+  ]
 }

@@ -1,92 +1,53 @@
 const vscode = require("vscode");
 const { fetch } = require("undici");
 
+let lastRequestTime = 0;
+const REQUEST_INTERVAL = 30000; // 30 seconds throttle
+
 // 🔹 Helper: call backend
-async function callAIBackend(payload) {
+async function callAIBackend(payload, statusBarItem) {
     try {
-        const res = await fetch("http://127.0.0.1:5000/complete", {
+        statusBarItem.text = "$(sync~spin) AI-EVER running...";
+        statusBarItem.show();
+
+        const res = await fetch("http://127.0.0.1:5000/complete?current_session=4", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
         });
-        return await res.json();
+
+        const data = await res.json();
+
+        statusBarItem.text = "✅ AI-EVER done!";
+        setTimeout(() => statusBarItem.hide(), 1500);
+
+        if (data?.status !== "success") {
+            vscode.window.showErrorMessage("AI-EVER error: " + (data?.message || "Unknown error"));
+            return null;
+        }
+
+        return data;
     } catch (err) {
+        statusBarItem.hide();
         vscode.window.showErrorMessage("AI-EVER backend error: " + err.message);
         return null;
     }
 }
 
-// 🔹 Command: Manual code completion
-async function completeWithAI() {
-    const editor = vscode.window.activeTextEditor;
-    if (!editor) return;
-
-    const document = editor.document;
-    const selection = editor.selection;
-    const context = selection.isEmpty
-        ? document.getText()
-        : document.getText(selection);
-
-    const data = await callAIBackend({
-        context,
-        task: "completion",
-        stream: false,
-    });
-
-    if (data && data.status === "success") {
-        editor.edit(editBuilder => {
-            if (selection.isEmpty) {
-                editBuilder.insert(selection.start, data.completion);
-            } else {
-                editBuilder.replace(selection, data.completion);
-            }
-        });
-    } else if (data) {
-        vscode.window.showErrorMessage("AI-EVER Error: " + data.message);
-    }
-}
-
-// 🔹 Command: Fix selected code
-async function fixCodeWithAI() {
-    const editor = vscode.window.activeTextEditor;
-    if (!editor) return;
-
-    const selection = editor.selection;
-    if (selection.isEmpty) {
-        vscode.window.showErrorMessage("Select some buggy code to fix.");
-        return;
-    }
-
-    const buggyCode = editor.document.getText(selection);
-    const data = await callAIBackend({
-        context: buggyCode,
-        task: "bug_fix",
-        stream: false,
-    });
-
-    if (data && data.status === "success") {
-        editor.edit(editBuilder => {
-            editBuilder.replace(selection, data.completion);
-        });
-    } else if (data) {
-        vscode.window.showErrorMessage("AI-EVER Error: " + data.message);
-    }
-}
-
-// 🔹 Inline ghost completions (like Tabnine)
+// 🔹 Inline provider with throttling
 const inlineProvider = {
     async provideInlineCompletionItems(document, position) {
-        const codeBefore = document.getText(
-            new vscode.Range(new vscode.Position(0, 0), position)
-        );
+        const codeBefore = document.getText(new vscode.Range(new vscode.Position(0, 0), position));
+        if (!codeBefore.trim()) return [];
 
-        const data = await callAIBackend({
-            context: codeBefore,
-            task: "completion",
-            stream: false,
-        });
+        const now = Date.now();
+        if (now - lastRequestTime < REQUEST_INTERVAL) return []; // throttle
+        lastRequestTime = now;
 
-        if (data && data.status === "success") {
+        const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
+        const data = await callAIBackend({ context: codeBefore, task: "completion" }, statusBarItem);
+
+        if (data?.completion?.trim()) {
             return [
                 {
                     insertText: data.completion,
@@ -95,40 +56,79 @@ const inlineProvider = {
             ];
         }
         return [];
-    },
+    }
 };
 
 // 🔹 Activate extension
 function activate(context) {
     console.log("AI-EVER extension activated ✅");
 
-    // Command: complete code
-    let disposableComplete = vscode.commands.registerCommand(
-        "ai-ever-vscode.completeCode",
-        completeWithAI
+    const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
+    context.subscriptions.push(statusBarItem);
+
+    // Commands: Manual completion
+    context.subscriptions.push(
+        vscode.commands.registerCommand("ai-ever-vscode.completeCode", async () => {
+            const editor = vscode.window.activeTextEditor;
+            if (!editor) return;
+
+            const text = editor.selection.isEmpty
+                ? editor.document.getText()
+                : editor.document.getText(editor.selection);
+
+            const data = await callAIBackend({ context: text, task: "completion" }, statusBarItem);
+
+            if (data?.completion) {
+                editor.edit(editBuilder => {
+                    if (editor.selection.isEmpty) {
+                        editBuilder.insert(editor.selection.start, data.completion);
+                    } else {
+                        editBuilder.replace(editor.selection, data.completion);
+                    }
+                });
+            }
+        }),
+
+        vscode.commands.registerCommand("ai-ever-vscode.fixCode", async () => {
+            const editor = vscode.window.activeTextEditor;
+            if (!editor) return;
+
+            const selection = editor.selection;
+            if (selection.isEmpty) {
+                return vscode.window.showErrorMessage("Select some buggy code to fix.");
+            }
+
+            const buggyCode = editor.document.getText(selection);
+            const data = await callAIBackend({ context: buggyCode, task: "bug_fix" }, statusBarItem);
+
+            if (data?.completion) {
+                editor.edit(editBuilder => editBuilder.replace(selection, data.completion));
+            }
+        })
     );
 
-    // Command: fix code
-    let disposableFix = vscode.commands.registerCommand(
-        "ai-ever-vscode.fixCode",
-        fixCodeWithAI
+    // Inline completion provider
+    context.subscriptions.push(
+        vscode.languages.registerInlineCompletionItemProvider({ pattern: "**" }, inlineProvider)
     );
 
-    // Inline completions
-    let inlineProviderDisposable = vscode.languages.registerInlineCompletionItemProvider(
-        { pattern: "**" },
-        inlineProvider
-    );
+    // 🔹 Listen to typing and trigger inline suggestions (throttled)
+    context.subscriptions.push(
+        vscode.workspace.onDidChangeTextDocument(async event => {
+            const editor = vscode.window.activeTextEditor;
+            if (!editor || editor.document !== event.document) return;
 
-    context.subscriptions.push(disposableComplete);
-    context.subscriptions.push(disposableFix);
-    context.subscriptions.push(inlineProviderDisposable);
+            const now = Date.now();
+            if (now - lastRequestTime < REQUEST_INTERVAL) return; // throttle
+            lastRequestTime = now;
+
+            // Trigger inline suggestion
+            await vscode.commands.executeCommand("editor.action.inlineSuggest.trigger");
+        })
+    );
 }
 
 // 🔹 Deactivate extension
 function deactivate() {}
 
-module.exports = {
-    activate,
-    deactivate,
-};
+module.exports = { activate, deactivate };

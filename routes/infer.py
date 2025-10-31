@@ -53,6 +53,13 @@ def load_model(iModelId=999):
 
     return model_instance
 
+def get_model(iModelId=None):
+    global model_instance
+    if model_instance is None:
+        logging.info(f"[Model] Loading model for session {iModelId}")
+        model_instance = load_model(iModelId)
+    return model_instance
+
 def unload_model():
     global model_instance, current_model_id
     if model_instance is not None:
@@ -277,11 +284,12 @@ def complete():
     Expects JSON: { "context": "...", "task": "completion|bug_fix|docstring", "stream": true/false }
     """
     try:
-        model_instance = load_model()
+        iModelId = request.args.get('current_session', default=9999, type=int)
+        model = get_model(iModelId)
 
         data = request.get_json() or {}
         context = data.get("context", "").strip()
-        task = data.get("task", "completion")   # default: completion
+        task = data.get("task", "completion")
         stream = data.get("stream", False)
 
         if not context:
@@ -292,16 +300,19 @@ def complete():
             prompt = f"### Buggy Code:\n{context}\n### Fixed Code:\n"
         elif task == "docstring":
             prompt = f"### Code:\n{context}\n### Add a detailed docstring:\n"
+        elif task == "completion":
+            prompt = f"### complete this code:\n{context}\n"
         else:
             prompt = context
 
         logging.info(f"[Completion] Task={task}, Stream={stream}, Prompt length={len(prompt)}")
+        logging.info(prompt)
 
         # ---------------- STREAMING MODE ---------------- #
         if stream:
             def generate_tokens():
                 try:
-                    for token in model_instance.generate_response_stream(
+                    for token in model.generate_response_stream(
                         prompt=prompt,
                         max_new_tokens=int(data.get("max_new_tokens", 256)),
                         temperature=float(data.get("temperature", 0.2)),
@@ -320,7 +331,7 @@ def complete():
 
         # ---------------- ONE-SHOT MODE ---------------- #
         else:
-            completion = model_instance.generate_response(
+            completion = model.generate_response(
                 prompt=prompt,
                 max_new_tokens=int(data.get("max_new_tokens", 256)),
                 temperature=float(data.get("temperature", 0.2)),
@@ -330,8 +341,12 @@ def complete():
                 do_sample=True,
                 num_beams=int(data.get("num_beams", 1)),
             )
+
+            if not completion:
+                logging.warning("[Completion] Model returned empty string")
+                return jsonify(status="error", message="Empty completion"), 500
+
             logging.info(f"[Completion] Generated {len(completion)} tokens")
-            logging.info(f"[Completion] Content: {completion}")
             return jsonify(status="success", completion=completion)
 
     except Exception as e:

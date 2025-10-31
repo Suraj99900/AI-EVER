@@ -1,0 +1,224 @@
+Database: lifehealer_db
+Extracted at: 2025-10-03T07:08:12.270350
+
+--- TABLE: api_logs ---
+Row count: 77191
+Columns:
+ - id (bigint unsigned) Nullable: NO Default: None [PRI]
+ - unique_visitor_id (varchar(255)) Nullable: YES Default: None [MUL]
+ - method (varchar(255)) Nullable: NO Default: None 
+ - endpoint (varchar(255)) Nullable: NO Default: None [MUL]
+ - time_spent (varchar(255)) Nullable: YES Default: None 
+ - request_payload (longtext) Nullable: YES Default: None 
+ - response_payload (longtext) Nullable: YES Default: None 
+ - status_code (int) Nullable: NO Default: None 
+ - ip_address (varchar(45)) Nullable: NO Default: None [MUL]
+ - user_agent (varchar(255)) Nullable: YES Default: None 
+ - created_at (timestamp) Nullable: YES Default: None [MUL]
+ - updated_at (timestamp) Nullable: YES Default: None 
+
+--- TABLE: app_attachment ---
+Row count: 8
+Columns:
+ - id (bigint unsigned) Nullable: NO Default: None [PRI]
+ - video_id (int) Nullable: NO Default: None 
+ - attachment_name (varchar(255)) Nullable: NO Default: None 
+ - attachment_path (varchar(255)) Nullable: NO Default: None 
+ - attachment_url (varchar(255)) Nullable: NO Default: None 
+ - added_on (timestamp) Nullable: NO Default: None 
+ - status (int) Nullable: NO Default: 1 [MUL]
+ - deleted (int) Nullable: NO Default: 0 [MUL]
+ - created_at (timestamp) Nullable: YES Default: None 
+ - updated_at (timestamp) Nullable: YES Default: None 
+
+--- TABLE: app_post ---
+Row count: 0
+Columns:
+ - id (bigint unsigned) Nullable: NO Default: None [PRI]
+ - body (longtext) Nullable: NO Default: None 
+ - added_on (timestamp) Nullable: NO Default: None 
+ - status (int) Nullable: NO Default: 1 [MUL]
+ - deleted (int) Nullable: NO Default: 0 [MUL]
+ - created_at (timestamp) Nullable: YES Default: None 
+ - updated_at (timestamp) Nullable: YES Default: None 
+
+--- TABLE: clients ---
+Row count: 1
+Columns:
+ - id (bigint unsigned) Nullable: NO Default: None [PRI]
+ - name (varchar(255)) Nullable: NO Default: None 
+ - client_id (varchar(255)) Nullable: NO Default: None [UNI]
+ - client_secret (varchar(255)) Nullable: NO Default: None 
+ - callback_url (varchar(255)) Nullable: NO Default: None 
+ - created_at (timestamp) Nullable: YES Default: None 
+ - updated_at (timestamp) Nullable: YES Default: None 
+ - deleted_at (timestamp) Nullable: YES Default: None 
+
+--- TABLE: failed_jobs ---
+Row count: 0
+Columns:
+ - id (bigint unsigned) Nullable: NO Default: None [PRI]
+ - uuid (varchar(255)) Nullable: NO Default: None [UNI]
+ - connection (text) Nullable: NO Default: None 
+ - queue (text) Nullable: NO Default: None 
+ - payload (longtext) Nullable: NO Default: None 
+ - exception (longtext) Nullable: NO Default: None 
+ - failed_at (timestamp) Nullable: NO Default: CURRENT_TIMESTAMP 
+
+--- TABLE: jobs ---
+Row count: 0
+Columns:
+ - id (bigint unsigned) Nullable: NO Default: None [PRI]
+ - queue (varchar(255)) Nullable: NO Default: None [MUL]
+ - payload (longtext) Nullable: NO Default: None 
+ - attempts (tinyint unsigned) Nullable: NO Default: None 
+ - reserved_at (int unsigned) Nullable: YES Default: None 
+ - available_at (int unsigned) Nullable: NO Default: None 
+ - created_at (int unsigned) Nullable: NO Default: None 
+
+--- TABLE: migrations ---
+Row count: 22
+Columns:
+ - id (int unsigned) Nullable: NO Default: None [PRI]
+ - migration (varchar(255)) Nullable: NO Default: None 
+ - batch (int) Nullable: NO Default: None 
+
+--- TABLE: personal_access_tokens ---
+Row count: 0
+Columns:
+ - id (bigint unsigned) Nullable: NO Default: None [PRI]
+ - tokenable_type (varchar(255)) Nullable: NO Default: None [MUL]
+ - tokenable_id (bigint unsigned) Nullable: NO Default: None 
+ - name (varchar(255)) Nullable: NO Default: None 
+ - token (varchar(64)) Nullable: NO Default: None [UNI]
+ - abilities (text) Nullable: YES Default: None 
+ - last_used_at (timestamp) Nullable: YES Default: None 
+ - expires_at (timestamp) Nullable: YES Default: None 
+ - created_at (timestamp) Nullable: YES Default: None 
+ - updated_at (timestamp) Nullable: YES Default: None 
+
+--- TABLE: sessions ---
+Row count: 0
+Columns:
+ - id (varchar(255)) Nullable: NO Default: None [PRI]
+ - user_id (bigint unsigned) Nullable: YES Default: None [MUL]
+ - ip_address (varchar(45)) Nullable: YES Default: None 
+ - user_agent (text) Nullable: YES Default: None 
+ - payload (longtext) Nullable: NO Default: None 
+ - last_activity (int) Nullable: NO Default: None [MUL]
+
+--- TABLE: user_category_access ---
+Row count: 1404
+Columns:
+ - id (bigint unsigned) Nullable: NO Default: None [PRI]
+ - user_id (bigint unsigned) Nullable: NO Default: None 
+ - category_id (bigint unsigned) Nullable: NO Default: None 
+ - access_time (timestamp) Nullable: NO Default: CURRENT_TIMESTAMP 
+ - expiration_time (timestamp) Nullable: YES Default: None 
+ - added_on (timestamp) Nullable: NO Default: CURRENT_TIMESTAMP 
+ - status (tinyint) Nullable: NO Default: 1 
+ - deleted (tinyint) Nullable: NO Default: 0 
+ - created_at (timestamp) Nullable: YES Default: None 
+ - updated_at (timestamp) Nullable: YES Default: None 
+
+--- TABLE: user_comment ---
+Row count: 50
+Columns:
+ - id (bigint unsigned) Nullable: NO Default: None [PRI]
+ - video_id (int) Nullable: NO Default: None 
+ - user_id (int) Nullable: NO Default: None 
+ - comment (longtext) Nullable: NO Default: None 
+ - added_on (timestamp) Nullable: NO Default: None 
+ - status (int) Nullable: NO Default: 1 [MUL]
+ - deleted (int) Nullable: NO Default: 0 [MUL]
+ - created_at (timestamp) Nullable: YES Default: None 
+ - updated_at (timestamp) Nullable: YES Default: None 
+
+--- TABLE: user_enrollments ---
+Row count: 84
+Columns:
+ - id (bigint unsigned) Nullable: NO Default: None [PRI]
+ - username (varchar(255)) Nullable: NO Default: None 
+ - full_name (varchar(255)) Nullable: NO Default: None 
+ - phone (varchar(255)) Nullable: NO Default: None 
+ - email (varchar(255)) Nullable: NO Default: None 
+ - address (varchar(500)) Nullable: NO Default: None 
+ - additional_info (text) Nullable: YES Default: None 
+ - added_on (timestamp) Nullable: NO Default: CURRENT_TIMESTAMP 
+ - status (tinyint) Nullable: NO Default: 1 
+ - deleted (tinyint) Nullable: NO Default: 0 
+ - created_at (timestamp) Nullable: YES Default: None 
+ - updated_at (timestamp) Nullable: YES Default: None 
+
+--- TABLE: video_category ---
+Row count: 14
+Columns:
+ - id (bigint unsigned) Nullable: NO Default: None [PRI]
+ - name (varchar(255)) Nullable: NO Default: None 
+ - added_on (timestamp) Nullable: NO Default: None 
+ - status (int) Nullable: NO Default: 1 [MUL]
+ - deleted (int) Nullable: NO Default: 0 [MUL]
+ - created_at (timestamp) Nullable: YES Default: None 
+ - updated_at (timestamp) Nullable: YES Default: None 
+ - description (longtext) Nullable: YES Default: None 
+
+--- TABLE: videos ---
+Row count: 209
+Columns:
+ - id (bigint unsigned) Nullable: NO Default: None [PRI]
+ - video_uid (varchar(255)) Nullable: NO Default: None 
+ - category_id (int) Nullable: NO Default: None 
+ - title (varchar(255)) Nullable: NO Default: None 
+ - description (longtext) Nullable: YES Default: None 
+ - path (varchar(255)) Nullable: NO Default: None 
+ - cloudflare_video_id (varchar(255)) Nullable: YES Default: None 
+ - video_json_data (json) Nullable: YES Default: None 
+ - hls_path (varchar(255)) Nullable: YES Default: None 
+ - is_converted_hls_video (tinyint(1)) Nullable: NO Default: 0 
+ - thumbnail (varchar(255)) Nullable: YES Default: None 
+ - duration (varchar(255)) Nullable: YES Default: None 
+ - added_on (datetime) Nullable: YES Default: CURRENT_TIMESTAMP 
+ - status (int) Nullable: NO Default: 1 [MUL]
+ - deleted (int) Nullable: NO Default: 0 [MUL]
+ - created_at (timestamp) Nullable: YES Default: None 
+ - updated_at (timestamp) Nullable: YES Default: None 
+
+--- TABLE: websockets_statistics_entries ---
+Row count: 0
+Columns:
+ - id (int unsigned) Nullable: NO Default: None [PRI]
+ - app_id (varchar(255)) Nullable: NO Default: None 
+ - peak_connection_count (int) Nullable: NO Default: None 
+ - websocket_message_count (int) Nullable: NO Default: None 
+ - api_message_count (int) Nullable: NO Default: None 
+ - created_at (timestamp) Nullable: YES Default: None 
+ - updated_at (timestamp) Nullable: YES Default: None 
+
+--- TABLE: wellness_otp ---
+Row count: 0
+Columns:
+ - id (bigint unsigned) Nullable: NO Default: None [PRI]
+ - otp (varchar(255)) Nullable: NO Default: None 
+ - email (varchar(255)) Nullable: NO Default: None 
+ - added_on (timestamp) Nullable: YES Default: None 
+ - exp_on (timestamp) Nullable: YES Default: None 
+ - status (int) Nullable: NO Default: 1 [MUL]
+ - deleted (int) Nullable: NO Default: 0 [MUL]
+ - created_at (timestamp) Nullable: YES Default: None 
+ - updated_at (timestamp) Nullable: YES Default: None 
+
+--- TABLE: wellness_users ---
+Row count: 280
+Columns:
+ - id (bigint unsigned) Nullable: NO Default: None [PRI]
+ - user_name (varchar(255)) Nullable: NO Default: None [MUL]
+ - email (varchar(255)) Nullable: NO Default: None [MUL]
+ - password (varchar(255)) Nullable: NO Default: None [MUL]
+ - user_type (int) Nullable: YES Default: None [MUL]
+ - type (varchar(255)) Nullable: NO Default: None [MUL]
+ - added_on (timestamp) Nullable: NO Default: None 
+ - status (int) Nullable: NO Default: 1 [MUL]
+ - deleted (int) Nullable: NO Default: 0 [MUL]
+ - created_at (timestamp) Nullable: YES Default: None 
+ - updated_at (timestamp) Nullable: YES Default: None 
+
