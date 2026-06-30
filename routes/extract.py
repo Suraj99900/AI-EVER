@@ -30,6 +30,14 @@ def _append_extract(msg, level=None):
         logmgr.append("extract", str(msg))
 
 
+def _log_event(event_type: str, message: str):
+    """Persist an extraction-route milestone to ai_ever_log."""
+    try:
+        AIEverLog().add_log(event_type, str(message))
+    except Exception:
+        pass
+
+
 # --- Worker functions ------------------------------------------------------
 def run_code_extraction(path: str, output_file: str, clear_logs: bool = True):
     if clear_logs:
@@ -37,6 +45,7 @@ def run_code_extraction(path: str, output_file: str, clear_logs: bool = True):
 
     _append_extract(f"Starting code extraction from: {path}")
     _append_extract(f"Output will be saved to: {output_file}")
+    _log_event("extract_started", f"Code extraction started: {path}")
 
     try:
         extractor = CodeExtractor()
@@ -48,6 +57,7 @@ def run_code_extraction(path: str, output_file: str, clear_logs: bool = True):
         extractor.extract_code(path, output_file, callback=cb)
 
         _append_extract("✅ Code extraction finished. Download at /extract/download?type=code")
+        _log_event("extract_completed", f"✅ Code extraction completed → {output_file}")
     except Exception as e:
         _append_extract(f"❌ Code extraction failed: {e}")
         AIEverLog().log_error("run_code_extraction", str(e))
@@ -102,6 +112,8 @@ def run_sql_extraction(host, port, user, password, db_name, clear_logs: bool = T
 
     _append_extract("Starting SQL schema extraction")
     _append_extract(f"Connecting to MySQL: {host}:{port}, user: {user}, db: {db_name}")
+    _log_event("sql_extract_started", f"SQL extraction started: {user}@{host}:{port}/{db_name}")
+
     try:
         extractor = DBSchemaExtractor(host, port, user, password, db_name)
 
@@ -112,12 +124,111 @@ def run_sql_extraction(host, port, user, password, db_name, clear_logs: bool = T
         extractor.run(callback=cb)
 
         _append_extract("✅ SQL schema extraction finished. Download at /extract/download?type=sql")
+        _log_event("sql_extract_completed", f"✅ SQL extraction completed: {db_name}")
     except Exception as e:
         _append_extract(f"❌ SQL extraction failed: {e}")
         AIEverLog().log_error("run_sql_extraction", str(e))
 
 
+def run_hf_extraction(dataset_name: str, config_name: str, split: str,
+                      text_col: str, output_file: str, clear_logs: bool = True):
+    if clear_logs:
+        logmgr.clear("extract")
+
+    _append_extract(f"Loading HuggingFace dataset: {dataset_name}")
+    _log_event("hf_extract_started", f"HF extraction started: {dataset_name}")
+
+    try:
+        from datasets import load_dataset
+        import json
+
+        load_kwargs = {"split": split or "train", "trust_remote_code": True}
+        if config_name:
+            ds = load_dataset(dataset_name, config_name, **load_kwargs)
+        else:
+            ds = load_dataset(dataset_name, **load_kwargs)
+
+        cols = set(ds.column_names)
+        _append_extract(f"Loaded {len(ds)} samples. Columns: {sorted(cols)}")
+
+        # Pick conversion strategy — most specific first
+        if text_col and text_col != "auto" and text_col in cols:
+            def convert(row):
+                return {"text": str(row[text_col])}
+        elif "question" in cols and ("query" in cols or "sql" in cols):
+            # Spider / WikiSQL
+            sql_col = "query" if "query" in cols else "sql"
+            def convert(row):
+                return {"text": f"### Instruction:\n{row['question']}\n### Response:\n{row[sql_col]}"}
+        elif "func_documentation_string" in cols and "func_code_string" in cols:
+            # CodeSearchNet
+            def convert(row):
+                doc = (row["func_documentation_string"] or "").strip()
+                code = (row["func_code_string"] or "").strip()
+                return {"text": f"### Instruction:\n{doc}\n### Response:\n```\n{code}\n```"}
+        elif "text" in cols and "code" in cols:
+            # MBPP
+            def convert(row):
+                return {"text": f"### Instruction:\n{row['text']}\n### Response:\n```python\n{row['code']}\n```"}
+        elif "content" in cols:
+            # The Stack
+            def convert(row):
+                return {"text": row["content"]}
+        elif "text" in cols:
+            def convert(row):
+                return {"text": row["text"]}
+        else:
+            # Fallback: join all string-valued columns
+            str_cols = [c for c in ds.column_names if isinstance(ds[0].get(c), str)]
+            if not str_cols:
+                raise ValueError(f"No usable text columns found. Available: {list(cols)}")
+            def convert(row):
+                parts = [f"{c}: {row[c]}" for c in str_cols if row.get(c)]
+                return {"text": "\n".join(parts)}
+
+        count = 0
+        with open(output_file, "w", encoding="utf-8") as f:
+            for row in ds:
+                item = convert(row)
+                if item.get("text", "").strip():
+                    f.write(json.dumps(item, ensure_ascii=False) + "\n")
+                    count += 1
+                if count % 500 == 0 and count > 0:
+                    _append_extract(f"  ...{count} samples written")
+
+        _append_extract(f"✅ HuggingFace extraction completed: {count} samples → {output_file}")
+        _log_event("hf_extract_completed", f"✅ HF extraction done: {dataset_name}, {count} samples")
+    except Exception as e:
+        _append_extract(f"❌ HuggingFace extraction failed: {e}")
+        AIEverLog().log_error("run_hf_extraction", str(e))
+
+
 # --- Routes ----------------------------------------------------------------
+@bp_extract.route("/extract/hf", methods=["POST"])
+def extract_hf():
+    data = request.get_json() or {}
+    dataset_name = data.get("dataset_name", "").strip()
+    if not dataset_name:
+        return jsonify(status="error", message="❌ Dataset name is required"), 400
+
+    config_name = data.get("config_name", "").strip()
+    split = data.get("split", "train").strip() or "train"
+    text_col = data.get("text_col", "auto").strip() or "auto"
+
+    app = current_app._get_current_object()
+    output_file = os.path.abspath(
+        os.path.join(app.root_path, "data", "processed", "train_data.jsonl")
+    )
+
+    thread = threading.Thread(
+        target=run_hf_extraction,
+        args=(dataset_name, config_name, split, text_col, output_file, True),
+        daemon=True,
+    )
+    thread.start()
+    return jsonify(status="started", message=f"HuggingFace dataset '{dataset_name}' extraction started")
+
+
 @bp_extract.route("/extract", methods=["POST", "GET"])
 def extract():
     if request.method == "POST":

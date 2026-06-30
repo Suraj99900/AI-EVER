@@ -39,16 +39,19 @@ current_model_id = None
 def load_model(iModelId=999):
     global model_instance, current_model_id
 
+    # If a different model is requested, unload the current one first
+    if model_instance is not None and iModelId != current_model_id:
+        logging.info(f"[Model Loader] Switching model from {current_model_id} to {iModelId}")
+        unload_model()
+
     if model_instance is None:
         try:
-            print(f"Loading model with ID: {iModelId}- {model_instance}")
             logging.info(f"[Model Loader] Initializing ModelInference for {iModelId} ...")
             model_instance = ModelInference(iModelId=iModelId)
             current_model_id = iModelId
-            print(f"Loading model with ID: {current_model_id}- {model_instance}")
-            logging.info("[Model Loader] Model loaded successfully")
+            logging.info(f"[Model Loader] Model {iModelId} loaded successfully")
         except Exception as e:
-            logging.error(f"[Model Loader] Failed: {e}")
+            logging.error(f"[Model Loader] Failed to load model {iModelId}: {e}")
             raise
 
     return model_instance
@@ -112,8 +115,9 @@ def infer():
         full_prompt = f"### Instruction:\n{prompt}\n### Response:"
         logging.info(f"Received prompt: {full_prompt}")
 
+        log_db = AIEverInferenceLog()
         try:
-            result = model_instance.generate_response_stream(
+            result = model_instance.generate_response(
                 prompt=full_prompt,
                 max_new_tokens=int(data.get("max_new_tokens", 1000)),
                 temperature=float(data.get("temperature", 0.2)),
@@ -121,17 +125,24 @@ def infer():
                 repetition_penalty=float(data.get("repetition_penalty", 1.1)),
                 no_repeat_ngram_size=int(data.get("no_repeat_ngram_size", 3)),
                 do_sample=False,
-                num_beams=int(data.get("num_beams", 4)),
+                num_beams=int(data.get("num_beams", 1)),
             )
+            log_db.add_log(check_point_id=iModelId, req_msg=full_prompt, res_msg=result, related_checkpoint_id=iModelId)
             return jsonify(status="success", result=result)
         except Exception as e:
             logging.error("inference", str(e))
+            log_db.add_log(check_point_id=iModelId, req_msg=full_prompt, res_msg="", related_checkpoint_id=iModelId, status=0)
             return jsonify(status="error", message=str(e)), 500
 
     else:
         # --- GET logic: render the chat page ---
         iModelId = request.args.get("session", default=9999, type=int)
-        load_model(iModelId)
+        
+        try:
+            load_model(iModelId)
+        except Exception as e:
+            logging.error(f"Failed to load model for session {iModelId}: {e}")
+            # Fallback to base model if possible, or show error
 
         base = os.getenv("BASE_URL", "http://localhost:5000").rstrip("/")
         BASE_URL = f"{base}/inference"
@@ -152,7 +163,7 @@ def infer():
 
         # --- Fetch past logs for this model/session ---
         past_chats = log_db.get_logs_by_checkpoint(iModelId)  # Returns list of dicts: [{req_msg, res_msg}, ...]
-
+        print(f"Fetched {len(past_chats)} past chats for session {iModelId}")
         return render_template(
             "inference.html",
             checkpoints=formatted_checkpoints,
@@ -232,22 +243,25 @@ def rename_checkpoint(cp_id):
         cp = db.get_checkpoint_by_id(cp_id)
         if not cp:
             return jsonify({"success": False, "error": "Checkpoint not found"}), 404
-        
+
         old_path = cp[2]        # assuming column 2 = file path
         base_dir = os.path.dirname(old_path)
-        
-        new_path = os.path.join(base_dir, new_name)
-        print(f"new_path {new_path}")
 
-        # # rename file on disk
+        new_path = os.path.join(base_dir, new_name)
+        logging.info(f"Renaming checkpoint: {old_path} → {new_path}")
+
+        # rename file on disk
         os.rename(old_path, new_path)
 
-        # # update database
+        # update database
         db.update_checkpoint(cp_id, checkpoint_dir=new_path)
 
+        AIEverLog().add_log("checkpoint_renamed",
+                            f"Renamed id={cp_id}: '{os.path.basename(old_path)}' → '{new_name}'",
+                            related_checkpoint_id=cp_id)
         return jsonify({"success": True})
     except Exception as e:
-        # Log full traceback if you have logging configured
+        logging.error(f"rename_checkpoint error: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -272,8 +286,12 @@ def delete_checkpoint(cp_id):
         # remove the DB record
         db.delete_checkpoint(cp_id)
 
+        AIEverLog().add_log("checkpoint_deleted",
+                            f"Deleted id={cp_id}: {path_to_delete}",
+                            related_checkpoint_id=cp_id)
         return jsonify({"success": True})
     except Exception as e:
+        logging.error(f"delete_checkpoint error: {e}")
         return jsonify({"success": False, "error": str(e)}), 500
     
 
@@ -307,10 +325,14 @@ def complete():
 
         logging.info(f"[Completion] Task={task}, Stream={stream}, Prompt length={len(prompt)}")
         logging.info(prompt)
+        infer_log = AIEverInferenceLog()
+        log_id = infer_log.add_log(check_point_id=iModelId, req_msg=prompt, res_msg="",
+                                   related_checkpoint_id=iModelId)
 
         # ---------------- STREAMING MODE ---------------- #
         if stream:
             def generate_tokens():
+                buf = []
                 try:
                     for token in model.generate_response_stream(
                         prompt=prompt,
@@ -322,10 +344,16 @@ def complete():
                         do_sample=True,
                         num_beams=int(data.get("num_beams", 1)),
                     ):
+                        buf.append(token)
                         yield token
                 except Exception as e:
                     logging.error(f"[Stream Error] {str(e)}")
                     yield f"\n[Error] {str(e)}"
+                finally:
+                    try:
+                        infer_log.update_log(log_id, res_msg="".join(buf))
+                    except Exception:
+                        pass
 
             return Response(stream_with_context(generate_tokens()), mimetype="text/plain")
 
@@ -344,8 +372,10 @@ def complete():
 
             if not completion:
                 logging.warning("[Completion] Model returned empty string")
+                infer_log.update_log(log_id, status=0, res_msg="")
                 return jsonify(status="error", message="Empty completion"), 500
 
+            infer_log.update_log(log_id, res_msg=completion)
             logging.info(f"[Completion] Generated {len(completion)} tokens")
             return jsonify(status="success", completion=completion)
 
@@ -363,4 +393,7 @@ def switch_model():
         logging.info(f"[Model Loader] Switching model: {current_model_id} -> {new_id}")
         unload_model()
         load_model(new_id)
+        AIEverLog().add_log("model_switched",
+                            f"Switched active model to id={new_id}",
+                            related_checkpoint_id=new_id if new_id != 9999 else None)
     return jsonify(status="success", current_model=new_id)

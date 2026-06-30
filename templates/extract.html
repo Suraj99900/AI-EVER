@@ -33,6 +33,10 @@
           <input class="form-check-input" type="radio" name="source_type" id="source_github" value="github">
           <label class="form-check-label" for="source_github">🌐 GitHub Repo (clone + extract)</label>
         </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="source_type" id="source_hf" value="hf">
+          <label class="form-check-label" for="source_hf">🤗 HuggingFace Dataset</label>
+        </div>
       </div>
 
       <!-- Local Path -->
@@ -47,6 +51,42 @@
         <input type="url" id="repo_url" name="repo_url" class="form-control"
           placeholder="https://github.com/user/repo.git">
       </div>
+
+      <!-- HuggingFace Dataset -->
+      <div class="mb-3 source-field d-none" id="hf-field">
+        <!-- Quick-fill chips -->
+        <div class="mb-2">
+          <small class="text-muted fw-semibold">Quick fill:</small><br>
+          <span class="badge bg-secondary me-1 mt-1 hf-chip" data-name="mbpp" data-config="" data-split="train" data-col="auto" style="cursor:pointer">MBPP (Python problems)</span>
+          <span class="badge bg-secondary me-1 mt-1 hf-chip" data-name="spider" data-config="" data-split="train" data-col="auto" style="cursor:pointer">Spider (SQL Q&amp;A)</span>
+          <span class="badge bg-secondary me-1 mt-1 hf-chip" data-name="code_search_net" data-config="python" data-split="train" data-col="auto" style="cursor:pointer">CodeSearchNet (Python)</span>
+          <span class="badge bg-secondary me-1 mt-1 hf-chip" data-name="bigcode/the-stack-smol" data-config="data-python" data-split="train" data-col="content" style="cursor:pointer">The Stack (Python)</span>
+        </div>
+        <div class="row g-2">
+          <div class="col-md-5">
+            <label class="form-label small">Dataset Name</label>
+            <input type="text" id="hf_dataset_name" class="form-control form-control-sm"
+              placeholder="e.g. mbpp  or  bigcode/the-stack-smol">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label small">Config (optional)</label>
+            <input type="text" id="hf_config" class="form-control form-control-sm" placeholder="e.g. python">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label small">Split</label>
+            <input type="text" id="hf_split" class="form-control form-control-sm" value="train">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label small">Text Column</label>
+            <input type="text" id="hf_text_col" class="form-control form-control-sm" value="auto"
+              title="auto = detect automatically">
+          </div>
+        </div>
+        <div class="form-text small mt-1">
+          Text Column: leave <code>auto</code> to auto-detect. For custom datasets set to the column name that contains the training text.
+        </div>
+      </div>
+
       <input type="hidden" name="type" value="code">
 
       <button type="submit" class="btn btn-gradient w-30">
@@ -128,7 +168,8 @@
       <div class="row g-3">
         <div class="col-md-3">
           <label class="form-label small">Max Steps</label>
-          <input type="number" name="max_steps" class="form-control form-control-sm" value="20" />
+          <input type="number" name="max_steps" class="form-control form-control-sm" value="-1" />
+          <div class="form-text small">-1 = run all epochs (recommended). A positive value caps training early for quick tests.</div>
         </div>
         <div class="col-md-3">
           <label class="form-label small">Batch Size</label>
@@ -373,6 +414,26 @@
 
     let extractInterval, sqlInterval, trainInterval;
 
+    // Source type radio toggle
+    $('input[name="source_type"]').on('change', function () {
+      const val = $(this).val();
+      $('#local-field, #github-field, #hf-field').addClass('d-none');
+      if (val === 'local') $('#local-field').removeClass('d-none');
+      else if (val === 'github') $('#github-field').removeClass('d-none');
+      else if (val === 'hf') $('#hf-field').removeClass('d-none');
+    });
+
+    // HF quick-fill chip click
+    $('.hf-chip').on('click', function () {
+      $('#hf_dataset_name').val($(this).data('name'));
+      $('#hf_config').val($(this).data('config'));
+      $('#hf_split').val($(this).data('split') || 'train');
+      $('#hf_text_col').val($(this).data('col') || 'auto');
+      // Visually highlight selected chip
+      $('.hf-chip').removeClass('bg-primary').addClass('bg-secondary');
+      $(this).removeClass('bg-secondary').addClass('bg-primary');
+    });
+
     // Code Extraction
     $('#extract-form').on('submit', function (e) {
       e.preventDefault();
@@ -380,45 +441,72 @@
       const $spinner = $('#extract-spinner');
       const $alert = $('#extract-alert');
       const $download = $('#download-link');
+      const sourceType = $('input[name="source_type"]:checked').val();
 
       // Reset UI
       $spinner.removeClass('d-none');
       $alert.addClass('d-none').removeClass('alert-success alert-danger');
       $download.addClass('d-none');
 
-      appendToGlobalConsole('EXTRACT', 'Started extraction…');
-
-      // Start polling server logs
       if (extractInterval) clearInterval(extractInterval);
       extractInterval = pollLogs('/extract/logs', 'EXTRACT', '#extract-spinner', '#download-link');
 
-      $.ajax({
-        url: '/extract',
-        method: 'POST',
-        data: $(this).serialize(),
-        dataType: 'json',
-        success: function (res) {
-          $alert
-            .removeClass('d-none alert-danger')
-            .addClass('alert-success')
-            .text(res.message || 'Extraction started ✅');
-          appendToGlobalConsole('EXTRACT', res.message || 'Extraction started ✅');
-        },
-        error: function (xhr) {
-          const msg = xhr.responseJSON?.message || 'Extraction failed ❌';
-          $alert
-            .removeClass('d-none alert-success')
-            .addClass('alert-danger')
-            .text(msg);
-          appendToGlobalConsole('EXTRACT', msg);
-
-          // 🔴 Stop the extraction log polling on error
-          if (extractInterval) clearInterval(extractInterval);
-        },
-        complete: function () {
+      if (sourceType === 'hf') {
+        // ---------- HuggingFace path ----------
+        const dsName = $('#hf_dataset_name').val().trim();
+        if (!dsName) {
           $spinner.addClass('d-none');
+          $alert.removeClass('d-none alert-success').addClass('alert-danger').text('Please enter a dataset name.');
+          clearInterval(extractInterval);
+          return;
         }
-      });
+        appendToGlobalConsole('HF', `Fetching HuggingFace dataset: ${dsName}…`);
+        $.ajax({
+          url: '/extract/hf',
+          method: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({
+            dataset_name: dsName,
+            config_name: $('#hf_config').val().trim(),
+            split: $('#hf_split').val().trim() || 'train',
+            text_col: $('#hf_text_col').val().trim() || 'auto',
+          }),
+          success: function (res) {
+            $alert.removeClass('d-none alert-danger').addClass('alert-success').text(res.message || 'HF extraction started ✅');
+            appendToGlobalConsole('HF', res.message || 'HF extraction started ✅');
+          },
+          error: function (xhr) {
+            const msg = xhr.responseJSON?.message || 'HF extraction failed ❌';
+            $alert.removeClass('d-none alert-success').addClass('alert-danger').text(msg);
+            appendToGlobalConsole('HF', msg);
+            $spinner.addClass('d-none');
+            if (extractInterval) clearInterval(extractInterval);
+          }
+        });
+      } else {
+        // ---------- Local / GitHub path ----------
+        appendToGlobalConsole('EXTRACT', 'Started extraction…');
+        $.ajax({
+          url: '/extract',
+          method: 'POST',
+          data: $(this).serialize(),
+          dataType: 'json',
+          success: function (res) {
+            $alert.removeClass('d-none alert-danger').addClass('alert-success').text(res.message || 'Extraction started ✅');
+            appendToGlobalConsole('EXTRACT', res.message || 'Extraction started ✅');
+          },
+          error: function (xhr) {
+            const msg = xhr.responseJSON?.message || 'Extraction failed ❌';
+            $alert.removeClass('d-none alert-success').addClass('alert-danger').text(msg);
+            appendToGlobalConsole('EXTRACT', msg);
+            $spinner.addClass('d-none');
+            if (extractInterval) clearInterval(extractInterval);
+          },
+          complete: function () {
+            $spinner.addClass('d-none');
+          }
+        });
+      }
     });
 
 
@@ -445,8 +533,11 @@
     });
 
     // Training
+    const $trainSubmitBtn = $('#train-form button[type=submit]');
     $('#train-form').submit(function (e) {
       e.preventDefault();
+      if ($trainSubmitBtn.prop('disabled')) return; // already running
+      $trainSubmitBtn.prop('disabled', true);
       $('#train-spinner').removeClass('d-none');
       $('#train-alert').addClass('d-none');
       appendToGlobalConsole('TRAIN', 'Started training...');
@@ -457,11 +548,13 @@
           appendToGlobalConsole('TRAIN', logs);
           if (logs.includes("✅") || logs.includes("❌")) {
             $('#train-spinner').addClass('d-none');
+            $trainSubmitBtn.prop('disabled', false);
             clearInterval(trainInterval);
           }
         }).fail(function () {
           appendToGlobalConsole('TRAIN', 'Failed to reach /train/logs');
           $('#train-spinner').addClass('d-none');
+          $trainSubmitBtn.prop('disabled', false);
           clearInterval(trainInterval);
         });
       }, 2000);
@@ -487,13 +580,17 @@
         data: JSON.stringify(data),
         success: function (res) {
           $('#train-alert').removeClass('d-none alert-danger').addClass('alert-success').text(res.message);
-          $('#train-spinner').addClass('d-none');
           appendToGlobalConsole('TRAIN', res.message);
         },
         error: function (xhr) {
-          $('#train-alert').removeClass('d-none alert-success').addClass('alert-danger').text(xhr.responseJSON?.message || "Training failed ❌");
+          const msg = xhr.status === 409
+            ? "A training run is already in progress. Wait for it to finish."
+            : (xhr.responseJSON?.message || "Training failed ❌");
+          $('#train-alert').removeClass('d-none alert-success').addClass('alert-danger').text(msg);
           $('#train-spinner').addClass('d-none');
-          appendToGlobalConsole('TRAIN', xhr.responseJSON?.message || "Training failed ❌");
+          $trainSubmitBtn.prop('disabled', false);
+          if (trainInterval) clearInterval(trainInterval);
+          appendToGlobalConsole('TRAIN', msg);
         }
       });
     });
@@ -522,7 +619,7 @@
       },
 
       mid: {
-        max_steps: 100,
+        max_steps: -1,
         per_device_train_batch_size: 1,
         gradient_accumulation_steps: 2,
         learning_rate: "3e-4",
@@ -543,7 +640,7 @@
       },
 
       high: {
-        max_steps: 300,
+        max_steps: -1,
         per_device_train_batch_size: 1,
         gradient_accumulation_steps: 4,
         learning_rate: "2e-4",
@@ -551,7 +648,7 @@
         logging_steps: 2,
         eval_steps: 20,
         warmup_steps: 10,
-        save_steps: 50,
+        save_steps: 40,
         save_strategy: "steps",
         save_total_limit: 3,
         metric_for_best_model: "eval_loss",

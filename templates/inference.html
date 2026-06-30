@@ -9,33 +9,30 @@
     <title>AI Ever</title>
 
     <!-- Tailwind + Icons + Font -->
-    <script src="static/js/tailwindcss.js" defer></script>
-    <link rel="stylesheet" href="static/css/font-awesome.css">
+    <script src="/static/js/tailwindcss.js"></script>
+    <link rel="stylesheet" href="/static/css/font-awesome.css">
 
     <!-- Only one jQuery to avoid conflicts -->
     <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
 
     <!-- Prism CSS -->
-    <link rel="stylesheet" href="static/css/prism.min.css">
+    <link rel="stylesheet" href="/static/css/prism.min.css">
 
     <!-- Prism JS: core first, then languages -->
 
     <!-- Prism JS core first -->
-    <script src="static/js/prism.min.js"></script>
-
-    <!-- Languages -->
-    <script src="static/js/prism-markup.min.js"></script>
-    <!-- <script src="static/js/prism-php.min.js"></script> -->
-    <script src="static/js/prism-python.min.js"></script>
-    <script src="static/js/prism-sql.min.js"></script>
-    <script src="static/js/prism-javascript.min.js"></script>
+    <script src="/static/js/prism.min.js"></script>
+    <script src="/static/js/prism-markup.min.js"></script>
+    <script src="/static/js/prism-python.min.js"></script>
+    <script src="/static/js/prism-sql.min.js"></script>
+    <script src="/static/js/prism-javascript.min.js"></script>
     <!-- <script src="static/js/prism-autoloader.min.js"></script> -->
 
 
 
     <link href="{{ url_for('static', filename='js/bootstrap.min.css') }}" rel="stylesheet">
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}" defer></script>
-    <link rel="stylesheet" href="static/css/all.min.css" />
+    <link rel="stylesheet" href="/static/css/all.min.css" />
 
     <style>
         :root {
@@ -171,22 +168,47 @@
                 transform: rotate(360deg);
             }
         }
+
+        .typing-dots span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--deepseek-primary);
+            opacity: 0.4;
+            animation: typing-bounce 1s infinite ease-in-out;
+        }
+
+        .typing-dots span:nth-child(2) { animation-delay: 0.15s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes typing-bounce {
+            0%, 80%, 100% { opacity: 0.3; transform: translateY(0); }
+            40% { opacity: 1; transform: translateY(-3px); }
+        }
+
+        .stop-button {
+            background-color: #dc2626;
+        }
+
+        .stop-button:hover {
+            background-color: #b91c1c;
+        }
+
+        .perf-tag {
+            font-size: 11px;
+            color: #9ca3af;
+            margin-top: 2px;
+        }
     </style>
 </head>
 
 <body class="min-h-screen flex flex-col">
     <!-- Replace your existing loading overlay with this -->
-    <div id="loading-overlay" class="hidden">
+    <div id="loading-overlay" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-[9999] backdrop-blur-sm">
         <div class="flex flex-col items-center space-y-4">
-            <div class="spinner-border"></div>
+            <div class="spinner-border text-white"></div>
             <div class="text-white text-lg font-medium">Switching model...</div>
             <div class="text-white text-sm opacity-80">Please wait</div>
-        </div>
-    </div>
-    <div id="loading-overlay" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50 hidden">
-        <div class="flex flex-col items-center">
-            <div class="spinner-border text-white w-12 h-12 mb-4" role="status"></div>
-            <span class="text-white text-lg font-medium">Switching model…</span>
         </div>
     </div>
 
@@ -197,8 +219,8 @@
             <!-- Model Selector -->
             <div class="mx-3 mb-2 px-3 py-2 rounded-lg model-selector text-sm font-medium mt-3">
                 <div class="flex items-center space-x-3 nav-logo">
-                    <div class="w-10 h-10 rounded-xl bg-transparent flex items-center justify-center">
-                        <img src="/static/img/logo.png" alt="" srcset="">
+                    <div class="w-10 h-10 rounded-xl bg-transparent flex items-center justify-center overflow-hidden">
+                        <img src="/static/img/logo.png" alt="Logo" class="w-full h-full object-contain">
                     </div>
                     <span class="text-xl font-bold">AI Ever</span>
                 </div>
@@ -260,7 +282,11 @@
                         <textarea id="chat-input" rows="1"
                             class="flex-1 bg-gray-100 rounded-xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none"
                             placeholder="Message DeepSeek..." style="min-height: 44px; max-height: 200px;"></textarea>
-                        <button type="submit"
+                        <button type="button" id="stop-btn"
+                            class="absolute right-2 w-8 h-8 hidden items-center justify-center stop-button text-white rounded-lg">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
+                        </button>
+                        <button type="submit" id="send-btn"
                             class="absolute right-2 w-8 h-8 flex items-center justify-center send-button text-white rounded-lg">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -300,45 +326,6 @@
             scrollBottom();
         }
 
-        function addCode(code, lang = 'sql') {
-            $('#chat-window').find('div.italic').remove();
-
-            const safeCode = escapeHTML(code);
-            const codeId = 'code-' + Date.now() + '-' + Math.floor(Math.random() * 9999);
-            const wrapper = $(`
-        <div class="flex justify-start px-4 w-full code-container">
-          <pre class="relative w-full"><code class="language-${lang}" id="${codeId}">${safeCode}</code></pre>
-          <button class="copy-btn" data-codeid="${codeId}">Copy</button>
-        </div>
-      `);
-            $('#chat-window').append(wrapper);
-            // highlight safely
-            setTimeout(() => {
-                try {
-                    if (window.Prism && document.getElementById(codeId)) {
-                        Prism.highlightElement(document.getElementById(codeId));
-                    }
-                } catch (err) {
-                    // If Prism fails for any reason, leave text content as-is (avoid breaking UI)
-                    console.warn('Prism highlight failed', err);
-                }
-            }, 0);
-
-            // copy handler
-            wrapper.find('.copy-btn').on('click', function () {
-                const id = $(this).data('codeid');
-                const txt = document.getElementById(id)?.textContent || '';
-                navigator.clipboard.writeText(txt).then(() => {
-                    const btn = $(this);
-                    const old = btn.text();
-                    btn.text('Copied');
-                    setTimeout(() => btn.text(old), 1500);
-                });
-            });
-
-            scrollBottom();
-        }
-
         // Safely highlight a single element (used for live streaming update)
         function safeHighlight(element) {
             try {
@@ -346,6 +333,71 @@
             } catch (e) {
                 console.warn('Prism highlight failed', e);
             }
+        }
+
+        function attachCopyHandler($btn, getText) {
+            $btn.on('click', function () {
+                navigator.clipboard.writeText(getText()).then(() => {
+                    const old = $btn.text();
+                    $btn.text('Copied');
+                    setTimeout(() => $btn.text(old), 1500);
+                });
+            });
+        }
+
+        // Creates an empty assistant bubble (with a "thinking" indicator) and
+        // returns a render(text) function that re-renders its content,
+        // splitting plain prose from ```fenced code blocks instead of
+        // forcing every reply into a single SQL code block regardless of
+        // whether the model actually returned code.
+        function addAssistantBubble() {
+            $('#chat-window').find('div.italic').remove();
+            const wrapper = $(`<div class="flex justify-start px-4 w-full"></div>`);
+            const content = $(`<div class="assistant-content max-w-[95%] space-y-2"></div>`);
+            const typing = $(`<div class="ai-bubble px-4 py-3 inline-flex gap-1 typing-dots"><span></span><span></span><span></span></div>`);
+            content.append(typing);
+            wrapper.append(content);
+            $('#chat-window').append(wrapper);
+            scrollBottom();
+
+            const fenceRe = /```(\w*)\n?([\s\S]*?)(?:```|$)/g;
+
+            function render(text) {
+                if (!text) return;
+                content.empty();
+                let lastIndex = 0;
+                let match;
+                let any = false;
+                fenceRe.lastIndex = 0;
+                while ((match = fenceRe.exec(text)) !== null) {
+                    any = true;
+                    const before = text.slice(lastIndex, match.index);
+                    if (before.trim()) {
+                        content.append(`<div class="ai-bubble px-4 py-3 break-words">${escapeHTML(before.trim()).replace(/\n/g, '<br>')}</div>`);
+                    }
+                    const lang = (match[1] || 'plaintext').toLowerCase();
+                    const code = match[2];
+                    const codeId = 'code-' + Date.now() + '-' + Math.floor(Math.random() * 9999);
+                    const codeWrap = $(`
+            <div class="code-container w-full">
+              <pre class="relative w-full"><code class="language-${lang}" id="${codeId}"></code></pre>
+              <button class="copy-btn" data-codeid="${codeId}">Copy</button>
+            </div>`);
+                    content.append(codeWrap);
+                    const codeEl = document.getElementById(codeId);
+                    codeEl.textContent = code;
+                    safeHighlight(codeEl);
+                    attachCopyHandler(codeWrap.find('.copy-btn'), () => code);
+                    lastIndex = fenceRe.lastIndex;
+                }
+                const rest = text.slice(lastIndex);
+                if (rest.trim() || !any) {
+                    content.append(`<div class="ai-bubble px-4 py-3 break-words">${escapeHTML(rest).replace(/\n/g, '<br>') || '&nbsp;'}</div>`);
+                }
+                scrollBottom();
+            }
+
+            return render;
         }
     </script>
 
@@ -364,104 +416,80 @@
         function renderPastChats(pastChats) {
             if (!pastChats || pastChats.length === 0) return;
             pastChats.forEach(chat => {
-                if (chat.prompt) addMsg(chat.prompt, true);
+                if (chat.prompt) {
+                    // stored prompts are wrapped as "### Instruction:\n...\n### Response:"
+                    let p = chat.prompt.replace(/^###\s*Instruction:\s*/is, '').replace(/\n?###\s*Response:\s*$/is, '');
+                    addMsg(p, true);
+                }
                 if (chat.response) {
-                    // strip leading prefixes like '### Instruction:' and '### Response:' if present
-                    let resp = chat.response;
-                    // remove the Instruction/Response blocks if they appear verbatim
-                    resp = resp.replace(/^.*?###\s*Response:\s*/is, '');
-                    addCode(resp, chat.lang || 'sql');
+                    const render = addAssistantBubble();
+                    render(chat.response);
                 }
             });
         }
 
         renderPastChats(pastChats);
 
+        let activeController = null;
+
+        function setGenerating(isGenerating) {
+            $('#send-btn').toggleClass('hidden', isGenerating);
+            $('#stop-btn').toggleClass('hidden', !isGenerating).toggleClass('flex', isGenerating);
+        }
+
+        $('#stop-btn').on('click', function () {
+            if (activeController) activeController.abort();
+        });
+
         $('#chat-form').on('submit', function (e) {
             e.preventDefault();
             const prompt = $('#chat-input').val().trim();
             const iProjectSessionId = $("#idSessionProject").val();
-            if (!prompt) return;
+            if (!prompt || activeController) return;
 
             addMsg(prompt, true);
             $('#chat-input').val('').css('height', 'auto');
 
-            // Create empty code bubble
-            const codeLang = 'sql';
-            const codeId = 'live-' + Date.now() + '-' + Math.floor(Math.random() * 9999);
-            const codeWrapper = $(`
-        <div class="flex justify-start px-4 w-full code-container">
-          <pre class="relative w-full"><code class="language-${codeLang}" id="${codeId}"></code></pre>
-          <button class="copy-btn" data-codeid="${codeId}" style="display:none">Copy</button>
-        </div>
-      `);
-            $('#chat-window').append(codeWrapper);
-            scrollBottom();
-
-            const liveCodeEl = document.getElementById(codeId);
-            const copyBtn = codeWrapper.find('.copy-btn');
-
+            const render = addAssistantBubble();
             let buffer = '';
-            let started = false;
+            const startTime = performance.now();
+            let firstTokenTime = null;
 
-            // Pump function inside submit handler
+            activeController = new AbortController();
+            setGenerating(true);
+
             function pump(reader, decoder) {
                 return reader.read().then(({ done, value }) => {
                     if (done) {
-                        copyBtn.show().on('click', function () {
-                            navigator.clipboard.writeText(buffer);
-                            const btn = $(this);
-                            const old = btn.text();
-                            btn.text('Copied');
-                            setTimeout(() => btn.text(old), 1500);
-                        });
-                        safeHighlight(liveCodeEl);
+                        finish();
                         return;
                     }
-
-                    const chunk = decoder.decode(value, { stream: true });
-
-                    // Only start after "### Response:"
-
-                    const prefix = "Response:";
-
-                    // New chunk arrives.
-                    if (!started) {
-                        // Attempt to find the full prefix structure in the current chunk.
-                        const prefixMatch = chunk.match(prefix);
-                        if (prefixMatch) {
-                            // If the match is successful, we can safely start buffering
-                            started = true;
-                            // prefixMatch[0] is the full matched string (e.g., "### Response: ")
-                            // We calculate the index immediately after the matched prefix and start the buffer from there.
-                            const startOfContent = prefixMatch.index + prefixMatch[0].length;
-                            // Add only the content that appears after the prefix
-                            buffer += chunk.substring(startOfContent);
-
-                        }
-                        // If prefixMatch is null, the chunk is still part of the instructions (or is empty), 
-                        // so we discard it by doing nothing, allowing the next chunk to be checked.
-
-                    } else {
-                        // Already started, append directly.
-                        buffer += chunk;
-                    }
-
-                    if (liveCodeEl) {
-                        liveCodeEl.textContent = buffer;
-                        safeHighlight(liveCodeEl);
-                        scrollBottom();
-                    }
-
+                    if (firstTokenTime === null) firstTokenTime = performance.now();
+                    buffer += decoder.decode(value, { stream: true });
+                    render(buffer);
                     return pump(reader, decoder);
                 });
+            }
+
+            function finish() {
+                setGenerating(false);
+                activeController = null;
+                if (!buffer.trim()) render('(no response)');
+                if (buffer.trim()) {
+                    const elapsed = ((performance.now() - startTime) / 1000).toFixed(1);
+                    const ttft = firstTokenTime ? ((firstTokenTime - startTime) / 1000).toFixed(1) : '0.0';
+                    $('#chat-window').children().last()
+                        .append(`<div class="perf-tag px-1">⏱ ${elapsed}s total · ${ttft}s to first token</div>`);
+                }
+                scrollBottom();
             }
 
             // Fetch streaming data
             fetch('/stream_inference?current_session=' + iProjectSessionId, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompt })
+                body: JSON.stringify({ prompt }),
+                signal: activeController.signal
             })
                 .then(resp => {
                     if (!resp.ok) throw new Error('Network response was not ok');
@@ -470,12 +498,13 @@
                     return pump(reader, decoder);
                 })
                 .catch(err => {
-                    if (liveCodeEl) {
-                        liveCodeEl.textContent = '❗ Error: ' + err.message;
-                        safeHighlight(liveCodeEl);
-                    } else {
-                        addMsg('❗ Error: ' + err.message, false);
+                    setGenerating(false);
+                    activeController = null;
+                    if (err.name === 'AbortError') {
+                        if (!buffer.trim()) render('(stopped)');
+                        return;
                     }
+                    render(buffer + '\n\n❗ Error: ' + err.message);
                 });
         });
 

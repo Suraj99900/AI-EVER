@@ -3,6 +3,7 @@ import threading
 from flask import Blueprint, request, jsonify, current_app ,render_template
 from models.ModelTrainer import ModelTrainer
 from sql.CheckpointTrackMaster import CheckpointTrackMaster
+from sql.AIEverLog import AIEverLog
 from pathlib import Path
 from models.log_manager import LogManager
 import functools
@@ -11,6 +12,7 @@ import re
 
 bp_train = Blueprint("train", __name__)
 training_logs = []  # In-memory training logs
+training_in_progress = threading.Lock()
 
 LOG_PATH = Path(__file__).parent.parent /"log/model_trainer.log"
 
@@ -20,11 +22,19 @@ logmgr.clear("model_trainer")
 
 # --- Helpers ---------------------------------------------------------------
 def _append_extract(msg, level=None):
-    """Helper wrapper to append logs to the 'model_trainer' logger."""
+    """Append logs to file/in-memory buffer AND persist to ai_ever_log."""
     if level is None:
         logmgr.append("model_trainer", str(msg))
     else:
         logmgr.append("model_trainer", str(msg), level=level)
+
+
+def _log_event(event_type: str, message: str, checkpoint_id=None):
+    """Persist a training-route event to the ai_ever_log SQLite table."""
+    try:
+        AIEverLog().add_log(event_type, message, related_checkpoint_id=checkpoint_id)
+    except Exception:
+        pass
 
 
 # Regex that matches common access log lines like:
@@ -47,9 +57,24 @@ def _is_ignored_log_line(line: str) -> bool:
         return True
     return False
 
-def run_training(isSQL=False,max_steps=20,per_device_train_batch_size=1,gradient_accumulation_steps=1,learning_rate=1e-4,num_train_epochs=10,logging_steps=2,eval_steps=5,warmup_steps=5,save_steps=20,save_strategy="steps",save_total_limit=1,metric_for_best_model="loss",fp16=True,bf16=False,greater_is_better=False,optim="adamw_torch",report_to=[],logging_dir=None):
+def run_training(isSQL=False,max_steps=-1,per_device_train_batch_size=1,gradient_accumulation_steps=1,learning_rate=1e-4,num_train_epochs=10,logging_steps=2,eval_steps=5,warmup_steps=5,save_steps=20,save_strategy="steps",save_total_limit=1,metric_for_best_model="loss",fp16=True,bf16=False,greater_is_better=False,optim="adamw_torch",report_to=[],logging_dir=None):
     global training_logs
     training_logs = []
+    _log_event("train_started", f"Training started: is_sql={isSQL}, epochs={num_train_epochs}, max_steps={max_steps}")
+
+    # Unload inference model from VRAM before training to free GPU memory.
+    # Late import avoids a module-level circular dependency.
+    try:
+        import routes.infer as _infer_route
+        if _infer_route.model_instance is not None:
+            _append_extract("Unloading inference model from VRAM to free GPU memory for training...")
+            _infer_route.unload_model()
+            import torch as _torch, gc as _gc
+            _torch.cuda.empty_cache()
+            _gc.collect()
+            _append_extract("Inference model unloaded. Proceeding with training.")
+    except Exception as _e:
+        _append_extract(f"Warning: could not unload inference model: {_e}")
 
     try:
         trainer = ModelTrainer(
@@ -58,10 +83,10 @@ def run_training(isSQL=False,max_steps=20,per_device_train_batch_size=1,gradient
 
         training_results = trainer.train(max_steps,per_device_train_batch_size,gradient_accumulation_steps,learning_rate,num_train_epochs,logging_steps,eval_steps,warmup_steps,save_steps,save_strategy,save_total_limit,metric_for_best_model,fp16,bf16,greater_is_better,optim,report_to,logging_dir)
 
-        # Save checkpoint info to DB
+        # Save checkpoint info to DB (single insert — ModelTrainer no longer inserts)
         _append_extract("Saving training checkpoint to database.")
         db = CheckpointTrackMaster()
-        db.add_checkpoint(
+        checkpoint_id = db.add_checkpoint(
             model_name=training_results.get("model_name"),
             checkpoint_dir=training_results.get("checkpoint_dir"),
             epoch=training_results.get("epoch"),
@@ -71,9 +96,16 @@ def run_training(isSQL=False,max_steps=20,per_device_train_batch_size=1,gradient
         )
         training_logs.append("✅ Training completed and checkpoint saved.")
         _append_extract("✅ Training completed and checkpoint saved.")
+        _log_event("train_completed",
+                   f"✅ Checkpoint saved: {training_results.get('checkpoint_dir')}",
+                   checkpoint_id)
     except Exception as e:
         training_logs.append(f"❌ Training failed: {str(e)}")
         _append_extract(f"❌ Training failed: {str(e)}")
+        _log_event("train_failed", f"❌ Training failed: {str(e)}")
+    finally:
+        if training_in_progress.locked():
+            training_in_progress.release()
 
 
 @bp_train.route("/train", methods=["POST"])
@@ -81,7 +113,11 @@ def start_training():
     data = request.get_json()
     if not data:
         return jsonify(error="No training parameters provided."), 400
-    max = int(data.get("max_steps", 20))
+
+    if training_in_progress.locked():
+        return jsonify(status="busy", message="A training run is already in progress."), 409
+
+    max_steps = int(data.get("max_steps", -1))
     per_device_train_batch_size = int(data.get("per_device_train_batch_size", 1))
     gradient_accumulation_steps = int(data.get("gradient_accumulation_steps", 4))
     learning_rate = data.get("learning_rate", 1e-4)
@@ -102,7 +138,8 @@ def start_training():
     isSQL = data.get("is_sql", False)
 
     # Start training in a separate thread
-    thread = threading.Thread(target=run_training, args=(isSQL,max,per_device_train_batch_size,gradient_accumulation_steps,learning_rate,num_train_epochs,logging_steps,eval_steps,warmup_steps,save_steps,save_strategy,save_total_limit,metric_for_best_model,fp16,bf16,greater_is_better,optim,report_to,logging_dir), daemon=True)
+    training_in_progress.acquire()
+    thread = threading.Thread(target=run_training, args=(isSQL,max_steps,per_device_train_batch_size,gradient_accumulation_steps,learning_rate,num_train_epochs,logging_steps,eval_steps,warmup_steps,save_steps,save_strategy,save_total_limit,metric_for_best_model,fp16,bf16,greater_is_better,optim,report_to,logging_dir), daemon=True)
     thread.start()
     _append_extract("Training started in background thread.")
 

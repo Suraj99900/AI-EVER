@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container py-4">
+  <h4 class="fw-bold text-primary mb-4"><i class="fas fa-chart-line"></i> Dashboard</h4>
+
+  <!-- Stat Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <div class="text-muted small">Trained Checkpoints</div>
+          <div class="fs-3 fw-bold" id="stat-checkpoints">{{ summary.total_checkpoints }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <div class="text-muted small">Inference Requests</div>
+          <div class="fs-3 fw-bold" id="stat-requests">{{ summary.total_requests }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <div class="text-muted small">Failed Requests</div>
+          <div class="fs-3 fw-bold text-danger" id="stat-failed">{{ summary.failed_requests }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <div class="text-muted small">System Log Events</div>
+          <div class="fs-3 fw-bold" id="stat-events">{{ summary.total_events }}
+            {% if summary.error_events %}<span class="fs-6 text-danger">({{ summary.error_events }} errors)</span>{% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if summary.last_checkpoint %}
+  <div class="alert alert-light border d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <strong>Latest checkpoint:</strong> {{ summary.last_checkpoint[0] }}
+      <span class="text-muted small">({{ summary.last_checkpoint[1] }})</span>
+    </div>
+    <span class="text-muted small">{{ summary.last_checkpoint[2] }}</span>
+  </div>
+  {% endif %}
+
+  <!-- Requests per day chart -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-white fw-semibold">Inference Requests (last 14 days)</div>
+    <div class="card-body">
+      <div id="req-chart" class="d-flex align-items-end gap-2" style="height:120px;">
+        {% for day, count in requests_per_day %}
+        <div class="d-flex flex-column align-items-center flex-fill" title="{{ day }}: {{ count }} requests">
+          <div class="w-100 bg-primary rounded-top" style="height: {{ (count / max_daily * 100) | round(0, 'ceil') }}px; min-height:2px;"></div>
+          <div class="small text-muted mt-1" style="font-size:10px; writing-mode:vertical-rl;">{{ day[5:] }}</div>
+        </div>
+        {% else %}
+        <div class="text-muted small">No inference activity logged yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Recent training runs -->
+    <div class="col-lg-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-white fw-semibold">Recent Training Runs</div>
+        <div class="card-body p-0" style="max-height:360px; overflow:auto;">
+          <table class="table table-sm table-hover mb-0">
+            <thead><tr><th>Model</th><th>Epoch</th><th>Val Loss</th><th>Timestamp</th></tr></thead>
+            <tbody>
+              {% for cp in checkpoints %}
+              <tr>
+                <td class="text-truncate" style="max-width:160px;" title="{{ cp[2] }}">{{ cp[1] }}</td>
+                <td>{{ cp[3] }}</td>
+                <td>{{ "%.4f"|format(cp[5]) if cp[5] is not none else "-" }}</td>
+                <td class="text-muted small">{{ cp[7] }}</td>
+              </tr>
+              {% else %}
+              <tr><td colspan="4" class="text-muted text-center py-3">No training runs yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent inference logs -->
+    <div class="col-lg-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-white fw-semibold">Recent Inference Requests</div>
+        <div class="card-body p-0" style="max-height:360px; overflow:auto;">
+          <table class="table table-sm table-hover mb-0">
+            <thead><tr><th>Model ID</th><th>Prompt</th><th>Response</th><th>Status</th><th>Timestamp</th></tr></thead>
+            <tbody>
+              {% for log in inference_logs %}
+              <tr>
+                <td>{{ log[1] }}</td>
+                <td class="text-truncate" style="max-width:160px;" title="{{ log[2] }}">{{ log[2] }}</td>
+                <td class="text-truncate" style="max-width:160px;" title="{{ log[3] }}">{{ log[3] or "-" }}</td>
+                <td>{% if log[4] == 1 %}<span class="badge bg-success">ok</span>{% else %}<span class="badge bg-danger">error</span>{% endif %}</td>
+                <td class="text-muted small">{{ log[5] }}</td>
+              </tr>
+              {% else %}
+              <tr><td colspan="5" class="text-muted text-center py-3">No inference requests logged yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- System logs -->
+  <div class="card shadow-sm mt-4">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+      <span class="fw-semibold">System Logs</span>
+      <form method="get" class="d-flex align-items-center gap-2">
+        <select name="event_type" class="form-select form-select-sm" style="width:auto;" onchange="this.form.submit()">
+          <option value="">All event types</option>
+          {% for et in event_types %}
+          <option value="{{ et }}" {% if et == active_event_type %}selected{% endif %}>{{ et }}</option>
+          {% endfor %}
+        </select>
+      </form>
+    </div>
+    <div class="card-body p-0" style="max-height:360px; overflow:auto;">
+      <table class="table table-sm table-hover mb-0">
+        <thead><tr><th>Type</th><th>Message</th><th>Checkpoint</th><th>Timestamp</th></tr></thead>
+        <tbody>
+          {% for ev in events %}
+          <tr>
+            <td><span class="badge bg-secondary">{{ ev[1] }}</span></td>
+            <td class="text-truncate" style="max-width:420px;" title="{{ ev[2] }}">{{ ev[2] }}</td>
+            <td>{{ ev[3] or "-" }}</td>
+            <td class="text-muted small">{{ ev[4] }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="4" class="text-muted text-center py-3">No log events yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Light auto-refresh of the stat cards only, so the page stays current
+  // without losing scroll position or refetching the full tables constantly.
+  setInterval(function () {
+    fetch('/dashboard/data').then(r => r.json()).then(data => {
+      document.getElementById('stat-checkpoints').textContent = data.summary.total_checkpoints;
+      document.getElementById('stat-requests').textContent = data.summary.total_requests;
+      document.getElementById('stat-failed').textContent = data.summary.failed_requests;
+    }).catch(() => {});
+  }, 30000);
+</script>
+
+{% endblock %}

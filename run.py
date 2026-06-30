@@ -17,6 +17,7 @@ from routes.extract import bp_extract
 from routes.infer import bp_infer
 from routes.train import bp_train
 from routes.home import bp_home
+from routes.dashboard import bp_dashboard
 
 def create_app():
     app = Flask(
@@ -33,6 +34,7 @@ def create_app():
     app.register_blueprint(bp_infer)
     app.register_blueprint(bp_train)
     app.register_blueprint(bp_home)
+    app.register_blueprint(bp_dashboard)
     return app
 
 if __name__ == "__main__":
